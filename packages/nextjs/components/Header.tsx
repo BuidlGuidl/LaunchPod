@@ -73,7 +73,7 @@ export const Header = () => {
   );
 
   return (
-    <div className="sticky top-[2rem] place-self-center navbar bg-base-100 min-h-0 flex-shrink-0 justify-between z-20 shadow-sm drop-shadow-[0_25px_25px_hsl(var(--s))] w-3/4 rounded-full">
+    <div className="sticky top-[2rem] mx-auto place-self-center navbar bg-base-100 min-h-0 flex-shrink-0 justify-between z-20 shadow-sm drop-shadow-[0_25px_25px_hsl(var(--s))] w-3/4 rounded-full">
       <div className="navbar-start w-[75%] lg:w-1/2">
         <div className="lg:hidden dropdown" ref={burgerMenuRef}>
           <button
