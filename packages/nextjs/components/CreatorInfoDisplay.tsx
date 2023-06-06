@@ -17,11 +17,11 @@ export const CreatorInfoDisplay: React.FC<{ creatorData: CreatorInfo; creatorAdd
   const percentage = cap > 0 ? (Number(unlockedAmount) / cap) * 100 : 0;
 
   return (
-    <div className="flex items-center bg-indigo-100/30 rounded-full px-6 py-2 my-3">
-      <div className="flex-auto w-[50%]">
+    <div className="flex flex-col md:flex-row place-items-center bg-indigo-100/30 rounded-full px-6 py-2 my-3 w-full">
+      <div className="w-full md:w-[50%] ml-[50%] md:ml-0">
         <Address address={creatorAddress} />
       </div>
-      <div className="flex-auto w-[50%]">
+      <div className="flex-auto w-full md:w-[50%]">
         <div className="flex flex-row">
           <div className="flex items-center w-full">
             <div className="pb-2 pr-2">
