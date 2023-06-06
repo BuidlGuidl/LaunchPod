@@ -59,7 +59,7 @@ const Home: NextPage = () => {
         <div className="mt-10">
           <div className="w-full items-center space-y-2 flex flex-col justify-center">
             <Address address={streamContract.data?.address} />
-            <div className="rounded-full bg-indigo-100 py-2 px-6 flex flex-col">
+            <div className="rounded-full bg-primary py-2 px-6 flex flex-col">
               <p className="text-center text-md font-extrabold -mt-1">slushfund</p>
               <Balance className="text-3xl" address={streamContract.data?.address} />
             </div>
