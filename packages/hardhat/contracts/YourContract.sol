@@ -32,14 +32,12 @@ contract YourContract is AccessControl, ReentrancyGuard {
   bool public stopped = false;
 
   // Defining admin role for the contract using AccessControl
-  bytes32 public constant ADMIN_ROLE = DEFAULT_ADMIN_ROLE;
-
   // Primary admin for remaining balances
   address private primaryAdmin;
 
   // Modifier to check for admin permissions
   modifier onlyAdmin() {
-    if (!hasRole(ADMIN_ROLE, msg.sender)) revert AccessDenied();
+    if (!hasRole(DEFAULT_ADMIN_ROLE, msg.sender)) revert AccessDenied();
     _;
   }
 
