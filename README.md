@@ -17,12 +17,12 @@ Developers can submit their contributions (stored in a Smart Contract), automati
 
 ## Smart Contract features
 
-We provide a contract that includes basic features for your Hacker House Stream.
+We provide a contract that includes basic features for your LaunchPod Streams.
 
 - **Donations to the LaunchPod**. Anyone can show their support to the LaunchPod by sending ETH to the contract.
 - **List of developers and their monthly stream cap**.
 - **Withdrawals**. Each builder can do withdrawals from their available streams when they contribute.
-- **Rechargable streams**. After a withdrawal, the hacker's monthly stream gets recharged during the next 30 days, until reaching their cap (MAX monthly stream).
+- **Rechargable streams**. After a withdrawal, the Creator's monthly stream gets recharged during the next 30 days, until reaching their cap (MAX monthly stream).
 
 ## LaunchPod Website
 
@@ -45,7 +45,7 @@ You'll need to complete a few steps to have your LaunchPod running:
 
 - [0. Checking prerequisites](#0-checking-prerequisites)
 - [1. Clone/Fork this repo & install dependencies](#1-clonefork-this-repo--install-dependencies)
-- [2. Configure on-chain data for your LaunchPod Stream](#2-configure-on-chain-data-for-your-hacker-house-stream)
+- [2. Configure on-chain data for your LaunchPod Stream](#2-configure-on-chain-data-for-your-LaunchPod-streams)
 - [3. Configure website](#3-configure-website)
 - [4. Test your local environment](#4-test-your-local-environment)
 - [5. Deploy to a Live Network](#5-deploy-to-a-live-network)
@@ -64,8 +64,8 @@ This project is powered by [Scaffold-ETH 2](https://github.com/scaffold-eth/scaf
 ### 1. Clone/Fork this repo & install dependencies
 
 ```shell
-git clone https://github.com/buidlguidl/hacker-houses-streams.git
-cd hacker-houses-streams
+git clone https://github.com/buidlguidl/LaunchPod.git
+cd LaunchPod
 yarn install
 ```
 
