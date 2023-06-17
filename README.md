@@ -1,6 +1,6 @@
 # LaunchPod Streams
 
--->This repos README.md is currently being edited<--
+-->This repo's README.md is currently being edited<--
 
 This **work-in-progress** project aims to provide a platform to retroactively fund open-source work by providing a monthly 
 UBI to handpicked open-source developers, rewarding them for their ongoing contributions.
