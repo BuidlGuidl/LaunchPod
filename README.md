@@ -71,7 +71,7 @@ yarn install
 
 ### 2. Configure primary admin for your LaunchPod
 
-- In line 27 of 'LaunchPod/packages/hardhat/deploy/00_deploy_your_contract.ts' set the address that should be the primary admin and the first admin of the smart contract (default setting is deployer). As the primary admin of the contract, such address will receive all the fund in the contract in case the 'drainAgreement()' functioon is called. Also, as the first admin, the primary admin is able to grant/revoke admin role to/from any address via the 'modifyAdminRole(address adminAddress, bool shouldGrant)' function.
+- In line 27 of 'LaunchPod/packages/hardhat/deploy/00_deploy_your_contract.ts' set the address that should be the primary admin and the first admin of the smart contract (default setting is deployer). As the primary admin of the contract, such address will receive all the funds in the contract in case the 'drainAgreement()' functioon is called. Also, as the first admin, the primary admin is able to grant/revoke admin role to/from any address via the 'modifyAdminRole(address adminAddress, bool shouldGrant)' function.
 
 
 ### 3. Configure website
