@@ -87,14 +87,12 @@ contract YourContract is AccessControl, ReentrancyGuard {
         uint256 last; // The timestamp of the last withdrawal
     }
 
-
     // Mapping to store the flow info of each creator
     mapping(address => CreatorFlowInfo) public flowingCreators;
     // Mapping to store the index of each creator in the activeCreators array
     mapping(address => uint256) public creatorIndex;
     // Array to store the addresses of all active creators
     address[] public activeCreators;
-
 
     // Declare events to log various activities
     event FundsReceived(address indexed from, uint256 amount);
@@ -123,11 +121,9 @@ contract YourContract is AccessControl, ReentrancyGuard {
     //if erc20 not true, then do the following
 
         if (!isERC20) {
-
             if (msg.value == 0) revert NoValueSent();
-            emit FundsReceived(msg.sender, msg.value);}
-
-        else {
+            emit FundsReceived(msg.sender, msg.value);
+        } else {
             if (_amount == 0) revert NoValueSent();
             uint256 currentBalance = IERC20(tokenAddress).balanceOf(address(this));
             IERC20(tokenAddress).safeTransferFrom(msg.sender, address(this), _amount);
@@ -154,8 +150,6 @@ contract YourContract is AccessControl, ReentrancyGuard {
         }
         return result;
     }
-
-
 
     // Get the available amount for a creator.
     function availableCreatorAmount(
@@ -205,7 +199,6 @@ contract YourContract is AccessControl, ReentrancyGuard {
         }
     }
 
-
     // Validate the input for a creator
     function validateCreatorInput(
         address payable _creator,
@@ -237,7 +230,6 @@ contract YourContract is AccessControl, ReentrancyGuard {
         emit CreatorUpdated(_creator, _newCap, CYCLE);
     }
 
-
     // Remove a creator's flow
     function removeCreatorFlow(
         address _creator
@@ -258,7 +250,6 @@ contract YourContract is AccessControl, ReentrancyGuard {
         emit CreatorRemoved(_creator);
     }
 
-
     function flowWithdraw(
         uint256 _amount,
         string memory _reason
@@ -266,8 +257,9 @@ contract YourContract is AccessControl, ReentrancyGuard {
         CreatorFlowInfo storage creatorFlow = flowingCreators[msg.sender];
 
         uint256 totalAmountCanWithdraw = availableCreatorAmount(msg.sender);
-        if (totalAmountCanWithdraw < _amount)
+        if (totalAmountCanWithdraw < _amount) {
             revert InsufficientInFlow(_amount, totalAmountCanWithdraw);
+        }
 
         uint256 creatorflowLast = creatorFlow.last;
         uint256 timestamp = block.timestamp;
@@ -277,22 +269,24 @@ contract YourContract is AccessControl, ReentrancyGuard {
         }
         if (!isERC20) {
             uint256 contractFunds = address(this).balance;
-            if (contractFunds < _amount)
+            if (contractFunds < _amount) {
                 revert InsufficientFundsInContract(_amount, contractFunds);
+            }
 
             (bool sent, ) = msg.sender.call{value: _amount}(""); 
-            if (!sent) revert EtherSendingFailed(msg.sender);}
-        else { 
+            if (!sent) revert EtherSendingFailed(msg.sender);
+        } else { 
             uint256 contractFunds = IERC20(tokenAddress).balanceOf(address(this));
-            if (contractFunds < _amount)
+            if (contractFunds < _amount) {
                 revert InsufficientFundsInContract(_amount, contractFunds);
+            }
 
             IERC20(tokenAddress).safeTransfer(msg.sender, _amount);
 
             uint256 newBalance = IERC20(tokenAddress).balanceOf(address(this));
-            if (newBalance != contractFunds - _amount)
+            if (newBalance != contractFunds - _amount) {
                 revert ERC20FundsTransferFailed(tokenAddress, msg.sender, _amount);
-            
+            }
         }
 
         creatorFlow.last =
@@ -302,7 +296,6 @@ contract YourContract is AccessControl, ReentrancyGuard {
 
         emit Withdrawn(msg.sender, _amount, _reason);
     }
-
 
     // Drain the agreement to the current primary admin
     function drainAgreement(address _token) public onlyAdmin nonReentrant {
@@ -314,14 +307,13 @@ contract YourContract is AccessControl, ReentrancyGuard {
             (bool sent, ) = primaryAdmin.call{value: remainingBalance}(""); 
             if (!sent) revert EtherSendingFailed(primaryAdmin);
 
-            emit AgreementDrained(primaryAdmin, remainingBalance);}
-        else {
-
+            emit AgreementDrained(primaryAdmin, remainingBalance);
+        } else {
             if (_token != address(0)) {
-                _tokenAddress = _token;}
-                else {
-                    _tokenAddress = tokenAddress;
-                }
+                _tokenAddress = _token;
+            } else {
+                _tokenAddress = tokenAddress;
+            }
 
             uint256 remainingBalance = IERC20(_tokenAddress).balanceOf(address(this));
             if (remainingBalance == 0) revert NoFundsInContract();
@@ -329,13 +321,13 @@ contract YourContract is AccessControl, ReentrancyGuard {
             IERC20(_tokenAddress).safeTransfer(primaryAdmin, remainingBalance);
 
             uint256 newBalance = IERC20(_tokenAddress).balanceOf(address(this));
-            if (newBalance != 0)
+            if (newBalance != 0) {
                 revert ERC20FundsTransferFailed(_tokenAddress, primaryAdmin, remainingBalance);
+            }
 
             emit AgreementDrained(primaryAdmin, remainingBalance);
         }
     }
-
 
     // Fallback function to receive ether
     receive() external payable {}
