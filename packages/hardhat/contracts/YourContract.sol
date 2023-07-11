@@ -298,35 +298,35 @@ contract YourContract is AccessControl, ReentrancyGuard {
     }
 
     // Drain the agreement to the current primary admin
-    function drainAgreement(address _token) public onlyAdmin nonReentrant {
-        address _tokenAddress;
-        if (!isERC20) {
-            uint256 remainingBalance = address(this).balance;
-            if (remainingBalance == 0) revert NoFundsInContract();
+   function drainAgreement(address _token) public onlyAdmin nonReentrant {
+    address _tokenAddress;
+    uint256 remainingBalance;
 
-            (bool sent, ) = primaryAdmin.call{value: remainingBalance}(""); 
-            if (!sent) revert EtherSendingFailed(primaryAdmin);
+    // Drain Ether
+    remainingBalance = address(this).balance;
+    if (remainingBalance > 0) {
+        (bool sent, ) = primaryAdmin.call{value: remainingBalance}("");
+        if (!sent) revert EtherSendingFailed(primaryAdmin);
+        emit AgreementDrained(primaryAdmin, remainingBalance);
+    }
 
-            emit AgreementDrained(primaryAdmin, remainingBalance);
+    // Drain ERC20
+    if (isERC20) {
+        if (_token != address(0)) {
+            _tokenAddress = _token;
         } else {
-            if (_token != address(0)) {
-                _tokenAddress = _token;
-            } else {
-                _tokenAddress = tokenAddress;
-            }
+            _tokenAddress = tokenAddress;
+        }
 
-            uint256 remainingBalance = IERC20(_tokenAddress).balanceOf(address(this));
-            if (remainingBalance == 0) revert NoFundsInContract();
-
+        remainingBalance = IERC20(_tokenAddress).balanceOf(address(this));
+        if (remainingBalance > 0) {
             IERC20(_tokenAddress).safeTransfer(primaryAdmin, remainingBalance);
-
             uint256 newBalance = IERC20(_tokenAddress).balanceOf(address(this));
-            if (newBalance != 0) {
+            if (newBalance != 0)
                 revert ERC20FundsTransferFailed(_tokenAddress, primaryAdmin, remainingBalance);
-            }
-
             emit AgreementDrained(primaryAdmin, remainingBalance);
         }
+    }
     }
 
     // Fallback function to receive ether
