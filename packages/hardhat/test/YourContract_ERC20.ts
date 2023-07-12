@@ -397,7 +397,7 @@ mock_2 = await ethers.getContract("ERC20Mock2");
         console.log(`      The balance for  admin is ${await mock_1.connect(admin).balanceOf(admin.address)}`);
         //drain all tokens from contract
         console.log(`      Admin drains all tokens from contract`);
-        await contract.connect(admin).drainAgreement(ZERO_ADDRESS);
+        await contract.connect(admin).drainAgreement(mock_1.address);
         //show balance of tokens in contract
         console.log(`      The balance of tokens in contract is ${await mock_1.connect(admin).balanceOf(contract.address)}`);
 
