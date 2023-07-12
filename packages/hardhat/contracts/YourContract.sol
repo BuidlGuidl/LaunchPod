@@ -298,35 +298,34 @@ contract YourContract is AccessControl, ReentrancyGuard {
     }
 
     // Drain the agreement to the current primary admin
-   function drainAgreement(address _token) public onlyAdmin nonReentrant {
-    address _tokenAddress;
-    uint256 remainingBalance;
+function drainAgreement(address _token) public onlyAdmin nonReentrant {
+        uint256 remainingBalance;
 
-    // Drain Ether
-    remainingBalance = address(this).balance;
-    if (remainingBalance > 0) {
-        (bool sent, ) = primaryAdmin.call{value: remainingBalance}("");
-        if (!sent) revert EtherSendingFailed(primaryAdmin);
-        emit AgreementDrained(primaryAdmin, remainingBalance);
-    }
-
-    // Drain ERC20
-    if (isERC20) {
-        if (_token != address(0)) {
-            _tokenAddress = _token;
-        } else {
-            _tokenAddress = tokenAddress;
+        // Drain Ether
+        if (_token == address(0)) {
+            remainingBalance = address(this).balance;
+            if (remainingBalance > 0) {
+                (bool sent, ) = primaryAdmin.call{value: remainingBalance}("");
+                if (!sent) revert EtherSendingFailed(primaryAdmin);
+                emit AgreementDrained(primaryAdmin, remainingBalance);
+            }
+            return;
         }
 
-        remainingBalance = IERC20(_tokenAddress).balanceOf(address(this));
+        // If no specific token is provided, use the tokenAddress in ERC20 mode
+        if (_token == address(0) && isERC20) {
+            _token = tokenAddress;
+        }
+
+        // Drain ERC20 tokens 
+        remainingBalance = IERC20(_token).balanceOf(address(this));
         if (remainingBalance > 0) {
-            IERC20(_tokenAddress).safeTransfer(primaryAdmin, remainingBalance);
-            uint256 newBalance = IERC20(_tokenAddress).balanceOf(address(this));
+            IERC20(_token).safeTransfer(primaryAdmin, remainingBalance);
+            uint256 newBalance = IERC20(_token).balanceOf(address(this));
             if (newBalance != 0)
-                revert ERC20FundsTransferFailed(_tokenAddress, primaryAdmin, remainingBalance);
+                revert ERC20FundsTransferFailed(_token, primaryAdmin, remainingBalance);
             emit AgreementDrained(primaryAdmin, remainingBalance);
         }
-    }
     }
 
     // Fallback function to receive ether
