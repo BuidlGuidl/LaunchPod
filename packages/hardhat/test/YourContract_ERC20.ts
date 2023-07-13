@@ -51,6 +51,7 @@ describe("Test file for YourContract.sol", () => {
 
    let contract: YourContract;
    let mock_1: ERC20Mock1;
+   let mock_2: ERC20Mock2;
   
 
   beforeEach(async () => {
@@ -84,11 +85,12 @@ describe("Test file for YourContract.sol", () => {
     user_25 = signers[25];
     user_26 = signers[26];    
 
-await deployments.fixture(["YourContract", "ERC20Mock1"]);
+await deployments.fixture(["YourContract", "ERC20Mock1","ERC20Mock2"]);
 
 
 contract = await ethers.getContract("YourContract", admin);
 mock_1 = await ethers.getContract("ERC20Mock1");
+mock_2 = await ethers.getContract("ERC20Mock2");
 
 
 
@@ -395,12 +397,49 @@ mock_1 = await ethers.getContract("ERC20Mock1");
         console.log(`      The balance for  admin is ${await mock_1.connect(admin).balanceOf(admin.address)}`);
         //drain all tokens from contract
         console.log(`      Admin drains all tokens from contract`);
-        await contract.connect(admin).drainAgreement(ZERO_ADDRESS);
+        await contract.connect(admin).drainAgreement(mock_1.address);
         //show balance of tokens in contract
         console.log(`      The balance of tokens in contract is ${await mock_1.connect(admin).balanceOf(contract.address)}`);
 
         //show balance of tokens of admin
         console.log(`      The balance for  admin is ${await mock_1.connect(admin).balanceOf(admin.address)}`);
+
+        //send eth to contract and try to drain it as admin
+        console.log(`      Admin sends 1 eth to contract`);
+        //send eth without using a function
+        await admin.sendTransaction({to: contract.address, value: ethers.utils.parseEther("1.0")});
+        //show balance of eth in contract
+        console.log(`      The balance of eth in contract is ${await ethers.provider.getBalance(contract.address)}`);
+        //show balance of eth of admin
+        console.log(`      The balance for  admin is ${await ethers.provider.getBalance(admin.address)}`);
+        //drain all eth from contract
+        console.log(`      Admin drains all eth from contract`);
+        await contract.connect(admin).drainAgreement(ZERO_ADDRESS);
+        //show balance of eth in contract
+        console.log(`      The balance of eth in contract is ${await ethers.provider.getBalance(contract.address)}`);
+        //show balance of eth of admin
+        console.log(`      The balance for  admin is ${await ethers.provider.getBalance(admin.address)}`);
+
+        //send as admin 10 tokens of mock_2 to contract to test the drainAgreement function
+        console.log(`      Admin sends 10 tokens of mock_2 to contract`);
+        await mock_2.connect(admin).transfer(contract.address, 10);
+        //show balance of tokens in contract
+        console.log(`      The balance of tokens in contract is ${await mock_2.connect(admin).balanceOf(contract.address)}`);
+        //show balance of tokens of admin
+        console.log(`      The balance for  admin is ${await mock_2.connect(admin).balanceOf(admin.address)}`);
+        //drain all tokens from contract
+        console.log(`      Admin drains all tokens from contract`);
+        await contract.connect(admin).drainAgreement(mock_2.address);
+        //show balance of tokens in contract
+        console.log(`      The balance of tokens in contract is ${await mock_2.connect(admin).balanceOf(contract.address)}`);
+        //show balance of tokens of admin
+        console.log(`      The balance for  admin is ${await mock_2.connect(admin).balanceOf(admin.address)}`);
+
+
+
+
+
+
 
 
       } else {

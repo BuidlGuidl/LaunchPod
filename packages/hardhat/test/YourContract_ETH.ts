@@ -318,6 +318,36 @@ it("Ether mode life-cycle", async () => {
         //check admin balance after draining
         const admin_balance_3 = await provider.getBalance(admin.address);
         console.log("      Admin balance after draining: ", ethers.utils.formatEther(admin_balance_3));
+
+        //test rescue functions        
+               
+        // contract balance of mock_1  tokens before faucet
+        const contract_balance_b4faucet = await mock_1.balanceOf(contract.address);
+        console.log("      Contract balance before faucet: ", ethers.BigNumber.from(contract_balance_b4faucet).toString());
+
+        //admin hits faucet
+        console.log(`      Admin hits faucet for mock_1 tokens with contract address`);
+        await mock_1.connect(admin).faucet(contract.address);
+        //show balance of tokens in contract
+        const contract_balance_7 = await mock_1.balanceOf(contract.address);
+        console.log("      Contract balance for mock_1 tokens after faucet: ", ethers.BigNumber.from(contract_balance_7).toString());
+        //admin balances before draining
+        const admin_balance_b4drain = await mock_1.balanceOf(admin.address);
+        console.log("      Admin balance for mock_1 tokens before draining: ", ethers.BigNumber.from(admin_balance_b4drain).toString());
+        //admin drains agreement
+        console.log(`      Admin drains agreement`);
+        await contract.connect(admin).drainAgreement(mock_1.address);
+        //show balance of tokens in contract
+        const contract_balance_8 = await mock_1.balanceOf(contract.address);
+        console.log("      Contract balance for mock_1 tokens after draining: ", ethers.BigNumber.from(contract_balance_8).toString());
+        //show balance of tokens in admin
+        const admin_balance_4 = await mock_1.balanceOf(admin.address);
+        console.log("      Admin balance for mock_1 tokens after draining: ", ethers.BigNumber.from(admin_balance_4).toString());
+
+
+
+
+
         
 
 
