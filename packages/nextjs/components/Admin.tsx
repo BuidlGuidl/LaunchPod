@@ -72,9 +72,7 @@ const Admin = () => {
   const { writeAsync: fundContract, isLoading: isFundingContract } = useScaffoldContractWrite({
     contractName: "YourContract",
     functionName: "fundContract",
-    args: isErc20
-      ? [BigNumber.from(BigInt(fundingValue * 1000000000000000000).toString())]
-      : [BigNumber.from(fundingValue)],
+    args: [BigNumber.from(BigInt(fundingValue * 1000000000000000000).toString())],
     value: isErc20 ? "0" : fundingValue.toString(),
   });
 
