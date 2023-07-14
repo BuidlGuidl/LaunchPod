@@ -4,6 +4,8 @@ import { BigNumber } from "ethers";
 import { parseEther } from "ethers/lib/utils.js";
 import { debounce } from "lodash";
 import { useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
+import { useApproveForFundng } from "~~/hooks/useApproveForFunding";
+import { useErc20 } from "~~/hooks/useErc20";
 
 const Admin = () => {
   const [modalAction, setModalAction] = useState<string>("add");
@@ -13,12 +15,15 @@ const Admin = () => {
   // The following two states hold args for addBatchCreatorFlow.
   const [batchCreators, setBatchCreators] = useState<string[] | undefined>();
   const [batchCaps, setBatchCaps] = useState<string[] | undefined>();
+  // The following state hold args for drainAggreement.
+  const [drainTokenAddr, setDrainTokenAddr] = useState<string>("0x0000000000000000000000000000000000000000");
 
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   const [fundingValue, setFundingValue] = useState<number>(0);
+  const { isErc20, tokenAddress } = useErc20();
 
   // Write hook for adding a creator.
   const {
@@ -64,14 +69,32 @@ const Admin = () => {
   });
 
   // Write hook for funding contract.
-  const {
-    writeAsync: fundContract,
-    // isLoading: isFundingContract
-  } = useScaffoldContractWrite({
+  const { writeAsync: fundContract, isLoading: isFundingContract } = useScaffoldContractWrite({
     contractName: "YourContract",
     functionName: "fundContract",
-    value: fundingValue.toString(),
+    args: [BigNumber.from(BigInt(fundingValue * 1000000000000000000).toString())],
+    value: isErc20 ? "0" : fundingValue.toString(),
   });
+
+  // Write hook for draining agreement.
+  const { writeAsync: drainAgreement, isLoading: isDrainingAgreement } = useScaffoldContractWrite({
+    contractName: "YourContract",
+    functionName: "drainAgreement",
+    args: [drainTokenAddr],
+  });
+
+  // Hook for approving before funding for erc20 streams
+  const {
+    writeAsync: approveForFunding,
+    allowance,
+    balance,
+  } = useApproveForFundng({
+    tokenAddress: tokenAddress as string,
+    amount: fundingValue,
+    isTransferLoading: isDrainingAgreement || isFundingContract,
+  });
+
+  console.log(balance);
 
   // use debounce for add,batchAdd and update
   const debouncedAddCreator = debounce(async () => {
@@ -130,14 +153,25 @@ const Admin = () => {
           return;
         }
 
-        try {
-          await fundContract();
+        if (isErc20 && (allowance as number) < fundingValue) {
+          try {
+            await approveForFunding();
 
-          setSuccessMessage("Contract funded successfully.");
-          setFundingValue(0);
-        } catch (error) {
-          setErrorMessage("Failed to fund contract. Please try again.");
-          console.error(error);
+            setSuccessMessage("Approved successfully.");
+          } catch (error) {
+            setErrorMessage("Failed to approve contract to spend tokens. Please try again.");
+            console.error(error);
+          }
+        } else {
+          try {
+            await fundContract();
+
+            setSuccessMessage("Contract funded successfully.");
+            setFundingValue(0);
+          } catch (error) {
+            setErrorMessage("Failed to fund contract. Please try again.");
+            console.error(error);
+          }
         }
       } else if (modalAction === "remove") {
         if (!creator) {
@@ -149,6 +183,9 @@ const Admin = () => {
 
         setSuccessMessage("Creator removed successfully.");
         setCreator("");
+      } else if (modalAction === "drain") {
+        await drainAgreement();
+        setSuccessMessage("Contract drained successfully.");
       }
       // setModalAction("");
     } catch (error) {
@@ -185,6 +222,7 @@ const Admin = () => {
     setSuccessMessage("");
     setErrorMessage("");
     setFundingValue(0);
+    setDrainTokenAddr("0x0000000000000000000000000000000000000000");
   };
 
   // to avoid linting issues untill loading and transaction states is implemented.
@@ -214,6 +252,7 @@ const Admin = () => {
                   <option value="update">Update Creator</option>
                   <option value="remove">Remove Creator</option>
                   <option value="fund">Fund Contract</option>
+                  <option value="drain">Drain Agreement</option>
                 </select>
               </div>
 
@@ -228,6 +267,7 @@ const Admin = () => {
             {modalAction === "update" && "Update Creator"}
             {modalAction === "remove" && "Remove Creator"}
             {modalAction === "fund" && "Fund Contract"}
+            {modalAction === "drain" && "Drain Agreement"}
           </h3>
           {modalAction === "update" && (
             <div>
@@ -239,6 +279,14 @@ const Admin = () => {
                 Cap:
               </label>
               <EtherInput value={cap.toString()} onChange={value => setCap(value)} placeholder="Enter cap amount" />
+            </div>
+          )}
+          {modalAction === "drain" && (
+            <div>
+              <label htmlFor="token" className="block mt-4">
+                {isErc20 && "Token Address:"}
+              </label>
+              {isErc20 && <AddressInput value={drainTokenAddr} onChange={value => setDrainTokenAddr(value)} />}
             </div>
           )}
           {modalAction === "batchAdd" && (
@@ -289,22 +337,29 @@ const Admin = () => {
               <EtherInput value={fundingValue.toString()} onChange={e => setFundingValue(Number(e))} />
             </div>
           )}
-          {modalAction !== "update" && modalAction !== "batchAdd" && modalAction !== "fund" && (
-            <div>
-              <label htmlFor="creator" className="block mt-4">
-                Creator Address:
-              </label>
-              <AddressInput value={creator} onChange={value => setCreator(value)} />
-              {modalAction === "add" && (
-                <>
-                  <label htmlFor="cap" className="block mt-4">
-                    Cap:
-                  </label>
-                  <EtherInput value={cap.toString()} onChange={value => setCap(value)} placeholder="Enter stream cap" />
-                </>
-              )}
-            </div>
-          )}
+          {modalAction !== "update" &&
+            modalAction !== "batchAdd" &&
+            modalAction !== "fund" &&
+            modalAction !== "drain" && (
+              <div>
+                <label htmlFor="creator" className="block mt-4">
+                  Creator Address:
+                </label>
+                <AddressInput value={creator} onChange={value => setCreator(value)} />
+                {modalAction === "add" && (
+                  <>
+                    <label htmlFor="cap" className="block mt-4">
+                      Cap:
+                    </label>
+                    <EtherInput
+                      value={cap.toString()}
+                      onChange={value => setCap(value)}
+                      placeholder="Enter stream cap"
+                    />
+                  </>
+                )}
+              </div>
+            )}
           <div className="flex justify-between mt-8">
             <button className="btn rounded-lg" onClick={reset}>
               reset
@@ -315,7 +370,8 @@ const Admin = () => {
                 {modalAction === "batchAdd" && "Add Batch"}
                 {modalAction === "update" && "Update"}
                 {modalAction === "remove" && "Remove"}
-                {modalAction === "fund" && "Fund"}
+                {modalAction === "fund" && (isErc20 && (allowance as number) < fundingValue ? "Approve" : "Fund")}
+                {modalAction === "drain" && "Drain"}
               </button>
             )}
           </div>
