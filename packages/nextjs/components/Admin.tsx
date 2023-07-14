@@ -284,7 +284,7 @@ const Admin = () => {
           {modalAction === "drain" && (
             <div>
               <label htmlFor="token" className="block mt-4">
-                Token Address:
+                {isErc20 && "Token Address:"}
               </label>
               {isErc20 && <AddressInput value={drainTokenAddr} onChange={value => setDrainTokenAddr(value)} />}
             </div>
