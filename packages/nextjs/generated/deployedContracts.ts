@@ -5,7 +5,7 @@ const contracts = {
       chainId: "31337",
       contracts: {
         YourContract: {
-          address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+          address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
           abi: [
             {
               inputs: [
@@ -13,6 +13,21 @@ const contracts = {
                   internalType: "address",
                   name: "_primaryAdmin",
                   type: "address",
+                },
+                {
+                  internalType: "address",
+                  name: "_tokenAddress",
+                  type: "address",
+                },
+                {
+                  internalType: "address[]",
+                  name: "_creators",
+                  type: "address[]",
+                },
+                {
+                  internalType: "uint256[]",
+                  name: "_caps",
+                  type: "uint256[]",
                 },
               ],
               stateMutability: "nonpayable",
@@ -36,6 +51,32 @@ const contracts = {
             {
               inputs: [],
               name: "CreatorAlreadyExists",
+              type: "error",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "token",
+                  type: "address",
+                },
+                {
+                  internalType: "address",
+                  name: "to",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+              ],
+              name: "ERC20FundsTransferFailed",
+              type: "error",
+            },
+            {
+              inputs: [],
+              name: "ERC20TransferFailed",
               type: "error",
             },
             {
@@ -105,11 +146,6 @@ const contracts = {
                 },
               ],
               name: "NoActiveFlowForCreator",
-              type: "error",
-            },
-            {
-              inputs: [],
-              name: "NoFundsInContract",
               type: "error",
             },
             {
@@ -197,6 +233,31 @@ const contracts = {
                 },
               ],
               name: "CreatorUpdated",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "token",
+                  type: "address",
+                },
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "from",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+              ],
+              name: "ERC20FundsReceived",
               type: "event",
             },
             {
@@ -317,19 +378,6 @@ const contracts = {
               ],
               name: "Withdrawn",
               type: "event",
-            },
-            {
-              inputs: [],
-              name: "ADMIN_ROLE",
-              outputs: [
-                {
-                  internalType: "bytes32",
-                  name: "",
-                  type: "bytes32",
-                },
-              ],
-              stateMutability: "view",
-              type: "function",
             },
             {
               inputs: [],
@@ -469,7 +517,13 @@ const contracts = {
               type: "function",
             },
             {
-              inputs: [],
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "_token",
+                  type: "address",
+                },
+              ],
               name: "drainAgreement",
               outputs: [],
               stateMutability: "nonpayable",
@@ -531,7 +585,13 @@ const contracts = {
               type: "function",
             },
             {
-              inputs: [],
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "_amount",
+                  type: "uint256",
+                },
+              ],
               name: "fundContract",
               outputs: [],
               stateMutability: "payable",
@@ -588,6 +648,19 @@ const contracts = {
                 },
               ],
               name: "hasRole",
+              outputs: [
+                {
+                  internalType: "bool",
+                  name: "",
+                  type: "bool",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "isERC20",
               outputs: [
                 {
                   internalType: "bool",
@@ -692,6 +765,19 @@ const contracts = {
                   internalType: "bool",
                   name: "",
                   type: "bool",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "tokenAddress",
+              outputs: [
+                {
+                  internalType: "address",
+                  name: "",
+                  type: "address",
                 },
               ],
               stateMutability: "view",
@@ -730,7 +816,7 @@ const contracts = {
       chainId: "11155111",
       contracts: {
         YourContract: {
-          address: "0xc1D2CE3F41F9D763e96aC82A3894b5D42237e0ce",
+          address: "0xE247F37C738BB8281A4A2d0C8c27CF814ef2622a",
           abi: [
             {
               inputs: [
@@ -738,6 +824,21 @@ const contracts = {
                   internalType: "address",
                   name: "_primaryAdmin",
                   type: "address",
+                },
+                {
+                  internalType: "address",
+                  name: "_tokenAddress",
+                  type: "address",
+                },
+                {
+                  internalType: "address[]",
+                  name: "_creators",
+                  type: "address[]",
+                },
+                {
+                  internalType: "uint256[]",
+                  name: "_caps",
+                  type: "uint256[]",
                 },
               ],
               stateMutability: "nonpayable",
@@ -761,6 +862,32 @@ const contracts = {
             {
               inputs: [],
               name: "CreatorAlreadyExists",
+              type: "error",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "token",
+                  type: "address",
+                },
+                {
+                  internalType: "address",
+                  name: "to",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+              ],
+              name: "ERC20FundsTransferFailed",
+              type: "error",
+            },
+            {
+              inputs: [],
+              name: "ERC20TransferFailed",
               type: "error",
             },
             {
@@ -830,11 +957,6 @@ const contracts = {
                 },
               ],
               name: "NoActiveFlowForCreator",
-              type: "error",
-            },
-            {
-              inputs: [],
-              name: "NoFundsInContract",
               type: "error",
             },
             {
@@ -922,6 +1044,31 @@ const contracts = {
                 },
               ],
               name: "CreatorUpdated",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "token",
+                  type: "address",
+                },
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "from",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+              ],
+              name: "ERC20FundsReceived",
               type: "event",
             },
             {
@@ -1042,19 +1189,6 @@ const contracts = {
               ],
               name: "Withdrawn",
               type: "event",
-            },
-            {
-              inputs: [],
-              name: "ADMIN_ROLE",
-              outputs: [
-                {
-                  internalType: "bytes32",
-                  name: "",
-                  type: "bytes32",
-                },
-              ],
-              stateMutability: "view",
-              type: "function",
             },
             {
               inputs: [],
@@ -1194,7 +1328,13 @@ const contracts = {
               type: "function",
             },
             {
-              inputs: [],
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "_token",
+                  type: "address",
+                },
+              ],
               name: "drainAgreement",
               outputs: [],
               stateMutability: "nonpayable",
@@ -1256,7 +1396,13 @@ const contracts = {
               type: "function",
             },
             {
-              inputs: [],
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "_amount",
+                  type: "uint256",
+                },
+              ],
               name: "fundContract",
               outputs: [],
               stateMutability: "payable",
@@ -1313,6 +1459,19 @@ const contracts = {
                 },
               ],
               name: "hasRole",
+              outputs: [
+                {
+                  internalType: "bool",
+                  name: "",
+                  type: "bool",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "isERC20",
               outputs: [
                 {
                   internalType: "bool",
@@ -1417,6 +1576,19 @@ const contracts = {
                   internalType: "bool",
                   name: "",
                   type: "bool",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "tokenAddress",
+              outputs: [
+                {
+                  internalType: "address",
+                  name: "",
+                  type: "address",
                 },
               ],
               stateMutability: "view",
