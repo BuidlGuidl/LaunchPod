@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 //This is intended for research and development purposes only. Use this contract at your own risk and discretion.
 //Pipoca
 
-// Defining custom errors for better error handling
+// Custom errors
 error NoValueSent();
 error InsufficientFundsInContract(uint256 requested, uint256 available);
 error NoActiveFlowForCreator(address creator);
@@ -55,9 +55,10 @@ contract YourContract is AccessControl, ReentrancyGuard {
     }
 
     // Constructor to setup admin role and initial creators
-    constructor(address _primaryAdmin,address _tokenAddress,address[] memory _creators,uint256[] memory _caps) {
+    constructor(address _primaryAdmin,address _tokenAddress,address[] memory _creators,uint256[] memory _caps)  {
         _setupRole(DEFAULT_ADMIN_ROLE, _primaryAdmin);
         primaryAdmin = _primaryAdmin;
+        
 
         if (_tokenAddress != address(0)) {
             isERC20 = true;
@@ -75,15 +76,19 @@ contract YourContract is AccessControl, ReentrancyGuard {
         bool shouldGrant
     ) public onlyAdmin {
         if (shouldGrant) {
+            if (flowingCreators[adminAddress].cap != 0) revert InvalidCreatorAddress();
             grantRole(DEFAULT_ADMIN_ROLE, adminAddress);
+            isAdmin[adminAddress] = true;
         } else {
+            if (adminAddress == primaryAdmin) revert AccessDenied();
             revokeRole(DEFAULT_ADMIN_ROLE, adminAddress);
+            isAdmin[adminAddress] = false;
         }
     }
 
     // Struct to store information about creator's flow
     struct CreatorFlowInfo {
-        uint256 cap; // Maximum amount of funds that can be withdrawn in a cycle (in wei)
+        uint256 cap; // Maximum amount of funds that can be withdrawn in a cycle
         uint256 last; // The timestamp of the last withdrawal
     }
 
@@ -93,14 +98,16 @@ contract YourContract is AccessControl, ReentrancyGuard {
     mapping(address => uint256) public creatorIndex;
     // Array to store the addresses of all active creators
     address[] public activeCreators;
+    // Mapping to see if an address is admin
+    mapping(address => bool) public isAdmin;
 
     // Declare events to log various activities
     event FundsReceived(address indexed from, uint256 amount);
     event Withdrawn(address indexed to, uint256 amount, string reason);
-    event CreatorAdded(address indexed to, uint256 amount, uint256 cycle);
-    event CreatorUpdated(address indexed to, uint256 amount, uint256 cycle);
+    event CreatorAdded(address indexed to, uint256 amount);
+    event CreatorUpdated(address indexed to, uint256 amount);
     event CreatorRemoved(address indexed to);
-    event AgreementDrained(address indexed to, uint256 amount);
+    event AgreementDrained(uint256 amount);
     event ERC20FundsReceived(address indexed token,address indexed from,uint256 amount);
 
     // Check if a flow for a creator is active
@@ -116,9 +123,9 @@ contract YourContract is AccessControl, ReentrancyGuard {
         _;
     }
 
-    //Fund contract
+    // Fund contract
     function fundContract(uint256 _amount) public payable {
-    //if erc20 not true, then do the following
+
 
         if (!isERC20) {
             if (msg.value == 0) revert NoValueSent();
@@ -181,7 +188,7 @@ contract YourContract is AccessControl, ReentrancyGuard {
         flowingCreators[_creator] = CreatorFlowInfo(_cap, block.timestamp - CYCLE);
         activeCreators.push(_creator);
         creatorIndex[_creator] = activeCreators.length - 1;
-        emit CreatorAdded(_creator, _cap, CYCLE);
+        emit CreatorAdded(_creator, _cap);
     }
 
     // Add a batch of creators.
@@ -190,6 +197,7 @@ contract YourContract is AccessControl, ReentrancyGuard {
         uint256[] memory _caps
     ) public onlyAdmin {
         uint256 cLength = _creators.length;
+        if (_creators.length >= MAXCREATORS) revert MaxCreatorsReached();
         if (cLength != _caps.length) revert LengthsMismatch();
         for (uint256 i = 0; i < cLength; ) {
             addCreatorFlow(payable(_creators[i]), _caps[i]);
@@ -205,8 +213,10 @@ contract YourContract is AccessControl, ReentrancyGuard {
         uint256 _cap
     ) internal view {
         if (_creator == address(0)) revert InvalidCreatorAddress();
+        if (isAdmin[_creator]) revert InvalidCreatorAddress();
         if (_cap == 0) revert CapCannotBeZero();
         if (flowingCreators[_creator].cap > 0) revert CreatorAlreadyExists();
+        
     }
 
     // Update a creator's flow cap and cycle.
@@ -227,7 +237,7 @@ contract YourContract is AccessControl, ReentrancyGuard {
             creatorFlow.last = timestamp - (CYCLE);
         }
 
-        emit CreatorUpdated(_creator, _newCap, CYCLE);
+        emit CreatorUpdated(_creator, _newCap);
     }
 
     // Remove a creator's flow
@@ -297,8 +307,8 @@ contract YourContract is AccessControl, ReentrancyGuard {
         emit Withdrawn(msg.sender, _amount, _reason);
     }
 
-    // Drain the agreement to the current primary admin
-function drainAgreement(address _token) public onlyAdmin nonReentrant {
+    // Drain the agreement to the primary admin address
+    function drainAgreement(address _token) public onlyAdmin nonReentrant {
         uint256 remainingBalance;
 
         // Drain Ether
@@ -307,14 +317,9 @@ function drainAgreement(address _token) public onlyAdmin nonReentrant {
             if (remainingBalance > 0) {
                 (bool sent, ) = primaryAdmin.call{value: remainingBalance}("");
                 if (!sent) revert EtherSendingFailed(primaryAdmin);
-                emit AgreementDrained(primaryAdmin, remainingBalance);
+                emit AgreementDrained(remainingBalance);
             }
             return;
-        }
-
-        // If no specific token is provided, use the tokenAddress in ERC20 mode
-        if (_token == address(0) && isERC20) {
-            _token = tokenAddress;
         }
 
         // Drain ERC20 tokens 
@@ -324,7 +329,7 @@ function drainAgreement(address _token) public onlyAdmin nonReentrant {
             uint256 newBalance = IERC20(_token).balanceOf(address(this));
             if (newBalance != 0)
                 revert ERC20FundsTransferFailed(_token, primaryAdmin, remainingBalance);
-            emit AgreementDrained(primaryAdmin, remainingBalance);
+            emit AgreementDrained(remainingBalance);
         }
     }
 
