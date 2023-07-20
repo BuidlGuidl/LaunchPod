@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddressInput, EtherInput } from "./scaffold-eth";
 import { BigNumber } from "ethers";
 import { parseEther } from "ethers/lib/utils.js";
@@ -16,7 +16,6 @@ const Admin = () => {
   const [batchCreators, setBatchCreators] = useState<string[] | undefined>();
   const [batchCaps, setBatchCaps] = useState<string[] | undefined>();
   // The following state hold args for drainAggreement.
-  const [drainTokenAddr, setDrainTokenAddr] = useState<string>("0x0000000000000000000000000000000000000000");
 
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
@@ -24,6 +23,16 @@ const Admin = () => {
 
   const [fundingValue, setFundingValue] = useState<number>(0);
   const { isErc20, tokenAddress } = useErc20();
+
+  const [drainTokenAddr, setDrainTokenAddr] = useState<string>(
+    tokenAddress || "0x0000000000000000000000000000000000000000",
+  );
+
+  useEffect(() => {
+    if (tokenAddress) {
+      setDrainTokenAddr(tokenAddress);
+    }
+  }, [tokenAddress]);
 
   // Write hook for adding a creator.
   const {
@@ -87,14 +96,12 @@ const Admin = () => {
   const {
     writeAsync: approveForFunding,
     allowance,
-    balance,
+    // balance,
   } = useApproveForFundng({
     tokenAddress: tokenAddress as string,
     amount: fundingValue,
     isTransferLoading: isDrainingAgreement || isFundingContract,
   });
-
-  console.log(balance);
 
   // use debounce for add,batchAdd and update
   const debouncedAddCreator = debounce(async () => {
