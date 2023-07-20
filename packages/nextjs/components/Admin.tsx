@@ -17,8 +17,6 @@ const Admin = () => {
   const [batchCaps, setBatchCaps] = useState<string[] | undefined>();
   // The following state hold args for drainAggreement.
 
-  const [drainTokenAddr, setDrainTokenAddr] = useState<string>("0x0000000000000000000000000000000000000000");
-
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -85,24 +83,6 @@ const Admin = () => {
     functionName: "fundContract",
     args: [BigNumber.from(BigInt(fundingValue * 1000000000000000000).toString())],
     value: isErc20 ? "0" : fundingValue.toString(),
-  });
-
-  // Write hook for draining agreement.
-  const { writeAsync: drainAgreement, isLoading: isDrainingAgreement } = useScaffoldContractWrite({
-    contractName: "YourContract",
-    functionName: "drainAgreement",
-    args: [drainTokenAddr],
-  });
-
-  // Hook for approving before funding for erc20 streams
-  const {
-    writeAsync: approveForFunding,
-    allowance,
-    // balance,
-  } = useApproveForFundng({
-    tokenAddress: tokenAddress as string,
-    amount: fundingValue,
-    isTransferLoading: isDrainingAgreement || isFundingContract,
   });
 
   // Write hook for draining agreement.

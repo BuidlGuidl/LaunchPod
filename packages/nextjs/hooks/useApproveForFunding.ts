@@ -29,11 +29,7 @@ export const useApproveForFundng = ({
 
   const sendContractWriteTx = async () => {
     let config;
-<<<<<<< HEAD
     if (deployedContract && tokenAddress) {
-=======
-    if (deployedContract) {
->>>>>>> 92ed1f7464130dbc0e61bce3df254ddca0608a2c
       config = await prepareWriteContract({
         address: tokenAddress,
         abi: erc20ABI,
@@ -83,11 +79,7 @@ export const useApproveForFundng = ({
 
   useEffect(() => {
     (async () => {
-<<<<<<< HEAD
       if (tokenAddress && tokenAddress != "0x0000000000000000000000000000000000000000" && address) {
-=======
-      if (tokenAddress && tokenAddress != "0x0000000000000000000000000000000000000000" && address && deployedContract) {
->>>>>>> 92ed1f7464130dbc0e61bce3df254ddca0608a2c
         const data = await readContract({
           address: tokenAddress,
           abi: erc20ABI,

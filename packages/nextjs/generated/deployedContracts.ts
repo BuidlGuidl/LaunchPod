@@ -5,11 +5,7 @@ const contracts = {
       chainId: "10",
       contracts: {
         YourContract: {
-<<<<<<< HEAD
           address: "0xDD2d806bEc2A76A367D176D8d77fE9b2244da37A",
-=======
-          address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
->>>>>>> 92ed1f7464130dbc0e61bce3df254ddca0608a2c
           abi: [
             {
               inputs: [
@@ -788,7 +784,6 @@ const contracts = {
               type: "function",
             },
             {
-<<<<<<< HEAD
               inputs: [
                 {
                   internalType: "address payable",
@@ -1600,8 +1595,6 @@ const contracts = {
               type: "function",
             },
             {
-=======
->>>>>>> 92ed1f7464130dbc0e61bce3df254ddca0608a2c
               inputs: [
                 {
                   internalType: "address payable",
@@ -1634,11 +1627,7 @@ const contracts = {
       chainId: "11155111",
       contracts: {
         YourContract: {
-<<<<<<< HEAD
           address: "0xCA03D1FeE50Cf91B75D9965A27cd3f521aEE0ee9",
-=======
-          address: "0xE247F37C738BB8281A4A2d0C8c27CF814ef2622a",
->>>>>>> 92ed1f7464130dbc0e61bce3df254ddca0608a2c
           abi: [
             {
               inputs: [
