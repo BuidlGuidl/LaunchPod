@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useErc20 } from "~~/hooks/useErc20";
+import { useTokenPrice } from "~~/hooks/useTokenPrice";
 import { useGlobalState } from "~~/services/store/store";
 
 type TPriceProps = {
@@ -7,7 +9,18 @@ type TPriceProps = {
 
 export const Price: React.FC<TPriceProps> = ({ value }: TPriceProps) => {
   const [dollarMode, setDollarMode] = useState(true);
-  const price = useGlobalState(state => state.nativeCurrencyPrice);
+  const { isErc20, isEns, isOp } = useErc20();
+  const { ensPrice, opPrice } = useTokenPrice();
+  const nativePrice = useGlobalState(state => state.nativeCurrencyPrice);
+
+  let price = 0;
+
+  if (isErc20) {
+    if (isEns) price = ensPrice;
+    if (isOp) price = opPrice;
+  } else if (isErc20 == false) {
+    price = nativePrice;
+  }
 
   const isValueNaN = isNaN(value);
   let displayBalance = isValueNaN ? NaN : value.toFixed(4);

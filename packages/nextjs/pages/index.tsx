@@ -3,10 +3,12 @@ import { useState } from "react";
 import Head from "next/head";
 import type { NextPage } from "next";
 import { CreatorInfoDisplay } from "~~/components/CreatorInfoDisplay";
+import { TokenBalance } from "~~/components/TokenBalance";
 import ContractEvents from "~~/components/contractEvents";
 // import { useAccountBalance } from "~~/hooks/scaffold-eth";
 import { Address, Balance } from "~~/components/scaffold-eth";
 import { useDeployedContractInfo, useScaffoldContractRead } from "~~/hooks/scaffold-eth";
+import { useErc20 } from "~~/hooks/useErc20";
 import { useFetchCreators } from "~~/hooks/useFetchCreators";
 import { useSetCreator } from "~~/hooks/useSetCreator";
 
@@ -39,6 +41,8 @@ const Home: NextPage = () => {
 
   useSetCreator({ allCreatorsData, creators, setCreatorsData });
 
+  const { isErc20, isEns, isOp } = useErc20();
+
   return (
     <>
       <Head>
@@ -61,7 +65,11 @@ const Home: NextPage = () => {
             <Address address={streamContract.data?.address} />
             <div className="rounded-full bg-primary py-2 px-6 flex flex-col">
               <p className="text-center text-md font-extrabold -mt-1">slushfund</p>
-              <Balance className="text-3xl" address={streamContract.data?.address} />
+              {isErc20 ? (
+                <TokenBalance className="text-3xl" address={streamContract.data?.address} isEns={isEns} isOp={isOp} />
+              ) : (
+                <Balance className="text-3xl" address={streamContract.data?.address} />
+              )}
             </div>
           </div>
         </div>

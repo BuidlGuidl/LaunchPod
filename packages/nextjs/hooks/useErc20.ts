@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { readContract } from "@wagmi/core";
-import { useAccount } from "wagmi";
 import { erc20ABI } from "wagmi";
 import { useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 
 export function useErc20() {
-  const { isConnected } = useAccount();
-
   const [tokenName, setTokenName] = useState("");
+  const [isEns, setIsEns] = useState(false);
+  const [isOp, setIsOp] = useState(false);
 
   const { data: isErc20, isLoading: isErc20Loading } = useScaffoldContractRead({
     contractName: "YourContract",
@@ -32,7 +31,12 @@ export function useErc20() {
     })();
   }, [tokenAddress]);
 
-  if (!isConnected || isErc20Loading || tokenAddressLoadng) {
+  useEffect(() => {
+    if (tokenName == "Ethereum Name Service") setIsEns(true);
+    if (tokenName == "Optimism") setIsOp(true);
+  }, [tokenName]);
+
+  if (isErc20Loading || tokenAddressLoadng) {
     return {
       isErc20: false,
       isLoading: true,
@@ -44,5 +48,7 @@ export function useErc20() {
     isLoading: false,
     tokenAddress: tokenAddress,
     tokenName: tokenName,
+    isEns,
+    isOp,
   };
 }
