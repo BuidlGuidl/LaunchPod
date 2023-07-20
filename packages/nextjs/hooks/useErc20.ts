@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
 import { readContract } from "@wagmi/core";
-import { useAccount } from "wagmi";
 import { erc20ABI } from "wagmi";
 import { useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 
 export function useErc20() {
-  const { isConnected } = useAccount();
-
   const [tokenName, setTokenName] = useState("");
   const [isEns, setIsEns] = useState(false);
   const [isOp, setIsOp] = useState(false);
@@ -39,7 +36,7 @@ export function useErc20() {
     if (tokenName == "Optimism") setIsOp(true);
   }, [tokenName]);
 
-  if (!isConnected || isErc20Loading || tokenAddressLoadng) {
+  if (isErc20Loading || tokenAddressLoadng) {
     return {
       isErc20: false,
       isLoading: true,
