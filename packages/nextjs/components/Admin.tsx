@@ -17,6 +17,8 @@ const Admin = () => {
   const [batchCaps, setBatchCaps] = useState<string[] | undefined>();
   // The following state hold args for drainAggreement.
 
+  const [drainTokenAddr, setDrainTokenAddr] = useState<string>("0x0000000000000000000000000000000000000000");
+
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -102,6 +104,26 @@ const Admin = () => {
     amount: fundingValue,
     isTransferLoading: isDrainingAgreement || isFundingContract,
   });
+
+  // Write hook for draining agreement.
+  const { writeAsync: drainAgreement, isLoading: isDrainingAgreement } = useScaffoldContractWrite({
+    contractName: "YourContract",
+    functionName: "drainAgreement",
+    args: [drainTokenAddr],
+  });
+
+  // Hook for approving before funding for erc20 streams
+  const {
+    writeAsync: approveForFunding,
+    allowance,
+    balance,
+  } = useApproveForFundng({
+    tokenAddress: tokenAddress as string,
+    amount: fundingValue,
+    isTransferLoading: isDrainingAgreement || isFundingContract,
+  });
+
+  console.log(balance);
 
   // use debounce for add,batchAdd and update
   const debouncedAddCreator = debounce(async () => {
