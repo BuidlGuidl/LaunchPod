@@ -69,7 +69,7 @@ const StreamData = () => {
           ))}
         </div>
       </div>
-      <div className="lg:w-1/3 pt-4 border-l pb-2">
+      <div className="lg:w-1/3 pt-4 md:border-l pb-2">
         <div className="py-2 border-b px-4">
           <h1 className=" font-bold tracking-widest uppercase md:text-left text-center text-base">Contract Balance</h1>
         </div>

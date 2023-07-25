@@ -17,7 +17,7 @@ export const WithdrawModal = ({
   const { writeAsync: withdraw } = useScaffoldContractWrite({
     contractName: "YourContract",
     functionName: "flowWithdraw",
-    args: [BigNumber.from(parseEther(amount)), reason],
+    args: [amount ? BigNumber.from(parseEther(amount)) : BigNumber.from(parseEther("0")), reason],
   });
 
   const closePopup = () => {
