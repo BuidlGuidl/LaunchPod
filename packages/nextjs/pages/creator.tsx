@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { CreatorData } from ".";
 import { BigNumber } from "ethers";
 import { parseUnits } from "ethers/lib/utils.js";
 import { useAccount } from "wagmi";
 import { CreatorInfoDisplay } from "~~/components/CreatorInfoDisplay";
+import { CreatorData } from "~~/components/homepage/StreamData";
 import { EtherInput } from "~~/components/scaffold-eth";
 import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 import { useIsCreator } from "~~/hooks/useIsCreator";
