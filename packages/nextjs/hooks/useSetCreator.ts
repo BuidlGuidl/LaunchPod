@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { formatEther } from "ethers/lib/utils.js";
-import { CreatorData } from "~~/pages";
+import { CreatorData } from "~~/components/homepage/StreamData";
 import { isEqual } from "~~/utils/isEqual";
 
 type Props = {

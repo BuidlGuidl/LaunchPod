@@ -93,17 +93,11 @@ const Admin = () => {
   });
 
   // Hook for approving before funding for erc20 streams
-  const {
-    writeAsync: approveForFunding,
-    allowance,
-    balance,
-  } = useApproveForFundng({
+  const { writeAsync: approveForFunding, allowance } = useApproveForFundng({
     tokenAddress: tokenAddress as string,
     amount: fundingValue,
     isTransferLoading: isDrainingAgreement || isFundingContract,
   });
-
-  console.log(balance);
 
   // use debounce for add,batchAdd and update
   const debouncedAddCreator = debounce(async () => {

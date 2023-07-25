@@ -75,10 +75,10 @@ export const Address = ({ address, disableAddressLink, format }: TAddressProps) 
         )}
       </div>
       {disableAddressLink ? (
-        <span className="ml-1.5 text-lg font-normal">{displayAddress}</span>
+        <span className="ml-1.5 text-md font-normal">{displayAddress}</span>
       ) : (
         <a
-          className="ml-1.5 text-sm lg:text-lg font-normal"
+          className="ml-1.5 text-xs lg:text-md font-normal"
           target="_blank"
           href={blockExplorerAddressLink}
           rel="noopener noreferrer"
@@ -88,7 +88,7 @@ export const Address = ({ address, disableAddressLink, format }: TAddressProps) 
       )}
       {addressCopied ? (
         <CheckCircleIcon
-          className="ml-1.5 text-xl font-normal text-yellow-600 h-5 w-5 cursor-pointer"
+          className="ml-1.5 text-lg font-normal text-yellow-600 h-5 w-5 cursor-pointer"
           aria-hidden="true"
         />
       ) : (

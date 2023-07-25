@@ -40,12 +40,14 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
         avatar={BlockieAvatar}
         theme={isDarkTheme ? darkTheme() : lightTheme()}
       >
-        <div className="flex gotham-font flex-col min-h-screen">
+        <div className="flex gotham-font flex-col min-h-screen overflow-hidden">
           <Header />
-          <main className="relative flex flex-col flex-initial w-full items-center mx-auto">
+          <main className="mt-20 relative flex flex-col flex-initial w-full items-center mx-auto">
             <Component {...pageProps} />
           </main>
-          <Footer />
+          <div className="mt-auto">
+            <Footer />
+          </div>
         </div>
         <Toaster />
       </RainbowKitProvider>
