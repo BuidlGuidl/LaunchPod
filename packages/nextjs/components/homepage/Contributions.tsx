@@ -24,7 +24,7 @@ const Contributions = () => {
         <div className=" md:text-sm text-[0.6rem] border rounded-xl">
           <h1 className=" font-bold tracking-widest uppercase p-4 text-base">Contributions</h1>
           {withdrawnEvents.map((event, index) => (
-            <div key={index} className="flex flex-wrap  justify-around  border-t py-4 px-6">
+            <div key={index} className="flex flex-wrap items-center justify-around  border-t py-4 px-6">
               <div className="flex flex-col w-[30%]">
                 <Address address={event.args[0]} />
                 <div>
