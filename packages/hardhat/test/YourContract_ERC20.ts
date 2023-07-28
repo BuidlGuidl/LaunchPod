@@ -5,20 +5,14 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { deployments, ethers } from "hardhat";
-import { YourContract,ERC20Mock1} from "../../typechain-types";
+import { YourContract,ERC20Mock1,ERC20Mock2} from "../../typechain-types";
 import { Address } from "hardhat-deploy/types";
 
 const chalk = require('chalk');
 
 
-const CYCLE = 30 * 24 * 60 * 60;
-
-
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
-const CAP = ethers.utils.parseEther("0.5");
-const ERC20CAP = 5;
-const halfERC20CAP = ethers.BigNumber.from(5);
-const CAP_UPDATE = ethers.utils.parseEther("0.6");
+
 
 describe("Test file for YourContract.sol", () => {
    let admin: SignerWithAddress;
@@ -101,339 +95,229 @@ mock_2 = await ethers.getContract("ERC20Mock2");
     return await contract.hasRole(DEFAULT_ADMIN_ROLE, account);
   };
 
-  const addCreatorFlows = async () => {
-    await contract.addCreatorFlow(user_1.address, CAP);
-    await contract.addCreatorFlow(user_2.address, CAP);
-    await contract.addCreatorFlow(user_3.address, CAP);
-    await contract.addCreatorFlow(user_4.address, CAP);
-    await contract.addCreatorFlow(user_5.address, CAP);
-    await contract.addCreatorFlow(user_6.address, CAP);
-    await contract.addCreatorFlow(user_7.address, CAP);
-    await contract.addCreatorFlow(user_8.address, CAP);
-    await contract.addCreatorFlow(user_9.address, CAP);
-    await contract.addCreatorFlow(user_10.address, CAP);
-    await contract.addCreatorFlow(user_11.address, CAP);
-    await contract.addCreatorFlow(user_12.address, CAP);
-    await contract.addCreatorFlow(user_13.address, CAP);
-    await contract.addCreatorFlow(user_14.address, CAP);
-    await contract.addCreatorFlow(user_15.address, CAP);
-    await contract.addCreatorFlow(user_16.address, CAP);
-    await contract.addCreatorFlow(user_17.address, CAP);
-    await contract.addCreatorFlow(user_18.address, CAP);
-    await contract.addCreatorFlow(user_19.address, CAP);
-    await contract.addCreatorFlow(user_20.address, CAP);
-    await contract.addCreatorFlow(user_21.address, CAP);
-    await contract.addCreatorFlow(user_22.address, CAP);
-    await contract.addCreatorFlow(user_23.address, CAP);
-    await contract.addCreatorFlow(user_24.address, CAP);
-    await contract.addCreatorFlow(user_25.address, CAP);
-  };
-
-  const addCreatorFlowsERC20 = async () => {
-    await contract.addCreatorFlow(user_1.address, ERC20CAP);
-    await contract.addCreatorFlow(user_2.address, ERC20CAP);
-    await contract.addCreatorFlow(user_3.address, ERC20CAP);
-    await contract.addCreatorFlow(user_4.address, ERC20CAP);
-    await contract.addCreatorFlow(user_5.address, ERC20CAP);
-    await contract.addCreatorFlow(user_6.address, ERC20CAP);
-    await contract.addCreatorFlow(user_7.address, ERC20CAP);
-    await contract.addCreatorFlow(user_8.address, ERC20CAP);
-    await contract.addCreatorFlow(user_9.address, ERC20CAP);
-    await contract.addCreatorFlow(user_10.address, ERC20CAP);
-    await contract.addCreatorFlow(user_11.address, ERC20CAP);
-    await contract.addCreatorFlow(user_12.address, ERC20CAP);
-    await contract.addCreatorFlow(user_13.address, ERC20CAP);
-    await contract.addCreatorFlow(user_14.address, ERC20CAP);
-    await contract.addCreatorFlow(user_15.address, ERC20CAP);
-    await contract.addCreatorFlow(user_16.address, ERC20CAP);
-    await contract.addCreatorFlow(user_17.address, ERC20CAP);
-    await contract.addCreatorFlow(user_18.address, ERC20CAP);
-    await contract.addCreatorFlow(user_19.address, ERC20CAP);
-    await contract.addCreatorFlow(user_20.address, ERC20CAP);
-    await contract.addCreatorFlow(user_21.address, ERC20CAP);
-    await contract.addCreatorFlow(user_22.address, ERC20CAP);
-    await contract.addCreatorFlow(user_23.address, ERC20CAP);
-    await contract.addCreatorFlow(user_24.address, ERC20CAP);
-    await contract.addCreatorFlow(user_25.address, ERC20CAP);
-  };
-
   describe("Checking ERC20 mode", () => {
 
     it("ERC20 mode life-cycle", async () => {
       const isERC20Mode = await contract.isERC20();
       if (isERC20Mode) {
         console.log(`      Contract is in ERC20 mode`);
-        // This test case checks if the contract correctly receives the ERC20 tokens
-        
-        //log the balance of admin
+        console.log(" ");
+        console.log(chalk.green("      Testing admin getting tokens from mock_1 faucet and depositing it in contract..."));
         const balance = await mock_1.balanceOf(admin.address);
-        console.log(`      Balance of admin is ${balance} before hitting faucet`);
-        console.log(`      Admin hits mock_1 faucet...`);
+        console.log(`      ⚖️  Balance of admin is ${balance} before hitting faucet`);
+        console.log(`      🚰 Admin hits mock_1 faucet`);
         await mock_1.connect(admin).faucet(admin.address);
-
-        //log the balance of admin
         const balancemock1 = await mock_1.balanceOf(admin.address);
-        console.log(`      Balance of admin is ${balancemock1} after hitting mock_1 faucet`);
-        //log the balance of contract
+        console.log(`      ⚖️  Balance of admin is ${balancemock1} after hitting mock_1 faucet`);
         const balanceContractmock1 = await mock_1.balanceOf(contract.address);
-        console.log(`      Balance of contract is ${balanceContractmock1}`);
-
-        console.log(`      Admin approves contract to spend ${balancemock1} tokens...`)
+        console.log(`      ⚖️  Balance of contract is ${balanceContractmock1}`);
+        console.log(`      ✔️  Admin approves contract to spend ${balancemock1} tokens`)
         await mock_1.connect(admin).approve(contract.address, balancemock1);
-
-        //fund the contract with tokens
-        console.log(`      Admin funds Contract with ${balancemock1} tokens`);
+        expect(await mock_1.allowance(admin.address, contract.address)).to.equal(balancemock1);
+        console.log(`      💰 Admin funds contract with ${balancemock1} tokens`);
         await contract.connect(admin).fundContract(balancemock1);
-      
+        expect(await mock_1.balanceOf(contract.address)).to.equal(balancemock1);
         const balanceAfterFunding = await mock_1.balanceOf(contract.address);
-        console.log(`      Balance of contract is ${balanceAfterFunding} after funding`);
+        expect(balanceAfterFunding).to.equal(200);
+        console.log(`      ⚖️  Balance of contract is ${balanceAfterFunding} after funding`);
         
       
         //add user 1 as creator
-        console.log(`      Admin adds user_1 as creator with a cap of 10`);
+        console.log(" ");
+        console.log(chalk.green("      Testing creator transactions with mock_1 ERC20 tokens..."));
+        console.log(`      🏟️  Admin adds user_1 as creator with a cap of 10`);
         await contract.connect(admin).addCreatorFlow(user_1.address, 10);
-
-
-        //trigger allCreatorsData with user_1 inside an array
-
+        expect(await contract.connect(admin).availableCreatorAmount(user_1.address)).to.equal(10);
         const allcreatordataoutput =  await contract.connect(admin).allCreatorsData([user_1.address]);
-        console.log(`      allCreatorsData for user_1 is (cap/last) ${allcreatordataoutput}`);
-
-        console.log(`      Simulating the passage of time of 15 days...`);
-        await ethers.provider.send("evm_increaseTime", [15 * 24 * 60 * 60]);
-        await ethers.provider.send("evm_mine"); 
-
-        //check available balance for user_1
+        console.log(`      🔍 allCreatorsData for user_1 is (cap,last) ${allcreatordataoutput}`);
         const availableCreator1Balance = await contract.connect(admin).availableCreatorAmount(user_1.address);
-        console.log(`      Available balance for user_1 is ${availableCreator1Balance}`);
-
-        //user_1 one tries to withdraw more than its cap and fails
-        console.log(`      user_1 tries to withdraw more than its available cap and fails`);
+        console.log(`      ⚖️  Available balance for user_1 is ${availableCreator1Balance}`);
+        console.log(`      💀 user_1 tries to withdraw more than its available cap of ${availableCreator1Balance} and fails`);
         await expect(contract.connect(user_1).flowWithdraw(availableCreator1Balance.add(50), "For testing")).to.be.revertedWithCustomError(
           contract,
           "InsufficientInFlow",
         );
-
-        //user_2 that is not even added as creator tries to withdraw and fails
-        console.log(`      user_2 that is not even added as creator tries to withdraw and fails`);
+        console.log(`      💀 user_2 that is not even added as creator tries to withdraw and fails`);
         await expect(contract.connect(user_2).flowWithdraw(availableCreator1Balance, "For testing")).to.be.revertedWithCustomError(
           contract,
           "NoActiveFlowForCreator",
         );
-
-        //user_1 withdraws its available balance
-        console.log(`      user_1 withdraws its available balance`);
+        console.log(`      💵 user_1 withdraws its available balance`);
         await contract.connect(user_1).flowWithdraw(availableCreator1Balance, "For testing");
         const balanceAfterWithdraw = await mock_1.balanceOf(contract.address);
-        console.log(`      Balance of contract is ${balanceAfterWithdraw} after user_1 withdraws`);
-        console.log(`      Balance of user_1 is ${await mock_1.balanceOf(user_1.address)} after user_1 withdraws`);
-        console.log(`      The available balance for user_1 is now ${await contract.connect(admin).availableCreatorAmount(user_1.address)}`);
-
-        //Simulate the passage of time of 15 days
-        console.log(`      Simulating the passage of time of 15 days...`);
+        console.log(`      ⚖️  Balance of contract is ${balanceAfterWithdraw} after user_1 withdraws`);
+        console.log(`      ⚖️  Balance of user_1 is ${await mock_1.balanceOf(user_1.address)} after user_1 withdraws`);
+        console.log(`      ⚖️  The available balance for user_1 is now ${await contract.connect(admin).availableCreatorAmount(user_1.address)}`);
+        expect(await contract.connect(admin).availableCreatorAmount(user_1.address)).to.equal(0);
+        console.log(`      ⏰ Simulating the passage of time of 15 days`);
         await ethers.provider.send("evm_increaseTime", [15 * 24 * 60 * 60]);
         await ethers.provider.send("evm_mine");
+        console.log(`      ⚖️  The available balance for user_1 is now ${await contract.connect(admin).availableCreatorAmount(user_1.address)}`);
+        expect(await contract.connect(admin).availableCreatorAmount(user_1.address)).to.equal(5);
 
-        //show the available balance for user_1
-        console.log(`      The available balance for user_1 is now ${await contract.connect(admin).availableCreatorAmount(user_1.address)}`);
+
 
         //admin triggers emergency mode and the contract is paused
-        console.log(`      Admin triggers emergency mode and the contract is paused`);
+        console.log(" ");
+        console.log(chalk.green("      Testing emergency mode..."));
+        console.log(`      🚨 Admin triggers emergency mode and the contract is paused`);
         await contract.connect(admin).emergencyMode(true);
         expect(await contract.stopped()).to.be.true;
-
-        //user_1 tries to withdraw and fails
-        console.log(`      user_1 tries to withdraw and fails`);
+        console.log(`      💀 user_1 tries to withdraw and fails`);
         await expect(contract.connect(user_1).flowWithdraw(availableCreator1Balance, "For testing")).to.be.revertedWithCustomError(
           contract,
           "ContractIsStopped",
         );
-
-        //admin triggers emergency mode and the contract is unpaused
-        console.log(`      Admin turns off emergency mode and the contract is unpaused`);
+        console.log(`      🧯 Admin turns off emergency mode and the contract is unpaused`);
         await contract.connect(admin).emergencyMode(false);
         expect(await contract.stopped()).to.be.false;
-
-        //user_1 withdraws its available balance
-        //get available balance for user_1
         const availableCreator1Balance2 = await contract.connect(admin).availableCreatorAmount(user_1.address);
-        console.log(`      Available balance for user_1 is ${availableCreator1Balance2}`);
-
-        console.log(`      user_1 withdraws its available balance`);
+        console.log(`      ⚖️  Available balance for user_1 is ${availableCreator1Balance2}`);
+        console.log(`      💵 user_1 withdraws its available balance of ${availableCreator1Balance2}`);
         await contract.connect(user_1).flowWithdraw(availableCreator1Balance2, "For testing");
+        expect(await contract.connect(admin).availableCreatorAmount(user_1.address)).to.equal(0);
         const balanceAfterWithdraw2 = await mock_1.balanceOf(contract.address);
-        console.log(`      Balance of contract is ${balanceAfterWithdraw2} after user_1 withdraws`);
-        console.log(`      Balance of user_1 is ${await mock_1.balanceOf(user_1.address)} after user_1 withdraws`);
-        console.log(`      The available balance for user_1 is now ${await contract.connect(admin).availableCreatorAmount(user_1.address)}`);
-
-        //simulate the passage of time of 7.5 days
-
-        console.log(`      Simulating the passage of time of 7.5 days...`);
+        console.log(`      ⚖️  Balance of contract is ${balanceAfterWithdraw2} after user_1 withdraws`);
+        expect(await mock_1.balanceOf(contract.address)).to.equal(185);
+        console.log(`      ⚖️  Balance of user_1 is ${await mock_1.balanceOf(user_1.address)} after user_1 withdraws`);
+        expect(await mock_1.balanceOf(user_1.address)).to.equal(15);
+        console.log(`      ⚖️  The available balance for user_1 is now ${await contract.connect(admin).availableCreatorAmount(user_1.address)}`);
+        expect(await contract.connect(admin).availableCreatorAmount(user_1.address)).to.equal(0);
+        
+        // updating creator cap
+        console.log(" ");
+        console.log(chalk.green("      Testing creator cap update for mock_1 ERC20 token..."));
+        console.log(`      ⏰ Simulating the passage of time of 7.5 days`);
         await ethers.provider.send("evm_increaseTime", [7.5 * 24 * 60 * 60]);
         await ethers.provider.send("evm_mine");
-
-        //user_1 available amount
-        console.log(`      The available balance for user_1 is now ${await contract.connect(admin).availableCreatorAmount(user_1.address)}`);
-        
-        //update the cap of user_1 to 110
-        console.log(`      Admin updates the cap of user_1 to 110`);
+        expect(await contract.connect(admin).availableCreatorAmount(user_1.address)).to.equal(2);
+        console.log(`      ⚖️  The available balance for user_1 is now ${await contract.connect(admin).availableCreatorAmount(user_1.address)}`);
+        console.log(`      ⚖️  Admin updates the cap of user_1 to 110`);
         await contract.connect(admin).updateCreatorFlowCapCycle(user_1.address, 110);
-
-        //user_1 allCreatorsData
         const allcreatordataoutput2 =  await contract.connect(admin).allCreatorsData([user_1.address]);
-        console.log(`      allCreatorsData for user_1 is (cap/last) ${allcreatordataoutput2}`);
-
-        //user_1 available amount
-        console.log(`      The available balance for user_1 is now ${await contract.connect(admin).availableCreatorAmount(user_1.address)}`);
-
-        //simulate the passage of time to 22.5 days
-        console.log(`      Simulating the passage of time of 22.5 days...`);
+        console.log(`      🔍 allCreatorsData for user_1 is (cap,last) ${allcreatordataoutput2}`);
+        console.log(`      ⚖️  The available balance for user_1 is now ${await contract.connect(admin).availableCreatorAmount(user_1.address)}`);
+        console.log(`      ⏰ Simulating the passage of time of 22.5 days`);
         await ethers.provider.send("evm_increaseTime", [22.5 * 24 * 60 * 60]);
         await ethers.provider.send("evm_mine");
+        console.log(`      ⚖️  The available balance for user_1 is now ${await contract.connect(admin).availableCreatorAmount(user_1.address)}`);
+        expect(await contract.connect(admin).availableCreatorAmount(user_1.address)).to.equal(110);
 
-        //user_1 available amount
-        console.log(`      The available balance for user_1 is now ${await contract.connect(admin).availableCreatorAmount(user_1.address)}`);
-
-        //user_1 is removed as creator
-        console.log(`      Admin removes user_1 as creator`);
+        
+        // testing creator removal
+        console.log(" ");
+        console.log(chalk.green("      Testing creator removal..."));
+        console.log(`      🫠 Admin removes user_1 as creator`);
         await contract.connect(admin).removeCreatorFlow(user_1.address);
-
-        //user_1 allCreatorsData
         const allcreatordataoutput3 =  await contract.connect(admin).allCreatorsData([user_1.address]);
-        console.log(`      allCreatorsData for user_1 is (cap/last) ${allcreatordataoutput3}`);
-
-        //user_1 tries to withdraw and fails
-        console.log(`      user_1 tries to withdraw 10 tokens and fails`);
+        console.log(`      🔍 allCreatorsData for user_1 is (cap,last) ${allcreatordataoutput3}`);
+        console.log(`      💀 user_1 tries to withdraw 10 tokens and fails`);
         await expect(contract.connect(user_1).flowWithdraw(10, "For testing")).to.be.revertedWithCustomError(
           contract,
           "NoActiveFlowForCreator",
         );
 
-        //admin grants user_2 as admin
-        console.log(`      Admin grants user_2 as admin`);
-        await contract.connect(admin).grantRole(ethers.utils.id("ADMIN_ROLE"), user_2.address);
-
-
-        //user_2, as admin, batch adds user_3, user_4 and user_5 as creators with caps 30, 40 and 50
-        console.log(`      user_2, as admin, batch adds user_3, user_4 and user_5 as creators with caps 3, 4 and 5`);
-        await contract.connect(admin).addBatch([user_3.address, user_4.address, user_5.address], [30, 40, 50]);
-
-        //allcreatorsdata for user_3, user_4 and user_5
+        //testing role granting and batch adding
+        console.log(" ");
+        console.log(chalk.green("      Testing admin functions and batch adding for mock_1 ERC20 token..."));
+        console.log(`      👔 Admin grants user_2 as admin`);
+        expect(await hasAdminRole(user_2.address)).to.be.false;
+        await contract.connect(admin).modifyAdminRole(user_2.address,"true");
+        expect(await hasAdminRole(user_2.address)).to.be.true;
+        console.log(`      🏟️  user_2, as admin, batch adds user_3, user_4 and user_5 as creators with caps 3, 4 and 5`);
+        await contract.connect(user_2).addBatch([user_3.address, user_4.address, user_5.address], [30, 40, 50]);
         const allcreatordataoutput4 =  await contract.connect(admin).allCreatorsData([user_3.address, user_4.address, user_5.address]);
-        console.log(`      allCreatorsData for user_3, user_4 and user_5 is (cap/last) ${allcreatordataoutput4}`);
+        console.log(`      🔍 allCreatorsData for user_3, user_4 and user_5 is (cap,last) ${allcreatordataoutput4}`);
+        console.log(`      ⚖️  The available balance for user_3 is now ${await contract.connect(admin).availableCreatorAmount(user_3.address)}`);
+        expect(await contract.connect(admin).availableCreatorAmount(user_3.address)).to.equal(30);
+        console.log(`      ⚖️  The available balance for user_4 is now ${await contract.connect(admin).availableCreatorAmount(user_4.address)}`);
+        expect(await contract.connect(admin).availableCreatorAmount(user_4.address)).to.equal(40);
+        console.log(`      ⚖️  The available balance for user_5 is now ${await contract.connect(admin).availableCreatorAmount(user_5.address)}`);
+        expect(await contract.connect(admin).availableCreatorAmount(user_5.address)).to.equal(50);
 
-        //user_3, user_4 and user_5 available amount
-        console.log(`      The available balance for user_3 is now ${await contract.connect(admin).availableCreatorAmount(user_3.address)}`);
-        console.log(`      The available balance for user_4 is now ${await contract.connect(admin).availableCreatorAmount(user_4.address)}`);
-        console.log(`      The available balance for user_5 is now ${await contract.connect(admin).availableCreatorAmount(user_5.address)}`);
 
-        //simulate the passage of time of 15 days
-
-        console.log(`      Simulating the passage of time of 15 days...`);
-        await ethers.provider.send("evm_increaseTime", [15 * 24 * 60 * 60]);
-        await ethers.provider.send("evm_mine");
-
-        //user_3, user_4 and user_5 available amount
-        console.log(`      The available balance for user_3 is now ${await contract.connect(admin).availableCreatorAmount(user_3.address)}`);
-        console.log(`      The available balance for user_4 is now ${await contract.connect(admin).availableCreatorAmount(user_4.address)}`);
-        console.log(`      The available balance for user_5 is now ${await contract.connect(admin).availableCreatorAmount(user_5.address)}`);
-
-        //update the cap of user_3 to 10
-        console.log(`      Admin updates the cap of user_3 to 10`);
+        // testing cap update
+        console.log(" ");
+        console.log(chalk.green("      Testing cap update for mock_1 ERC20 token..."));
+        console.log(`      🔥 Admin updates the cap of user_3 to 10`);
+        expect(await contract.connect(admin).availableCreatorAmount(user_3.address)).to.equal(30);
         await contract.connect(admin).updateCreatorFlowCapCycle(user_3.address, 10);
-
-        //user_3 allCreatorsData
+        expect(await contract.connect(admin).availableCreatorAmount(user_3.address)).to.equal(10);
         const allcreatordataoutput5 =  await contract.connect(admin).allCreatorsData([user_3.address]);
-        console.log(`      allCreatorsData for user_3 is (cap/last) ${allcreatordataoutput5}`);
-
-        //user_3 available amount
-        console.log(`      The available balance for user_3 is now ${await contract.connect(admin).availableCreatorAmount(user_3.address)}`);
-
-        //user_3 withdraws available amount
-        console.log(`      user_3 withdraws available amount`);
+        console.log(`      🔍 allCreatorsData for user_3 is (cap,last) ${allcreatordataoutput5}`);
+        console.log(`      ⚖️  The available balance for user_3 is now ${await contract.connect(admin).availableCreatorAmount(user_3.address)}`);
+        console.log(`      ⚖️  user_3 withdraws available amount`);
         await contract.connect(user_3).flowWithdraw(await contract.connect(admin).availableCreatorAmount(user_3.address), "For testing");
-
-        //user_3 available amount
-        console.log(`      The available balance for user_3 is now ${await contract.connect(admin).availableCreatorAmount(user_3.address)}`);
-
-        //admin removes user_3 as creator
-        console.log(`      Admin removes user_3 as creator`);
-        await contract.connect(admin).removeCreatorFlow(user_3.address);
+        expect(await contract.connect(admin).availableCreatorAmount(user_3.address)).to.equal(0);
+        console.log(`      ⚖️  The available balance for user_3 is now ${await contract.connect(admin).availableCreatorAmount(user_3.address)}`);
         
-        //user_3,user_4 and user_5 allCreatorsData
+        
+        // testing removing from batch add and creator withdrawal
+        console.log(" ");
+        console.log(chalk.green("      Testing removing from batch add and creator withdrawal for mock_1 ERC20 token..."));
+        console.log(`      🫠 Admin removes user_3 as creator`);
+        await contract.connect(admin).removeCreatorFlow(user_3.address);
         const allcreatordataoutput6 =  await contract.connect(admin).allCreatorsData([user_3.address, user_4.address, user_5.address]);
-        console.log(`      allCreatorsData for user_3, user_4 and user_5 is (cap/last) ${allcreatordataoutput6}`);
-
-        //simulate the passage of time of 15 days
-        console.log(`      Simulating the passage of time of 15 days...`);
-        await ethers.provider.send("evm_increaseTime", [15 * 24 * 60 * 60]);
-        await ethers.provider.send("evm_mine");
-
-        //user_4 and user_5 available amount
-        console.log(`      The available balance for user_4 is now ${await contract.connect(admin).availableCreatorAmount(user_4.address)}`);
-        console.log(`      The available balance for user_5 is now ${await contract.connect(admin).availableCreatorAmount(user_5.address)}`);
-
-        //user_4 withdraws available amount
-        console.log(`      user_4 withdraws available amount`);
-        //show user_4 balance before withdraw
-        console.log(`      The balance for user_4 is now ${await contract.connect(admin).availableCreatorAmount(user_4.address)}`);
-        console.log(`      user_4 withdraws available amount of ${await contract.connect(admin).availableCreatorAmount(user_4.address)}`);
+        console.log(`      🔍 allCreatorsData for user_3, user_4 and user_5 is (cap,last) ${allcreatordataoutput6}`);
+        console.log(`      ⚖️  The available balance for user_4 is ${await contract.connect(admin).availableCreatorAmount(user_4.address)}`);
+        console.log(`      💵 user_4 withdraws available amount of ${await contract.connect(admin).availableCreatorAmount(user_4.address)}`);
         await contract.connect(user_4).flowWithdraw(await contract.connect(admin).availableCreatorAmount(user_4.address), "For testing");
-        //show user_4 balance after withdraw
-        console.log(`      The balance for user_4 is now ${await contract.connect(admin).availableCreatorAmount(user_4.address)}`);
-
-        //user_5 withdraws half of the available amount
-        console.log(`      user_5 withdraws half of the available amount`);
-        //show user_5 balance before withdraw
-        console.log(`      The balance for user_5 is now ${await contract.connect(admin).availableCreatorAmount(user_5.address)}`);
-        console.log(`      user_5 withdraws available amount of ${await contract.connect(admin).availableCreatorAmount(user_5.address) / 2}`);
+        console.log(`      ⚖️  The available balance for user_4 is now ${await contract.connect(admin).availableCreatorAmount(user_4.address)}`);
+        console.log(`      ⚖️  The balance of tokens user_4 has is now ${await mock_1.connect(admin).balanceOf(user_4.address)}`);
+        expect(await mock_1.connect(admin).balanceOf(user_4.address)).to.equal(40);
+        console.log(`      ⚖️  The available balance for user_5 is now ${await contract.connect(admin).availableCreatorAmount(user_5.address)}`);
+        console.log(`      💵 user_5 withdraws half of its available amount of ${await contract.connect(admin).availableCreatorAmount(user_5.address) / 2}`);
+        expect(await contract.connect(admin).availableCreatorAmount(user_5.address)).to.equal(50);
         await contract.connect(user_5).flowWithdraw(await contract.connect(admin).availableCreatorAmount(user_5.address) / 2, "For testing");
-        //show user_5 balance after withdraw
-        console.log(`      The balance for user_5 is now ${await contract.connect(admin).availableCreatorAmount(user_5.address)}`);
-
-        //show balance of tokens in contract
-        console.log(`      The balance of tokens in contract is ${await mock_1.connect(admin).balanceOf(contract.address)}`);
-        //show balance of tokens of admin
-        console.log(`      The balance for  admin is ${await mock_1.connect(admin).balanceOf(admin.address)}`);
-        //drain all tokens from contract
-        console.log(`      Admin drains all tokens from contract`);
+        expect(await contract.connect(admin).availableCreatorAmount(user_5.address)).to.equal(25);
+        console.log(`      ⚖️  The available balance for user_5 is now ${await contract.connect(admin).availableCreatorAmount(user_5.address)}`);
+        console.log(`      ⚖️  The balance of tokens user_5 has is now ${await mock_1.connect(admin).balanceOf(user_5.address)}`);
+        expect(await mock_1.connect(admin).balanceOf(user_5.address)).to.equal(25);
+        console.log(`      ⚖️  The balance of tokens in contract is ${await mock_1.connect(admin).balanceOf(contract.address)}`);
+        expect(await mock_1.connect(admin).balanceOf(contract.address)).to.equal(110);
+        
+        
+        // testing rescue function for mock_1 ERC20 tokens
+        console.log(" ");
+        console.log(chalk.green("      Testing rescue function for mock_1 ERC20 token..."));
+        console.log(`      ⚖️  The balance for admin is ${await mock_1.connect(admin).balanceOf(admin.address)}`);
+        console.log(`      🛟 Admin drains all tokens from contract`);
         await contract.connect(admin).drainAgreement(mock_1.address);
-        //show balance of tokens in contract
-        console.log(`      The balance of tokens in contract is ${await mock_1.connect(admin).balanceOf(contract.address)}`);
+        expect(await mock_1.connect(admin).balanceOf(contract.address)).to.equal(0);
+        console.log(`      ⚖️  The balance of tokens in contract is ${await mock_1.connect(admin).balanceOf(contract.address)}`);
+        console.log(`      ⚖️  The balance for admin is ${await mock_1.connect(admin).balanceOf(admin.address)}`);
+        expect(await mock_1.connect(admin).balanceOf(admin.address)).to.equal(110);
 
-        //show balance of tokens of admin
-        console.log(`      The balance for  admin is ${await mock_1.connect(admin).balanceOf(admin.address)}`);
-
-        //send eth to contract and try to drain it as admin
-        console.log(`      Admin sends 1 eth to contract`);
-        //send eth without using a function
-        await admin.sendTransaction({to: contract.address, value: ethers.utils.parseEther("1.0")});
-        //show balance of eth in contract
-        console.log(`      The balance of eth in contract is ${await ethers.provider.getBalance(contract.address)}`);
-        //show balance of eth of admin
-        console.log(`      The balance for  admin is ${await ethers.provider.getBalance(admin.address)}`);
-        //drain all eth from contract
-        console.log(`      Admin drains all eth from contract`);
+        //testing rescue function for eth
+        console.log(" ");
+        console.log(chalk.green("      Testing rescue function for ETH..."));
+        console.log(`      💰 Admin sends 1 eth to contract`);
+        expect(await ethers.provider.getBalance(contract.address)).to.equal(0);
+        await admin.sendTransaction({to: contract.address, value: ethers.utils.parseEther("1")});
+        console.log(`      ⚖️  The balance of eth in contract is ${await ethers.provider.getBalance(contract.address)}`);
+        expect(await ethers.provider.getBalance(contract.address)).to.equal(ethers.utils.parseEther("1"));
+        console.log(`      ⚖️  The balance for  admin is ${await ethers.provider.getBalance(admin.address)}`);
+        console.log(`      🛟 Admin drains all eth from contract`);
         await contract.connect(admin).drainAgreement(ZERO_ADDRESS);
-        //show balance of eth in contract
-        console.log(`      The balance of eth in contract is ${await ethers.provider.getBalance(contract.address)}`);
-        //show balance of eth of admin
-        console.log(`      The balance for  admin is ${await ethers.provider.getBalance(admin.address)}`);
+        expect(await ethers.provider.getBalance(contract.address)).to.equal(0);
+        console.log(`      ⚖️  The balance of eth in contract is ${await ethers.provider.getBalance(contract.address)}`);
+        console.log(`      ⚖️  The balance of eth for admin is ${await ethers.provider.getBalance(admin.address)}`);
 
-        //send as admin 10 tokens of mock_2 to contract to test the drainAgreement function
-        console.log(`      Admin sends 10 tokens of mock_2 to contract`);
+        //testing rescue function with mock_2 ERC20 tokens
+        console.log(" ");
+        console.log(chalk.green("      Testing rescue function for mock_2 ERC20 token..."));
+        console.log(`      💰 Admin sends 10 tokens of mock_2 to contract`);
+        expect(await mock_2.connect(admin).balanceOf(contract.address)).to.equal(0);
         await mock_2.connect(admin).transfer(contract.address, 10);
-        //show balance of tokens in contract
-        console.log(`      The balance of tokens in contract is ${await mock_2.connect(admin).balanceOf(contract.address)}`);
-        //show balance of tokens of admin
-        console.log(`      The balance for  admin is ${await mock_2.connect(admin).balanceOf(admin.address)}`);
-        //drain all tokens from contract
-        console.log(`      Admin drains all tokens from contract`);
+        expect(await mock_2.connect(admin).balanceOf(contract.address)).to.equal(10);
+        console.log(`      ⚖️  The balance of tokens in contract is ${await mock_2.connect(admin).balanceOf(contract.address)}`);
+        console.log(`      ⚖️  The balance of tokens for admin is ${await mock_2.connect(admin).balanceOf(admin.address)}`);
+        console.log(`      🛟 Admin drains all tokens from contract`);
         await contract.connect(admin).drainAgreement(mock_2.address);
-        //show balance of tokens in contract
-        console.log(`      The balance of tokens in contract is ${await mock_2.connect(admin).balanceOf(contract.address)}`);
-        //show balance of tokens of admin
-        console.log(`      The balance for  admin is ${await mock_2.connect(admin).balanceOf(admin.address)}`);
+        expect(await mock_2.connect(admin).balanceOf(contract.address)).to.equal(0);
+        expect(await mock_2.connect(admin).balanceOf(admin.address)).to.equal(100);
+        console.log(`      ⚖️  The balance of tokens in contract is ${await mock_2.connect(admin).balanceOf(contract.address)}`);
+        console.log(`      ⚖️  The balance of tokens for admin is ${await mock_2.connect(admin).balanceOf(admin.address)}`);                   
 
 
 
