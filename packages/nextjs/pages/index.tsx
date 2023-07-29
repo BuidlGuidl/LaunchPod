@@ -16,9 +16,9 @@ const Home: NextPage = () => {
 
         <Welcome />
 
-        <StreamData />
+        <StreamData creatorPage={false} />
 
-        <Contributions />
+        <Contributions creatorPage={false} />
       </div>
     </>
   );
