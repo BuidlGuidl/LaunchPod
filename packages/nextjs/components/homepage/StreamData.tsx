@@ -56,7 +56,7 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
           </div>
           <div>
             {isLoadingCreators &&
-              Array.from({ length: 4 }).map((_, index) => (
+              Array.from({ length: creatorPage ? 1 : 4 }).map((_, index) => (
                 <div key={index} className="animate-pulse flex justify-between px-6 py-4">
                   <div className="rounded-md bg-slate-300 h-6 w-[5%]"></div>
                   <div className="flex items-center space-y-6 w-[27%]">
