@@ -46,7 +46,7 @@ contract YourContract is AccessControl, ReentrancyGuard {
     bool public stopped = false;
 
     // Primary admin for remaining balances
-    address private primaryAdmin;
+    address public primaryAdmin;
 
     // Modifier to check for admin permissions
     modifier onlyAdmin() {
