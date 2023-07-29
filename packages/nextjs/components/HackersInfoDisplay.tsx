@@ -16,22 +16,29 @@ export const HackersInfoDisplay: React.FC<{ creatorData: CreatorInfo; creatorAdd
 
   return (
     <div className="flex flex-col md:flex-row place-items-center border-t px-6 py-2 w-full">
-      <div className="w-fit md:w-[50%]  md:ml-0">
+      <div className="w-fit md:w-[50%]  md:ml-0 py-2">
         <Address address={creatorAddress} />
       </div>
-      <div className="flex-auto w-full md:w-[50%] text-sm">
+      <div className="flex flex-col gap-1 w-full md:w-[50%] text-sm ">
         <div className="flex flex-row justify-center">
-          <div className="flex ">
-            Ξ <Price value={Number(unlockedAmount)} /> / <Price value={cap} />
+          <div className="flex md:text-sm text-[0.7rem] font-semibold">
+            Ξ
+            <span className="px-1">
+              <Price value={Number(unlockedAmount)} />
+            </span>
+            /
+            <span className="px-1">
+              <Price value={cap} />
+            </span>
           </div>
         </div>
         <div className="flex flex-row">
           <progress className="progress progress-primary" value={percentage} max="100"></progress>
         </div>
         <div className="flex flex-row justify-center">
-          <div className="flex flex-row items-center">
-            <div className="font-semibold tracking-tighter text-sm lg:text-lg px-3">Last:</div>
-            <div className="text-sm tracking-tighter lg:text-lg">{getTimeAgo(last * 1000)}</div>
+          <div className="md:text-sm text-[0.7rem] font-semibold flex flex-row items-center">
+            <div className=" tracking-tighter px-3">Last:</div>
+            <div className=" tracking-tighter ">{getTimeAgo(last * 1000)}</div>
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const defaultTheme = require('tailwindcss/defaultTheme')
+const defaultTheme = require("tailwindcss/defaultTheme");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -102,6 +102,9 @@ module.exports = {
       },
       fontFamily: {
         gotham: ["Gotham", "sans-serif"],
+      },
+      fontFamily: {
+        "typo-round": ["Typo-round", "sans-serif"],
       },
       keyframes: {
         grow: {

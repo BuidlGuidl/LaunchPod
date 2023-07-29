@@ -7,6 +7,7 @@ import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 import { useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 import { useErc20 } from "~~/hooks/useErc20";
 import { useFetchCreators } from "~~/hooks/useFetchCreators";
+import { useIsCreator } from "~~/hooks/useIsCreator";
 import { useSetCreator } from "~~/hooks/useSetCreator";
 
 export type CreatorInfo = {
@@ -19,6 +20,8 @@ export type CreatorData = {
 
 const StreamData = () => {
   const [creatorsData, setCreatorsData] = useState<CreatorData>({});
+
+  const { isCreator } = useIsCreator();
 
   const streamContract = useDeployedContractInfo("YourContract");
 
@@ -45,7 +48,7 @@ const StreamData = () => {
       <div className="container lg:w-2/3  pt-4">
         <div className="flex flex-col">
           <div className="py-2 ">
-            <h1 className=" font-bold tracking-widest uppercase px-4 md:text-left text-center text-base">
+            <h1 className=" font-bold font-typo-round md:text-xl text-lg  px-4 md:text-left text-center tracking-wide">
               Hacker Streams
             </h1>
           </div>
@@ -71,13 +74,17 @@ const StreamData = () => {
       </div>
       <div className="lg:w-1/3 pt-4 md:border-l pb-2">
         <div className="py-2 border-b px-4">
-          <h1 className=" font-bold tracking-widest uppercase md:text-left text-center text-base">Contract Balance</h1>
+          <h1 className=" font-bold font-typo-round md:text-xl text-lg  upercase md:text-left text-center tracking-wide">
+            Contract Balance
+          </h1>
         </div>
         <div className="px-4 pt-4">
           <div>
-            <button onClick={() => setModalOpen(true)} className="btn rounded-md btn-primary py-3 px-6 w-full">
-              Withdraw
-            </button>
+            {isCreator && (
+              <button onClick={() => setModalOpen(true)} className="btn rounded-md btn-primary py-3 px-6 w-full">
+                Withdraw
+              </button>
+            )}
           </div>
           <div className="py-3 mt-2 rounded-md px-2 bg-base-300 w-full ">
             <div className="w-full bg-primary rounded-md py-2 px-2 mb-3 flex justify-center">
@@ -91,8 +98,8 @@ const StreamData = () => {
               <Address address={streamContract.data?.address} />
             </div>
           </div>
-          <div className="flex gap-1 bg-base-300 mt-2 rounded-md w-full px-4 py-2 font-bold justify-center">
-            Owner <Address address={streamContract.data?.address} />
+          <div className="flex gap-2 bg-base-300 mt-2 rounded-md w-full px-4 py-2 font-bold justify-center">
+            <span className="font-bold font-sans">Owner: </span> <Address address={streamContract.data?.address} />
           </div>
         </div>
       </div>
