@@ -22,8 +22,6 @@ const Contributions = ({ creatorPage }: { creatorPage: boolean }) => {
     setWithdrawnEvents(events);
   }, [withdrawn.isLoading, address, creatorPage, withdrawn.data]);
 
-  console.log(withdrawnEvents);
-
   const getDate = (timestamp: number) => {
     const date = new Date(timestamp * 1000);
     const year = date.getFullYear();
@@ -47,8 +45,8 @@ const Contributions = ({ creatorPage }: { creatorPage: boolean }) => {
                 <div className="flex md:flex-row  flex-col gap-2 mt-1">
                   <div>{getDate(event.block.timestamp)}</div>
 
-                  <div className="font-bold font-sans">
-                    <span className="mr-2">&#x2022;</span>
+                  <div className="font-bold font-sans ">
+                    <span className=" hidden md:contents ">&#x2022; </span>
                     Ξ <Price value={Number(formatEther(event.args[1]))} />
                   </div>
                 </div>
