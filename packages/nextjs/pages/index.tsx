@@ -12,13 +12,13 @@ const Home: NextPage = () => {
         <meta name="description" content="LaunchPod&#8482;: Created with 🏗 scaffold-eth-2" />
       </Head>
       <div className="flex flex-col gap-4 xs:w-4/5 xl:w-1/2 w-11/12">
-        <p className="text-2xl font-bold tracking-widest  ">Your Hacker House</p>
+        <p className="font-bold font-typo-round md:text-2xl text-xl  tracking-wide  ">Your Hacker House</p>
 
         <Welcome />
 
-        <StreamData />
+        <StreamData creatorPage={false} />
 
-        <Contributions />
+        <Contributions creatorPage={false} />
       </div>
     </>
   );

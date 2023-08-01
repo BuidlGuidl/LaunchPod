@@ -2,10 +2,13 @@ import { useEffect, useState } from "react";
 import { Price } from "../Price";
 import { Address } from "../scaffold-eth";
 import { formatEther } from "ethers/lib/utils.js";
+import { useAccount } from "wagmi";
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth";
 
-const Contributions = () => {
+const Contributions = ({ creatorPage }: { creatorPage: boolean }) => {
   const [withdrawnEvents, setWithdrawnEvents] = useState<any[] | undefined>([]);
+
+  const { address } = useAccount();
 
   const withdrawn = useScaffoldEventHistory({
     contractName: "YourContract",
@@ -15,20 +18,37 @@ const Contributions = () => {
   });
 
   useEffect(() => {
-    setWithdrawnEvents(withdrawn.data);
-  }, [withdrawn]);
+    const events = creatorPage ? withdrawn.data?.filter(obj => obj.args[0] === address) : withdrawn.data;
+    setWithdrawnEvents(events);
+  }, [withdrawn.isLoading, address, creatorPage, withdrawn.data]);
+
+  const getDate = (timestamp: number) => {
+    const date = new Date(timestamp * 1000);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const formattedDate = `${year}-${month}-${day}`;
+    return formattedDate;
+  };
 
   return (
     <div>
       {withdrawnEvents && withdrawnEvents?.length > 0 && (
-        <div className=" md:text-sm text-[0.6rem] border rounded-xl">
-          <h1 className=" font-bold tracking-widest uppercase p-4 text-base">Contributions</h1>
+        <div className=" md:text-sm text-[0.7rem] border rounded-xl">
+          <h1 className="font-bold font-typo-round md:text-xl text-lg  p-4 tracking-wide">
+            {creatorPage ? "Your Contributions" : "Contributions"}
+          </h1>
           {withdrawnEvents.map((event, index) => (
             <div key={index} className="flex flex-wrap items-center justify-around  border-t py-4 px-6">
               <div className="flex flex-col w-[30%]">
                 <Address address={event.args[0]} />
-                <div>
-                  Ξ <Price value={Number(formatEther(event.args[1]))} />
+                <div className="flex md:flex-row  flex-col gap-2 mt-1">
+                  <div>{getDate(event.block.timestamp)}</div>
+
+                  <div className="font-bold font-sans ">
+                    <span className=" hidden md:contents ">&#x2022; </span>
+                    Ξ <Price value={Number(formatEther(event.args[1]))} />
+                  </div>
                 </div>
               </div>
               <div className="pl-4 w-[70%] ">{event.args[2]}</div>
