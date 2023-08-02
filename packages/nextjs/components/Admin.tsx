@@ -28,12 +28,25 @@ const Admin = () => {
     tokenAddress || "0x0000000000000000000000000000000000000000",
   );
 
+  const [addadmin, setaddadmin] = useState<string>("");
+
   useEffect(() => {
     if (tokenAddress) {
       setDrainTokenAddr(tokenAddress);
     }
   }, [tokenAddress]);
 
+  // hook for adding admin
+  const {
+    writeAsync: addAdmin,
+
+  } = useScaffoldContractWrite({
+    contractName: "YourContract",
+    functionName: "modifyAdminRole",
+    //args is address of admin
+    args: [addadmin,true],
+  });
+  
   // Write hook for adding a creator.
   const {
     writeAsync: addCreator,
@@ -256,6 +269,7 @@ const Admin = () => {
                   <option value="remove">Remove Creator</option>
                   <option value="fund">Fund Contract</option>
                   <option value="drain">Drain Agreement</option>
+                  <option value="addadmin">Add Admin</option>
                 </select>
               </div>
 
@@ -271,7 +285,30 @@ const Admin = () => {
             {modalAction === "remove" && "Remove Creator"}
             {modalAction === "fund" && "Fund Contract"}
             {modalAction === "drain" && "Drain Agreement"}
+            {modalAction === "addadmin" && "Add Admin"}
+            
           </h3>
+          {modalAction === "addadmin" && (
+    <div>
+        <label htmlFor="admin" className="block mt-4">
+            Admin Address:
+        </label>
+        <AddressInput value={addadmin} onChange={value => setaddadmin(value)} />
+        <button className="btn btn-primary mt-4" onClick={async () => { 
+            try {
+                await addAdmin(); 
+                setSuccessMessage("Admin added successfully."); 
+                setaddadmin("");
+            } catch (error) {
+                setErrorMessage("Failed to add the admin. Please try again.");
+                console.error(error);
+            }  
+        }}>
+            Add Admin
+        </button>
+    </div>
+)}
+
           {modalAction === "update" && (
             <div>
               <label htmlFor="creator" className="block mt-4">
@@ -343,7 +380,8 @@ const Admin = () => {
           {modalAction !== "update" &&
             modalAction !== "batchAdd" &&
             modalAction !== "fund" &&
-            modalAction !== "drain" && (
+            modalAction !== "drain" &&
+            modalAction !== "addadmin" && (
               <div>
                 <label htmlFor="creator" className="block mt-4">
                   Creator Address:
@@ -367,7 +405,7 @@ const Admin = () => {
             <button className="btn rounded-lg" onClick={reset}>
               reset
             </button>
-            {modalAction && (
+            {modalAction !== "addadmin" && (
               <button className="btn btn-primary rounded-lg" onClick={handleModalAction}>
                 {modalAction === "add" && "Add"}
                 {modalAction === "batchAdd" && "Add Batch"}
@@ -375,6 +413,7 @@ const Admin = () => {
                 {modalAction === "remove" && "Remove"}
                 {modalAction === "fund" && (isErc20 && (allowance as number) < fundingValue ? "Approve" : "Fund")}
                 {modalAction === "drain" && "Drain"}
+                {modalAction === "addadmin" && "Add Admin"}
               </button>
             )}
           </div>
