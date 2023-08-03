@@ -29,12 +29,14 @@ const Admin = () => {
   );
 
   const [addadmin, setaddadmin] = useState<string>("");
+  const [removeadmin, setremoveadmin] = useState<string>("");
 
   useEffect(() => {
     if (tokenAddress) {
       setDrainTokenAddr(tokenAddress);
     }
   }, [tokenAddress]);
+
 
   // hook for adding admin
   const {
@@ -45,6 +47,17 @@ const Admin = () => {
     functionName: "modifyAdminRole",
     //args is address of admin
     args: [addadmin,true],
+  });
+
+  // hook for removing admin
+  const {
+    writeAsync: removeAdmin,
+
+  } = useScaffoldContractWrite({
+    contractName: "YourContract",
+    functionName: "modifyAdminRole",
+    //args is address of admin
+    args: [removeadmin,false],
   });
   
   // Write hook for adding a creator.
@@ -159,6 +172,16 @@ const Admin = () => {
 
       if (modalAction === "add") {
         debouncedAddCreator();
+      } else if (modalAction === "addadmin") {
+        await addAdmin();
+        setSuccessMessage("Admin added successfully.");
+        setaddadmin("");
+
+      } else if (modalAction === "removeadmin") {
+        await removeAdmin();
+        setSuccessMessage("Admin removed successfully.");
+        setremoveadmin("");
+
       } else if (modalAction === "batchAdd") {
         debouncedAddBatch();
       } else if (modalAction === "update") {
@@ -239,6 +262,8 @@ const Admin = () => {
     setErrorMessage("");
     setFundingValue(0);
     setDrainTokenAddr("0x0000000000000000000000000000000000000000");
+    setaddadmin("");
+    setremoveadmin("");
   };
 
   // to avoid linting issues untill loading and transaction states is implemented.
@@ -270,6 +295,7 @@ const Admin = () => {
                   <option value="fund">Fund Contract</option>
                   <option value="drain">Drain Agreement</option>
                   <option value="addadmin">Add Admin</option>
+                  <option value="removeadmin">Remove Admin</option>
                 </select>
               </div>
 
@@ -286,6 +312,7 @@ const Admin = () => {
             {modalAction === "fund" && "Fund Contract"}
             {modalAction === "drain" && "Drain Agreement"}
             {modalAction === "addadmin" && "Add Admin"}
+            {modalAction === "removeadmin" && "Remove Admin"}
             
           </h3>
           {modalAction === "addadmin" && (
@@ -294,18 +321,16 @@ const Admin = () => {
             Admin Address:
         </label>
         <AddressInput value={addadmin} onChange={value => setaddadmin(value)} />
-        <button className="btn btn-primary mt-4" onClick={async () => { 
-            try {
-                await addAdmin(); 
-                setSuccessMessage("Admin added successfully."); 
-                setaddadmin("");
-            } catch (error) {
-                setErrorMessage("Failed to add the admin. Please try again.");
-                console.error(error);
-            }  
-        }}>
-            Add Admin
-        </button>
+        
+    </div>
+)}
+{modalAction === "removeadmin" && (
+    <div>
+        <label htmlFor="admin" className="block mt-4">
+            Admin Address:
+            </label>
+            <AddressInput value={removeadmin} onChange={value => setremoveadmin(value)} />
+
     </div>
 )}
 
@@ -381,7 +406,8 @@ const Admin = () => {
             modalAction !== "batchAdd" &&
             modalAction !== "fund" &&
             modalAction !== "drain" &&
-            modalAction !== "addadmin" && (
+            modalAction !== "addadmin" &&
+            modalAction !== "removeadmin" && (
               <div>
                 <label htmlFor="creator" className="block mt-4">
                   Creator Address:
@@ -405,7 +431,7 @@ const Admin = () => {
             <button className="btn rounded-lg" onClick={reset}>
               reset
             </button>
-            {modalAction !== "addadmin" && (
+            {modalAction && (
               <button className="btn btn-primary rounded-lg" onClick={handleModalAction}>
                 {modalAction === "add" && "Add"}
                 {modalAction === "batchAdd" && "Add Batch"}
@@ -414,6 +440,8 @@ const Admin = () => {
                 {modalAction === "fund" && (isErc20 && (allowance as number) < fundingValue ? "Approve" : "Fund")}
                 {modalAction === "drain" && "Drain"}
                 {modalAction === "addadmin" && "Add Admin"}
+                {modalAction === "removeadmin" && "Remove Admin"}
+
               </button>
             )}
           </div>
