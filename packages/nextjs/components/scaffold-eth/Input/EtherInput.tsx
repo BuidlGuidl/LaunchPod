@@ -34,7 +34,7 @@ function displayValueToEtherValue(usdMode: boolean, displayValue: string, native
       return (parsedDisplayValue / nativeCurrencyPrice).toString();
     }
   } else {
-    return displayValue;
+    return displayValue.trim() === "." ? "0." : displayValue;
   }
 }
 
