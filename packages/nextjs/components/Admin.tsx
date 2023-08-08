@@ -390,7 +390,12 @@ const Admin = () => {
 )}
 
           
-        {modalAction === "rescueeth" && <div>The contract has a current eth balance of: <Balance address={streamContract.data?.address} /></div>}
+        {modalAction === "rescueeth" && <div>The contract has a current eth balance of: <Balance address={streamContract.data?.address} /></div>
+        
+        }
+        
+        
+
 
 
 
@@ -503,7 +508,7 @@ const Admin = () => {
               <label htmlFor="token" className="block mt-4">
                 Token Address:
               </label>
-              <AddressInput value={rescuetoken} onChange={value => setrescuetoken(value)    } />
+              <AddressInput value={rescuetoken === "0x0000000000000000000000000000000000000000" ? "" : rescuetoken} onChange={value => setrescuetoken(value)    } />
             </div>
           )}
 
@@ -518,6 +523,7 @@ const Admin = () => {
             <button className="btn rounded-lg" onClick={reset}>
               reset
             </button>)}
+            {modalAction === "rescueeth" &&(<button className="invisible"></button> )}
     
 
             {modalAction && (
