@@ -435,8 +435,8 @@ const Admin = () => {
                     <label htmlFor={`batch-caps-${index}`} className="block mt-4">
                       Cap {index + 1}:
                     </label>
-                    {
-                    <EtherInput value={batchCaps ? batchCaps[index].toString() : ""} onChange={value => handleInputChange(index, value, setBatchCaps)} placeholder="Enter stream cap" />}
+                    
+                    <EtherInput value={batchCaps ? batchCaps[index].toString() : ""} onChange={value => handleInputChange(index, value, setBatchCaps)} placeholder="Enter stream cap" />
           
                   </div>
                 ))}
