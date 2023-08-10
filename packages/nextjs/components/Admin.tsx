@@ -37,29 +37,22 @@ const Admin = () => {
     }
   }, [tokenAddress]);
 
-
   // hook for adding admin
-  const {
-    writeAsync: addAdmin,
-
-  } = useScaffoldContractWrite({
+  const { writeAsync: addAdmin } = useScaffoldContractWrite({
     contractName: "YourContract",
     functionName: "modifyAdminRole",
     //args is address of admin
-    args: [addadmin,true],
+    args: [addadmin, true],
   });
 
   // hook for removing admin
-  const {
-    writeAsync: removeAdmin,
-
-  } = useScaffoldContractWrite({
+  const { writeAsync: removeAdmin } = useScaffoldContractWrite({
     contractName: "YourContract",
     functionName: "modifyAdminRole",
     //args is address of admin
-    args: [removeadmin,false],
+    args: [removeadmin, false],
   });
-  
+
   // Write hook for adding a creator.
   const {
     writeAsync: addCreator,
@@ -176,12 +169,10 @@ const Admin = () => {
         await addAdmin();
         setSuccessMessage("Admin added successfully.");
         setaddadmin("");
-
       } else if (modalAction === "removeadmin") {
         await removeAdmin();
         setSuccessMessage("Admin removed successfully.");
         setremoveadmin("");
-
       } else if (modalAction === "batchAdd") {
         debouncedAddBatch();
       } else if (modalAction === "update") {
@@ -313,26 +304,23 @@ const Admin = () => {
             {modalAction === "drain" && "Drain Agreement"}
             {modalAction === "addadmin" && "Add Admin"}
             {modalAction === "removeadmin" && "Remove Admin"}
-            
           </h3>
           {modalAction === "addadmin" && (
-    <div>
-        <label htmlFor="admin" className="block mt-4">
-            Admin Address:
-        </label>
-        <AddressInput value={addadmin} onChange={value => setaddadmin(value)} />
-        
-    </div>
-)}
-{modalAction === "removeadmin" && (
-    <div>
-        <label htmlFor="admin" className="block mt-4">
-            Admin Address:
-            </label>
-            <AddressInput value={removeadmin} onChange={value => setremoveadmin(value)} />
-
-    </div>
-)}
+            <div>
+              <label htmlFor="admin" className="block mt-4">
+                Admin Address:
+              </label>
+              <AddressInput value={addadmin} onChange={value => setaddadmin(value)} />
+            </div>
+          )}
+          {modalAction === "removeadmin" && (
+            <div>
+              <label htmlFor="admin" className="block mt-4">
+                Admin Address:
+              </label>
+              <AddressInput value={removeadmin} onChange={value => setremoveadmin(value)} />
+            </div>
+          )}
 
           {modalAction === "update" && (
             <div>
@@ -441,7 +429,6 @@ const Admin = () => {
                 {modalAction === "drain" && "Drain"}
                 {modalAction === "addadmin" && "Add Admin"}
                 {modalAction === "removeadmin" && "Remove Admin"}
-
               </button>
             )}
           </div>
