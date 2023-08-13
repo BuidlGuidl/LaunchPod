@@ -5,12 +5,10 @@ import { parseEther } from "ethers/lib/utils.js";
 import { debounce } from "lodash";
 import { Balance } from "~~/components/scaffold-eth/Balance";
 import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
-import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 import { useApproveForFundng } from "~~/hooks/useApproveForFunding";
 import { useErc20 } from "~~/hooks/useErc20";
 
 const Admin = () => {
-  const streamContract = useDeployedContractInfo("YourContract");
 
   const [modalAction, setModalAction] = useState<string>("add");
   // The following two states hold args for addCreatorFlow.
@@ -47,13 +45,6 @@ const Admin = () => {
       setRescueToken(tokenAddress);
     }
   }, [tokenAddress]);
-
-  //hook for getting contract token balance
-  const { data: contractTokenBalanceData } = useScaffoldContractRead({
-    contractName: "ERC20Mock1",
-    functionName: "balanceOf",
-    args: [streamContract.data?.address],
-  });
 
   // hook for rescuing tokens
   const { writeAsync: rescueTokenfunc } = useScaffoldContractWrite({
@@ -436,20 +427,8 @@ const Admin = () => {
               <EtherInput value={fundingValue.toString()} onChange={e => setFundingValue(Number(e))} />
             </div>
           )}
-          {modalAction === "rescueEth" && (
-            <div>
-              The contract has a current eth balance of: <Balance address={streamContract.data?.address} />
-            </div>
-          )}
           {modalAction === "rescueToken" && (
             <div>
-              {isErc20 && (
-                <div>
-                  The contract has a current token balance of:
-                  {contractTokenBalanceData && contractTokenBalanceData.toString()}
-                </div>
-              )}
-
               <label htmlFor="token" className="block mt-4">
                 Token Address:
               </label>
