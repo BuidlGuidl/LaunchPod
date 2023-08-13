@@ -455,7 +455,7 @@ const Admin = () => {
               </label>
               <AddressInput
                 value={
-                  rescueToken.toString() === "0x0000000000000000000000000000000000000000" ? "" : rescueToken.toString()
+                  rescueToken === "0x0000000000000000000000000000000000000000" ? "" : rescueToken
                 }
                 onChange={value => setRescueToken(value)}
               />
