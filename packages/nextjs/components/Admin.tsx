@@ -445,7 +445,7 @@ const Admin = () => {
             <div>
               {isErc20 && (
                 <div>
-                  The contract has a current token balance of:{" "}
+                  The contract has a current token balance of:
                   {contractTokenBalanceData && contractTokenBalanceData.toString()}
                 </div>
               )}
@@ -454,7 +454,9 @@ const Admin = () => {
                 Token Address:
               </label>
               <AddressInput
-                value={rescueToken === "0x0000000000000000000000000000000000000000" ? "" : rescueToken}
+                value={
+                  rescueToken.toString() === "0x0000000000000000000000000000000000000000" ? "" : rescueToken.toString()
+                }
                 onChange={value => setRescueToken(value)}
               />
             </div>
