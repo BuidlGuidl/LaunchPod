@@ -325,6 +325,7 @@ const Admin = () => {
                   <option value="update">Update Creator</option>
                   <option value="remove">Remove Creator</option>
                   <option value="fund">Fund Contract</option>
+                  <option value="drain">Drain Agreement</option>
                   <option value="addadmin">Add Admin</option>
                   <option value="removeadmin">Remove Admin</option>
                   <option value="rescueToken">Rescue Tokens</option>
@@ -376,12 +377,6 @@ const Admin = () => {
                 Cap:
               </label>
               <EtherInput value={cap.toString()} onChange={value => setCap(value)} placeholder="Enter cap amount" />
-            </div>
-          )}
-
-          {modalAction === "rescueeth" && (
-            <div>
-              The contract has a current eth balance of: <Balance address={streamContract.data?.address} />
             </div>
           )}
 
