@@ -1,4 +1,4 @@
-# LaunchPod Streams
+# Hacker Houses Streams
 
 This **forkable** project aims to provide a platform to retroactively fund open-source work by providing a monthly 
 UBI to handpicked open-source developers, rewarding them for their ongoing contributions.
