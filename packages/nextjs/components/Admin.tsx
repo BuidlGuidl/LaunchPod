@@ -3,13 +3,11 @@ import { AddressInput, EtherInput } from "./scaffold-eth";
 import { BigNumber } from "ethers";
 import { parseEther } from "ethers/lib/utils.js";
 import { debounce } from "lodash";
-import { Balance } from "~~/components/scaffold-eth/Balance";
-import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
+import { useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 import { useApproveForFundng } from "~~/hooks/useApproveForFunding";
 import { useErc20 } from "~~/hooks/useErc20";
 
 const Admin = () => {
-
   const [modalAction, setModalAction] = useState<string>("add");
   // The following two states hold args for addCreatorFlow.
   const [creator, setCreator] = useState<string>("");
@@ -433,9 +431,7 @@ const Admin = () => {
                 Token Address:
               </label>
               <AddressInput
-                value={
-                  rescueToken === "0x0000000000000000000000000000000000000000" ? "" : rescueToken
-                }
+                value={rescueToken === "0x0000000000000000000000000000000000000000" ? "" : rescueToken}
                 onChange={value => setRescueToken(value)}
               />
             </div>
