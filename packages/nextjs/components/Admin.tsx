@@ -30,12 +30,35 @@ const Admin = () => {
 
   const [addadmin, setaddadmin] = useState<string>("");
   const [removeadmin, setremoveadmin] = useState<string>("");
+  const [rescueToken, setRescueToken] = useState<string>(tokenAddress || "0x0000000000000000000000000000000000000000");
 
   useEffect(() => {
     if (tokenAddress) {
       setDrainTokenAddr(tokenAddress);
     }
   }, [tokenAddress]);
+
+  useEffect(() => {
+    if (tokenAddress) {
+      setRescueToken(tokenAddress);
+    }
+  }, [tokenAddress]);
+
+  // hook for rescuing tokens
+  const { writeAsync: rescueTokenfunc } = useScaffoldContractWrite({
+    contractName: "YourContract",
+    functionName: "drainAgreement",
+    //args is token address
+    args: [rescueToken],
+  });
+
+  // hook for rescuing eth
+  const { writeAsync: rescueEth } = useScaffoldContractWrite({
+    contractName: "YourContract",
+    functionName: "drainAgreement",
+    //args is zero address
+    args: ["0x0000000000000000000000000000000000000000"],
+  });
 
   // hook for adding admin
   const { writeAsync: addAdmin } = useScaffoldContractWrite({
@@ -165,6 +188,12 @@ const Admin = () => {
 
       if (modalAction === "add") {
         debouncedAddCreator();
+      } else if (modalAction === "rescueToken") {
+        await rescueTokenfunc();
+        setSuccessMessage("Tokens rescued successfully.");
+      } else if (modalAction === "rescueEth") {
+        await rescueEth();
+        setSuccessMessage("Eth rescued successfully.");
       } else if (modalAction === "addadmin") {
         await addAdmin();
         setSuccessMessage("Admin added successfully.");
@@ -255,6 +284,7 @@ const Admin = () => {
     setDrainTokenAddr("0x0000000000000000000000000000000000000000");
     setaddadmin("");
     setremoveadmin("");
+    setRescueToken("");
   };
 
   // to avoid linting issues untill loading and transaction states is implemented.
@@ -287,6 +317,8 @@ const Admin = () => {
                   <option value="drain">Drain Agreement</option>
                   <option value="addadmin">Add Admin</option>
                   <option value="removeadmin">Remove Admin</option>
+                  <option value="rescueToken">Rescue Tokens</option>
+                  <option value="rescueEth">Rescue Eth</option>
                 </select>
               </div>
 
@@ -304,6 +336,8 @@ const Admin = () => {
             {modalAction === "drain" && "Drain Agreement"}
             {modalAction === "addadmin" && "Add Admin"}
             {modalAction === "removeadmin" && "Remove Admin"}
+            {modalAction === "rescueToken" && "Rescue Tokens"}
+            {modalAction === "rescueEth" && "Rescue Eth"}
           </h3>
           {modalAction === "addadmin" && (
             <div>
@@ -334,6 +368,7 @@ const Admin = () => {
               <EtherInput value={cap.toString()} onChange={value => setCap(value)} placeholder="Enter cap amount" />
             </div>
           )}
+
           {modalAction === "drain" && (
             <div>
               <label htmlFor="token" className="block mt-4">
@@ -390,12 +425,25 @@ const Admin = () => {
               <EtherInput value={fundingValue.toString()} onChange={e => setFundingValue(Number(e))} />
             </div>
           )}
+          {modalAction === "rescueToken" && (
+            <div>
+              <label htmlFor="token" className="block mt-4">
+                Token Address:
+              </label>
+              <AddressInput
+                value={rescueToken === "0x0000000000000000000000000000000000000000" ? "" : rescueToken}
+                onChange={value => setRescueToken(value)}
+              />
+            </div>
+          )}
           {modalAction !== "update" &&
             modalAction !== "batchAdd" &&
             modalAction !== "fund" &&
             modalAction !== "drain" &&
             modalAction !== "addadmin" &&
-            modalAction !== "removeadmin" && (
+            modalAction !== "removeadmin" &&
+            modalAction !== "rescueEth" &&
+            modalAction !== "rescueToken" && (
               <div>
                 <label htmlFor="creator" className="block mt-4">
                   Creator Address:
@@ -416,9 +464,12 @@ const Admin = () => {
               </div>
             )}
           <div className="flex justify-between mt-8">
-            <button className="btn rounded-lg" onClick={reset}>
-              reset
-            </button>
+            {modalAction !== "rescueEth" && (
+              <button className="btn rounded-lg" onClick={reset}>
+                reset
+              </button>
+            )}
+            {modalAction === "rescueEth" && <button className="invisible"></button>}
             {modalAction && (
               <button className="btn btn-primary rounded-lg" onClick={handleModalAction}>
                 {modalAction === "add" && "Add"}
@@ -429,6 +480,8 @@ const Admin = () => {
                 {modalAction === "drain" && "Drain"}
                 {modalAction === "addadmin" && "Add Admin"}
                 {modalAction === "removeadmin" && "Remove Admin"}
+                {modalAction === "rescueToken" && "Rescue Tokens"}
+                {modalAction === "rescueEth" && "Rescue Eth"}
               </button>
             )}
           </div>
