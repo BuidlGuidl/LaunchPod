@@ -31,6 +31,29 @@ const Contributions = ({ creatorPage }: { creatorPage: boolean }) => {
     return formattedDate;
   };
 
+  const getTimeDifference = (timestamp: number) => {
+    const now = new Date();
+    const eventDate = new Date(timestamp * 1000);
+    const differenceInMilliseconds = now.getTime() - eventDate.getTime();
+    const differenceInDays = Math.floor(differenceInMilliseconds / (1000 * 60 * 60 * 24));
+    const differenceInHours = Math.floor((differenceInMilliseconds % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const differenceInMinutes = Math.floor((differenceInMilliseconds % (1000 * 60 * 60)) / (1000 * 60));
+
+    const daysString = differenceInDays === 1 ? "day" : "days";
+    const hoursString = differenceInHours === 1 ? "hour" : "hours";
+    const minutesString = differenceInMinutes === 1 ? "minute" : "minutes";
+
+    let result = `${differenceInDays} ${daysString} ago`;
+    if (differenceInDays === 0) {
+      result =
+        differenceInHours > 0
+          ? `${differenceInHours} ${hoursString} ago`
+          : `${differenceInMinutes} ${minutesString} ago`;
+    }
+
+    return result;
+  };
+
   return (
     <div>
       {withdrawnEvents && withdrawnEvents?.length > 0 && (
@@ -43,7 +66,9 @@ const Contributions = ({ creatorPage }: { creatorPage: boolean }) => {
               <div className="flex flex-col w-[30%]">
                 <Address address={event.args[0]} />
                 <div className="flex md:flex-row  flex-col gap-2 mt-1">
-                  <div>{getDate(event.block.timestamp)}</div>
+                  <div className="tooltip" data-tip={getTimeDifference(event.block.timestamp)}>
+                    {getDate(event.block.timestamp)}
+                  </div>
 
                   <div className="font-bold font-sans ">
                     <span className=" hidden md:contents ">&#x2022; </span>
