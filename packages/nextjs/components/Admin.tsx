@@ -24,19 +24,9 @@ const Admin = () => {
   const [fundingValue, setFundingValue] = useState<number>(0);
   const { isErc20, tokenAddress } = useErc20();
 
-  const [drainTokenAddr, setDrainTokenAddr] = useState<string>(
-    tokenAddress || "0x0000000000000000000000000000000000000000",
-  );
-
   const [addadmin, setaddadmin] = useState<string>("");
   const [removeadmin, setremoveadmin] = useState<string>("");
   const [rescueToken, setRescueToken] = useState<string>(tokenAddress || "0x0000000000000000000000000000000000000000");
-
-  useEffect(() => {
-    if (tokenAddress) {
-      setDrainTokenAddr(tokenAddress);
-    }
-  }, [tokenAddress]);
 
   useEffect(() => {
     if (tokenAddress) {
@@ -45,7 +35,7 @@ const Admin = () => {
   }, [tokenAddress]);
 
   // hook for rescuing tokens
-  const { writeAsync: rescueTokenfunc } = useScaffoldContractWrite({
+  const { writeAsync: rescueTokenfunc, isLoading: isRescuingToken } = useScaffoldContractWrite({
     contractName: "YourContract",
     functionName: "drainAgreement",
     //args is token address
@@ -53,7 +43,7 @@ const Admin = () => {
   });
 
   // hook for rescuing eth
-  const { writeAsync: rescueEth } = useScaffoldContractWrite({
+  const { writeAsync: rescueEth, isLoading: isRescuingEth } = useScaffoldContractWrite({
     contractName: "YourContract",
     functionName: "drainAgreement",
     //args is zero address
@@ -127,18 +117,11 @@ const Admin = () => {
     value: isErc20 ? "0" : fundingValue.toString(),
   });
 
-  // Write hook for draining agreement.
-  const { writeAsync: drainAgreement, isLoading: isDrainingAgreement } = useScaffoldContractWrite({
-    contractName: "YourContract",
-    functionName: "drainAgreement",
-    args: [drainTokenAddr],
-  });
-
   // Hook for approving before funding for erc20 streams
   const { writeAsync: approveForFunding, allowance } = useApproveForFundng({
     tokenAddress: tokenAddress as string,
     amount: fundingValue,
-    isTransferLoading: isDrainingAgreement || isFundingContract,
+    isTransferLoading: isRescuingEth || isRescuingToken || isFundingContract,
   });
 
   // use debounce for add,batchAdd and update
@@ -242,9 +225,6 @@ const Admin = () => {
 
         setSuccessMessage("Creator removed successfully.");
         setCreator("");
-      } else if (modalAction === "drain") {
-        await drainAgreement();
-        setSuccessMessage("Contract drained successfully.");
       }
       // setModalAction("");
     } catch (error) {
@@ -281,7 +261,6 @@ const Admin = () => {
     setSuccessMessage("");
     setErrorMessage("");
     setFundingValue(0);
-    setDrainTokenAddr("0x0000000000000000000000000000000000000000");
     setaddadmin("");
     setremoveadmin("");
     setRescueToken("");
@@ -314,7 +293,6 @@ const Admin = () => {
                   <option value="update">Update Creator</option>
                   <option value="remove">Remove Creator</option>
                   <option value="fund">Fund Contract</option>
-                  <option value="drain">Drain Agreement</option>
                   <option value="addadmin">Add Admin</option>
                   <option value="removeadmin">Remove Admin</option>
                   <option value="rescueToken">Rescue Tokens</option>
@@ -333,7 +311,6 @@ const Admin = () => {
             {modalAction === "update" && "Update Creator"}
             {modalAction === "remove" && "Remove Creator"}
             {modalAction === "fund" && "Fund Contract"}
-            {modalAction === "drain" && "Drain Agreement"}
             {modalAction === "addadmin" && "Add Admin"}
             {modalAction === "removeadmin" && "Remove Admin"}
             {modalAction === "rescueToken" && "Rescue Tokens"}
@@ -355,7 +332,6 @@ const Admin = () => {
               <AddressInput value={removeadmin} onChange={value => setremoveadmin(value)} />
             </div>
           )}
-
           {modalAction === "update" && (
             <div>
               <label htmlFor="creator" className="block mt-4">
@@ -366,15 +342,6 @@ const Admin = () => {
                 Cap:
               </label>
               <EtherInput value={cap.toString()} onChange={value => setCap(value)} placeholder="Enter cap amount" />
-            </div>
-          )}
-
-          {modalAction === "drain" && (
-            <div>
-              <label htmlFor="token" className="block mt-4">
-                {isErc20 && "Token Address:"}
-              </label>
-              {isErc20 && <AddressInput value={drainTokenAddr} onChange={value => setDrainTokenAddr(value)} />}
             </div>
           )}
           {modalAction === "batchAdd" && (
@@ -427,6 +394,7 @@ const Admin = () => {
           )}
           {modalAction === "rescueToken" && (
             <div>
+              <p className="-mt-3 mb-6 italic">Transfer token balance from the contract to primary admin</p>
               <label htmlFor="token" className="block mt-4">
                 Token Address:
               </label>
@@ -436,10 +404,14 @@ const Admin = () => {
               />
             </div>
           )}
+          {modalAction === "rescueEth" && (
+            <div>
+              <p className="-mt-3 mb-6 italic">Transfer eth balance from the contract to primary admin</p>
+            </div>
+          )}
           {modalAction !== "update" &&
             modalAction !== "batchAdd" &&
             modalAction !== "fund" &&
-            modalAction !== "drain" &&
             modalAction !== "addadmin" &&
             modalAction !== "removeadmin" &&
             modalAction !== "rescueEth" &&
@@ -477,7 +449,6 @@ const Admin = () => {
                 {modalAction === "update" && "Update"}
                 {modalAction === "remove" && "Remove"}
                 {modalAction === "fund" && (isErc20 && (allowance as number) < fundingValue ? "Approve" : "Fund")}
-                {modalAction === "drain" && "Drain"}
                 {modalAction === "addadmin" && "Add Admin"}
                 {modalAction === "removeadmin" && "Remove Admin"}
                 {modalAction === "rescueToken" && "Rescue Tokens"}
