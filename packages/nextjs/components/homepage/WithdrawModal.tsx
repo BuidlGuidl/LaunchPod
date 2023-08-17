@@ -25,8 +25,8 @@ export const WithdrawModal = ({
     setIsOpen(false);
   };
 
-  const handleReasonChange = e => {
-    const inputText = e.target.value;
+  const handleReasonChange = (value: string) => {
+    const inputText = value;
 
     if (inputText.length <= characterLimit) {
       setReason(inputText);
@@ -55,7 +55,7 @@ export const WithdrawModal = ({
               className="textarea textarea-bordered  focus:bg-transparent focus:text-gray-400 h-[2.2rem] min-h-[6.2rem] px-4  w-full font-medium placeholder:text-accent/50 text-gray-400 rounded-lg"
               placeholder={`Enter Reason (limit: ${characterLimit} characters)`}
               value={reason}
-              onChange={e => handleReasonChange(e)}
+              onChange={e => handleReasonChange(e.target.value)}
             ></textarea>
             <p className="font-sans italic font-normal -mt-1">Remaining characters: {characterLimit - reason.length}</p>
             <button className="btn btn-primary rounded-lg w-full mt-2 ml-auto" onClick={withdraw}>
