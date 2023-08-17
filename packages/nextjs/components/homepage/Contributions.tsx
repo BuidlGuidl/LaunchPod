@@ -47,7 +47,7 @@ const Contributions = ({ creatorPage }: { creatorPage: boolean }) => {
 
                   <div className="font-bold font-sans ">
                     <span className=" hidden md:contents ">&#x2022; </span>
-                    Ξ <Price value={Number(formatEther(event.args[1]))} />
+                    <Price value={Number(formatEther(event.args[1]))} />
                   </div>
                 </div>
               </div>

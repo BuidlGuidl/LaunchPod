@@ -27,6 +27,11 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
 
   const streamContract = useDeployedContractInfo("YourContract");
 
+  const { data: primaryAdmin } = useScaffoldContractRead({
+    contractName: "YourContract",
+    functionName: "primaryAdmin",
+  });
+
   const {
     creators,
     isLoadingCreators,
@@ -56,7 +61,7 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
           </div>
           <div>
             {isLoadingCreators &&
-              Array.from({ length: creatorPage ? 1 : 4 }).map((_, index) => (
+              Array.from({ length: creatorPage ? 1 : 3 }).map((_, index) => (
                 <div key={index} className="animate-pulse flex justify-between px-6 py-4">
                   <div className="rounded-md bg-slate-300 h-6 w-[5%]"></div>
                   <div className="flex items-center space-y-6 w-[27%]">
@@ -111,7 +116,7 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
             </div>
           </div>
           <div className="flex gap-2 bg-base-300 mt-2 rounded-md w-full px-4 py-2 font-bold justify-center">
-            <span className="font-bold font-sans">Owner: </span> <Address address={streamContract.data?.address} />
+            <span className="font-bold font-sans">Owner: </span> <Address address={primaryAdmin} />
           </div>
         </div>
       </div>

@@ -8,7 +8,7 @@ type TPriceProps = {
 };
 
 export const Price: React.FC<TPriceProps> = ({ value }: TPriceProps) => {
-  const [dollarMode, setDollarMode] = useState(true);
+  const [dollarMode, setDollarMode] = useState(false);
   const { isErc20, isEns, isOp } = useErc20();
   const { ensPrice, opPrice } = useTokenPrice();
   const nativePrice = useGlobalState(state => state.nativeCurrencyPrice);
@@ -23,7 +23,7 @@ export const Price: React.FC<TPriceProps> = ({ value }: TPriceProps) => {
   }
 
   const isValueNaN = isNaN(value);
-  let displayBalance = isValueNaN ? NaN : value.toFixed(4);
+  let displayBalance = isValueNaN ? NaN : "Ξ " + value.toFixed(4);
 
   if (!isValueNaN && dollarMode && price > 0) {
     displayBalance = "$" + (value * price).toFixed(2);
