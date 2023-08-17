@@ -13,6 +13,7 @@ export const WithdrawModal = ({
 }) => {
   const [reason, setReason] = useState("");
   const [amount, setAmount] = useState("0");
+  const characterLimit = 400;
 
   const { writeAsync: withdraw } = useScaffoldContractWrite({
     contractName: "YourContract",
@@ -22,6 +23,14 @@ export const WithdrawModal = ({
 
   const closePopup = () => {
     setIsOpen(false);
+  };
+
+  const handleReasonChange = e => {
+    const inputText = e.target.value;
+
+    if (inputText.length <= characterLimit) {
+      setReason(inputText);
+    } else return;
   };
 
   return (
@@ -35,16 +44,20 @@ export const WithdrawModal = ({
             <label className="block mt-4 mb-2">Amount:</label>
             <EtherInput
               value={amount.toString()}
-              onChange={value => setAmount(value)}
+              onChange={value => {
+                setAmount(value);
+              }}
               placeholder="Enter withdraw amount"
             />
             <label className="block mt-2 mb-2">Reason:</label>
 
             <textarea
-              className="textarea textarea-bordered  focus:bg-transparent focus:text-gray-400 h-[2.2rem] min-h-[5.2rem] px-4  w-full font-medium placeholder:text-accent/50 text-gray-400 rounded-lg"
-              placeholder="Enter Reason"
-              onChange={e => setReason(e.target.value)}
+              className="textarea textarea-bordered  focus:bg-transparent focus:text-gray-400 h-[2.2rem] min-h-[6.2rem] px-4  w-full font-medium placeholder:text-accent/50 text-gray-400 rounded-lg"
+              placeholder={`Enter Reason (limit: ${characterLimit} characters)`}
+              value={reason}
+              onChange={e => handleReasonChange(e)}
             ></textarea>
+            <p className="font-sans italic font-normal -mt-1">Remaining characters: {characterLimit - reason.length}</p>
             <button className="btn btn-primary rounded-lg w-full mt-2 ml-auto" onClick={withdraw}>
               Withdraw
             </button>

@@ -4,6 +4,7 @@ import { CommonInputProps, InputBase, SIGNED_NUMBER_REGEX } from "~~/components/
 import { useGlobalState } from "~~/services/store/store";
 
 const MAX_DECIMALS_USD = 2;
+const MAX_DECIMALS_ETH = 10;
 
 function etherValueToDisplayValue(usdMode: boolean, etherValue: string, nativeCurrencyPrice: number) {
   if (usdMode && nativeCurrencyPrice) {
@@ -70,6 +71,11 @@ export const EtherInput = ({ value, name, placeholder, onChange }: CommonInputPr
     if (usdMode) {
       const decimals = newValue.split(".")[1];
       if (decimals && decimals.length > MAX_DECIMALS_USD) {
+        return;
+      }
+    } else {
+      const decimals = newValue.split(".")[1];
+      if (decimals && decimals.length > MAX_DECIMALS_ETH) {
         return;
       }
     }
