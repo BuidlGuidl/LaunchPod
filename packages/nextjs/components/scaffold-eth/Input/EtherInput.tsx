@@ -31,7 +31,7 @@ function displayValueToEtherValue(usdMode: boolean, displayValue: string, native
       return displayValue;
     } else {
       // Compute the ETH value if a valid number.
-      return (parsedDisplayValue / nativeCurrencyPrice).toString();
+      return (parsedDisplayValue / nativeCurrencyPrice).toFixed(18).toString();
     }
   } else {
     return displayValue.trim() === "." ? "0." : displayValue;
@@ -68,6 +68,9 @@ export const EtherInput = ({ value, name, placeholder, onChange }: CommonInputPr
     // Following condition is a fix to prevent usdMode from experiencing different display values
     // than what the user entered. This can happen due to floating point rounding errors that are introduced in the back and forth conversion
     if (usdMode) {
+      if (newValue === ".") {
+        newValue = "0.";
+      }
       const decimals = newValue.split(".")[1];
       if (decimals && decimals.length > MAX_DECIMALS_USD) {
         return;
