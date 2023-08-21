@@ -80,10 +80,12 @@ contract YourContract is AccessControl, ReentrancyGuard {
             if (flowingCreators[adminAddress].cap != 0) revert InvalidCreatorAddress();
             grantRole(DEFAULT_ADMIN_ROLE, adminAddress);
             isAdmin[adminAddress] = true;
+            emit AdminAdded(adminAddress);
         } else {
             if (adminAddress == primaryAdmin) revert AccessDenied();
             revokeRole(DEFAULT_ADMIN_ROLE, adminAddress);
             isAdmin[adminAddress] = false;
+            emit AdminRemoved(adminAddress);
         }
     }
 
@@ -108,6 +110,8 @@ contract YourContract is AccessControl, ReentrancyGuard {
     event CreatorAdded(address indexed to, uint256 amount);
     event CreatorUpdated(address indexed to, uint256 amount);
     event CreatorRemoved(address indexed to);
+    event AdminAdded(address indexed to);
+    event AdminRemoved(address indexed to);
     event AgreementDrained(uint256 amount);
     event ERC20FundsReceived(address indexed token,address indexed from,uint256 amount);
 
