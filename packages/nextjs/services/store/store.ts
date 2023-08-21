@@ -16,5 +16,5 @@ type TGlobalState = {
 
 export const useGlobalState = create<TGlobalState>(set => ({
   nativeCurrencyPrice: 0,
-  setNativeCurrencyPrice: (newValue: number): void => set(() => ({ nativeCurrencyPrice: newValue })),
+  setNativeCurrencyPrice: (newValue: number): void => set(() => ({ nativeCurrencyPrice: newValue }))
 }));

@@ -5,7 +5,7 @@ import { formatEther } from "ethers/lib/utils.js";
 import { useAccount } from "wagmi";
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth";
 
-const Contributions = ({ creatorPage }: { creatorPage: boolean }) => {
+const Contributions = () => {
   const [withdrawnEvents, setWithdrawnEvents] = useState<any[] | undefined>([]);
 
   const { address } = useAccount();
@@ -18,9 +18,9 @@ const Contributions = ({ creatorPage }: { creatorPage: boolean }) => {
   });
 
   useEffect(() => {
-    const events = creatorPage ? withdrawn.data?.filter(obj => obj.args[0] === address) : withdrawn.data;
+    const events = address ? withdrawn.data?.filter(obj => obj.args[0] === address) : withdrawn.data;
     setWithdrawnEvents(events);
-  }, [withdrawn.isLoading, address, creatorPage, withdrawn.data]);
+  }, [withdrawn.isLoading, address, withdrawn.data]);
 
   const getDate = (timestamp: number) => {
     const date = new Date(timestamp * 1000);
@@ -36,7 +36,7 @@ const Contributions = ({ creatorPage }: { creatorPage: boolean }) => {
       {withdrawnEvents && withdrawnEvents?.length > 0 && (
         <div className=" md:text-sm text-[0.7rem] border rounded-xl">
           <h1 className="font-bold font-typo-round md:text-xl text-lg  p-4 tracking-wide">
-            {creatorPage ? "Your Contributions" : "Contributions"}
+            {address ? "Your Contributions" : "Contributions"}
           </h1>
           {withdrawnEvents.map((event, index) => (
             <div key={index} className="flex flex-wrap items-center justify-around  border-t py-4 px-6">

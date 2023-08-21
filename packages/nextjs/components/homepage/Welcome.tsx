@@ -2,8 +2,8 @@ import React from "react";
 
 const Welcome = () => {
   return (
-    <div className="md:text-sm text-[0.7rem] border rounded-xl p-4">
-      <h1 className="font-bold font-typo-round md:text-2xl text-xl tracking-widest ">Welcome!</h1>
+    <div className="text-lg border rounded-xl p-4">
+      <h1 className="font-bold font-typo-round md:text-3xl text-xl tracking-widest">Welcome!</h1>
       <p>
         We&lsquo;re running an experiment to retroactively fund open-source work by providing a monthly UBI to
         open-source developers, handpicked by Jessy and Jessy&lsquo;s Hacker House, and rewarding them for their ongoing

@@ -4,30 +4,14 @@ import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth";
 export const useFetchCreators = () => {
   const [creators, setCreators] = useState<string[]>([]);
 
-  // Read the creatorAdded events to get added creators.
-  const {
-    data: creatorAdded,
-    isLoading: isLoadingCreators,
-    error: errorReadingCreators,
-  } = useScaffoldEventHistory({
+  const { data: creatorAdded } = useScaffoldEventHistory({
     contractName: "YourContract",
     eventName: "CreatorAdded",
     fromBlock: Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0,
     blockData: true,
   });
 
-  useEffect(() => {
-    if (creatorAdded) {
-      const addedCreators = creatorAdded.map(creator => creator.args[0]);
-      setCreators(prev => [...prev, ...addedCreators]);
-    }
-  }, [creatorAdded]);
-
-  const {
-    data: creatorRemoved,
-    isLoading: isLoadingRemovedCreators,
-    error: errorReadingRemovedCreators,
-  } = useScaffoldEventHistory({
+  const { data: creatorRemoved } = useScaffoldEventHistory({
     contractName: "YourContract",
     eventName: "CreatorRemoved",
     fromBlock: Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0,
@@ -35,44 +19,23 @@ export const useFetchCreators = () => {
   });
 
   useEffect(() => {
-    if (creatorRemoved && creatorRemoved.length !== 0) {
-      console.log(creatorRemoved);
-      const removedCreators = creatorRemoved.map(creator => creator.args[0]);
-      setCreators(prev => prev.filter(creator => !removedCreators.includes(creator)));
-    }
-  }, [creatorRemoved, creators]);
+    if (Array.isArray(creatorAdded) && Array.isArray(creatorRemoved)) {
+      const addedCreators = creatorAdded.map((creator) => creator.args[0]);
+      const removedCreators = creatorRemoved.map((creator) => creator.args[0]);
 
-  // Read the creatorUpdated events to get updated creators.
-  const {
-    data: creatorUpdated,
-    isLoading: isLoadingUpdatedCreators,
-    error: errorReadingUpdatedCreators,
-  } = useScaffoldEventHistory({
-    contractName: "YourContract",
-    eventName: "CreatorUpdated",
-    fromBlock: Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0,
-    blockData: true,
-  });
+      const previousCreators = [...creators];
 
-  useEffect(() => {
-    if (creatorUpdated && creatorUpdated.length !== 0) {
-      creatorUpdated.forEach(creator => {
-        const updatedCreator = creator.args[0];
-        setCreators(prev => {
-          const updatedCreators = [...prev];
-          const index = updatedCreators.indexOf(updatedCreator);
-          if (index !== -1) {
-            updatedCreators[index] = updatedCreator;
-          }
-          return updatedCreators;
-        });
-      });
+      const updatedList = [...creators, ...addedCreators].filter((creator) => !removedCreators.includes(creator));
+
+      
+      // Check if the updatedList is different from the previousCreators
+      if (JSON.stringify(updatedList) !== JSON.stringify(previousCreators)) {
+        setCreators(updatedList);
+      }
     }
-  }, [creatorUpdated, creators]);
+  }, [creatorAdded, creatorRemoved]);
 
   return {
     creators,
-    isLoadingCreators: isLoadingCreators || isLoadingRemovedCreators || isLoadingUpdatedCreators,
-    errorReadingCreators: errorReadingCreators || errorReadingRemovedCreators || errorReadingUpdatedCreators,
   };
 };

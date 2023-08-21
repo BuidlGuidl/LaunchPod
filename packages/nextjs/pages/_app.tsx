@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Head from "next/head";
 import type { AppProps } from "next/app";
 import { RainbowKitProvider, darkTheme, lightTheme } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
@@ -40,9 +41,13 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
         avatar={BlockieAvatar}
         theme={isDarkTheme ? darkTheme() : lightTheme()}
       >
-        <div className="flex gotham-font font-semibold flex-col min-h-screen overflow-hidden">
+        <div className="flex gotham-font font-normal text-2xl flex-col min-h-screen overflow-hidden">
+          <Head>
+            <title>LaunchPod&#8482;</title>
+            <meta name="description" content="LaunchPod&#8482;: Created with 🏗 scaffold-eth-2" />
+          </Head>
           <Header />
-          <main className="mt-20 relative flex flex-col flex-initial w-full items-center mx-auto">
+          <main className="mt-16 relative flex flex-col w-full">
             <Component {...pageProps} />
           </main>
           <div className="mt-auto">
