@@ -357,13 +357,13 @@ export const AdminModal = ({
           {(action === "fundContract" || action === "rescueEth" || action === "rescueToken") && setAction && (
             <ul className="menu menu-horizontal bg-base-100 rounded-box activemenu">
               <li onClick={() => setAction("fundContract")}>
-                <a className={action === "fundContract" ? "active" : "bg-base-300"}>fund</a>
+                <a className={action === "fundContract" ? "active" : "bg-base-300"}>FUND</a>
               </li>
               <li onClick={() => setAction("rescueEth")}>
-                <a className={action === "rescueEth" ? "active" : "bg-base-300"}>rescue eth</a>
+                <a className={action === "rescueEth" ? "active" : "bg-base-300"}>RESCUE ETH</a>
               </li>
               <li onClick={() => setAction("rescueToken")}>
-                <a className={action === "rescueToken" ? "active" : "bg-base-300"}>rescue token</a>
+                <a className={action === "rescueToken" ? "active" : "bg-base-300"}>RESCUE TOKEN</a>
               </li>
             </ul>
           )}

@@ -177,35 +177,32 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
             <span className="font-bold font-sans">Owner: </span> <Address address={primaryAdmin} />
           </div>
         </div>
-
-        <div className="py-2 mt-6  px-4 flex justify-between ">
-          <h1 className=" font-bold font-typo-round md:text-xl text-lg  upercase md:text-left text-center tracking-wide">
-            Admins
-          </h1>
-          {isAdmin && (
-            <div>
-              <button
-                data-tooltip-id="add admin"
-                data-tooltip-content="add admin"
-                className="hover:bg-primary p-2 rounded-md active:scale-90 border "
-                onClick={() => {
-                  setAdminAction("addAdmin");
-                  setAdminModalOpen(true);
-                }}
-              >
-                <PlusIcon className="h-[1.1rem]" />
-              </button>
-              <Tooltip place="bottom" id="add admin" />
-            </div>
-          )}
-        </div>
-        <div className="px-4">
+        {isAdmin && (
           <div>
-            {uniqueAdmins.map((admin, index) => (
-              <div key={index} className="py-2 flex justify-between">
-                <Address address={admin} />
-                {isAdmin && (
-                  <div>
+            <div className="py-2 mt-6  px-4 flex justify-between ">
+              <h1 className=" font-bold font-typo-round md:text-xl text-lg  upercase md:text-left text-center tracking-wide">
+                Admins
+              </h1>
+              <div>
+                <button
+                  data-tooltip-id="add admin"
+                  data-tooltip-content="add admin"
+                  className="hover:bg-primary p-2 rounded-md active:scale-90 border "
+                  onClick={() => {
+                    setAdminAction("addAdmin");
+                    setAdminModalOpen(true);
+                  }}
+                >
+                  <PlusIcon className="h-[1.1rem]" />
+                </button>
+                <Tooltip place="bottom" id="add admin" />
+              </div>
+            </div>
+            <div className="px-4">
+              <div>
+                {uniqueAdmins.map((admin, index) => (
+                  <div key={index} className="py-2 flex justify-between">
+                    <Address address={admin} />
                     <button
                       data-tooltip-id="remove"
                       data-tooltip-content="remove"
@@ -220,22 +217,24 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
                     </button>
                     <Tooltip place="bottom" id="remove" />
                   </div>
+                ))}
+                {isLoadingAdmins &&
+                  Array.from({ length: creatorPage ? 1 : 3 }).map((_, index) => (
+                    <div key={index} className="animate-pulse flex justify-between py-4">
+                      <div className="rounded-md bg-slate-300 h-6 w-[10%]"></div>
+                      <div className="flex items-center space-y-6 w-[70%]">
+                        <div className="h-2 w-full bg-slate-300 rounded"></div>
+                      </div>
+                      <div className="rounded-md bg-slate-300 h-6 w-[10%]"></div>
+                    </div>
+                  ))}
+                {!isLoadingAdmins && (admins.length === 0 || !admins) && (
+                  <div className="text-center py-6">No Admins</div>
                 )}
               </div>
-            ))}
-            {isLoadingAdmins &&
-              Array.from({ length: creatorPage ? 1 : 3 }).map((_, index) => (
-                <div key={index} className="animate-pulse flex justify-between py-4">
-                  <div className="rounded-md bg-slate-300 h-6 w-[10%]"></div>
-                  <div className="flex items-center space-y-6 w-[70%]">
-                    <div className="h-2 w-full bg-slate-300 rounded"></div>
-                  </div>
-                  <div className="rounded-md bg-slate-300 h-6 w-[10%]"></div>
-                </div>
-              ))}
-            {!isLoadingAdmins && (admins.length === 0 || !admins) && <div className="text-center py-6">No Admins</div>}
+            </div>
           </div>
-        </div>
+        )}
       </div>
       {modalOpen && <WithdrawModal isOpen={modalOpen} setIsOpen={setModalOpen} />}
       {adminModalOpen && (
