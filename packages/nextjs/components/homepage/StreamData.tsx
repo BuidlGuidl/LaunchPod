@@ -1,13 +1,20 @@
 import { useState } from "react";
+import { AdminModal } from "../AdminModal";
 import { HackersInfoDisplay } from "../HackersInfoDisplay";
 import { TokenBalance } from "../TokenBalance";
 import { WithdrawModal } from "./WithdrawModal";
+import { Tooltip } from "react-tooltip";
 import { useAccount } from "wagmi";
+import { PlusIcon } from "@heroicons/react/24/outline";
+import { WalletIcon } from "@heroicons/react/24/outline";
+import { TrashIcon } from "@heroicons/react/24/outline";
 import { Address, Balance } from "~~/components/scaffold-eth";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 import { useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 import { useErc20 } from "~~/hooks/useErc20";
+import { useFetchAdmins } from "~~/hooks/useFetchAdmins";
 import { useFetchCreators } from "~~/hooks/useFetchCreators";
+import { useIsAdmin } from "~~/hooks/useIsAdmin";
 import { useIsCreator } from "~~/hooks/useIsCreator";
 import { useSetCreator } from "~~/hooks/useSetCreator";
 
@@ -21,9 +28,12 @@ export type CreatorData = {
 
 const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
   const [creatorsData, setCreatorsData] = useState<CreatorData>({});
+  const [adminToRemove, setAdminToRemove] = useState("");
   const { address } = useAccount();
 
   const { isCreator } = useIsCreator();
+
+  const { isAdmin } = useIsAdmin();
 
   const streamContract = useDeployedContractInfo("YourContract");
 
@@ -38,6 +48,12 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
     // errorReadingCreators,
   } = useFetchCreators();
 
+  const { admins, isLoadingAdmins } = useFetchAdmins();
+  const uniqueAdmins = admins.filter((value, index, self) => {
+    return self.indexOf(value) === index;
+  });
+  console.log(uniqueAdmins);
+
   // Get all creator data.
   const { data: allCreatorsData } = useScaffoldContractRead({
     contractName: "YourContract",
@@ -49,16 +65,37 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
 
   const { isErc20, isEns, isOp } = useErc20();
   const [modalOpen, setModalOpen] = useState(false);
+  const [adminModalOpen, setAdminModalOpen] = useState(false);
+  const [adminAction, setAdminAction] = useState<
+    "addCreator" | "fundContract" | "rescueEth" | "rescueToken" | "addAdmin" | "removeAdmin"
+  >("addCreator");
 
   return (
     <div className="flex lg:flex-wrap md:flex-row flex-col border rounded-xl">
       <div className="container  lg:w-2/3  pt-4">
         <div className="flex flex-col ">
-          <div className="py-2 ">
+          <div className="py-2 flex justify-between">
             <h1 className=" font-bold font-typo-round md:text-xl text-lg  px-4 md:text-left text-center tracking-wide">
               {creatorPage ? "Your Stream" : "Hacker Streams"}
             </h1>
+            {isAdmin && (
+              <div>
+                <button
+                  data-tooltip-id="add creator"
+                  data-tooltip-content="add creator"
+                  className="hover:bg-primary p-2 rounded-md active:scale-90 border mx-6"
+                  onClick={() => {
+                    setAdminAction("addCreator");
+                    setAdminModalOpen(true);
+                  }}
+                >
+                  <PlusIcon className="h-[1.1rem]" />
+                </button>
+                <Tooltip place="bottom" id="add creator" />
+              </div>
+            )}
           </div>
+
           <div>
             {isLoadingCreators &&
               Array.from({ length: creatorPage ? 1 : 3 }).map((_, index) => (
@@ -82,7 +119,12 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
           </div>
           {!isLoadingCreators && creatorPage && (
             <div className=" px-4 mt-4">
-              <button onClick={() => setModalOpen(true)} className="btn rounded-md btn-primary py-3 px-6 w-full ">
+              <button
+                onClick={() => {
+                  setModalOpen(true);
+                }}
+                className="btn rounded-md btn-primary py-3 px-6 w-full "
+              >
                 Withdraw
               </button>
             </div>
@@ -92,7 +134,7 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
       <div className="lg:w-1/3 pt-4 md:border-l pb-2">
         <div className="py-2 border-b px-4">
           <h1 className=" font-bold font-typo-round md:text-xl text-lg  upercase md:text-left text-center tracking-wide">
-            Contract Balance
+            Contract Data
           </h1>
         </div>
         <div className="px-4 pt-4">
@@ -110,6 +152,22 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
               ) : (
                 <Balance className="text-3xl" address={streamContract.data?.address} />
               )}
+              {isAdmin && (
+                <div>
+                  <button
+                    data-tooltip-content="fund/sweep"
+                    data-tooltip-id="fund/sweep"
+                    className="hover:bg-base-300 p-2 rounded-md active:scale-90 \ "
+                    onClick={() => {
+                      setAdminAction("fundContract");
+                      setAdminModalOpen(true);
+                    }}
+                  >
+                    <WalletIcon className="h-[1.1rem]" />
+                  </button>
+                  <Tooltip place="bottom" id="fund/sweep" />
+                </div>
+              )}
             </div>
             <div className="flex justify-center">
               <Address address={streamContract.data?.address} />
@@ -119,8 +177,76 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
             <span className="font-bold font-sans">Owner: </span> <Address address={primaryAdmin} />
           </div>
         </div>
+
+        <div className="py-2 mt-6  px-4 flex justify-between ">
+          <h1 className=" font-bold font-typo-round md:text-xl text-lg  upercase md:text-left text-center tracking-wide">
+            Admins
+          </h1>
+          {isAdmin && (
+            <div>
+              <button
+                data-tooltip-id="add admin"
+                data-tooltip-content="add admin"
+                className="hover:bg-primary p-2 rounded-md active:scale-90 border "
+                onClick={() => {
+                  setAdminAction("addAdmin");
+                  setAdminModalOpen(true);
+                }}
+              >
+                <PlusIcon className="h-[1.1rem]" />
+              </button>
+              <Tooltip place="bottom" id="add admin" />
+            </div>
+          )}
+        </div>
+        <div className="px-4">
+          <div>
+            {uniqueAdmins.map((admin, index) => (
+              <div key={index} className="py-2 flex justify-between">
+                <Address address={admin} />
+                {isAdmin && (
+                  <div>
+                    <button
+                      data-tooltip-id="remove"
+                      data-tooltip-content="remove"
+                      className="hover:bg-primary p-1 rounded-md active:scale-90"
+                      onClick={() => {
+                        setAdminAction("removeAdmin");
+                        setAdminToRemove(admin);
+                        setAdminModalOpen(true);
+                      }}
+                    >
+                      <TrashIcon className="h-[1.3rem]" />
+                    </button>
+                    <Tooltip place="bottom" id="remove" />
+                  </div>
+                )}
+              </div>
+            ))}
+            {isLoadingAdmins &&
+              Array.from({ length: creatorPage ? 1 : 3 }).map((_, index) => (
+                <div key={index} className="animate-pulse flex justify-between py-4">
+                  <div className="rounded-md bg-slate-300 h-6 w-[10%]"></div>
+                  <div className="flex items-center space-y-6 w-[70%]">
+                    <div className="h-2 w-full bg-slate-300 rounded"></div>
+                  </div>
+                  <div className="rounded-md bg-slate-300 h-6 w-[10%]"></div>
+                </div>
+              ))}
+            {!isLoadingAdmins && (admins.length === 0 || !admins) && <div className="text-center py-6">No Admins</div>}
+          </div>
+        </div>
       </div>
       {modalOpen && <WithdrawModal isOpen={modalOpen} setIsOpen={setModalOpen} />}
+      {adminModalOpen && (
+        <AdminModal
+          isOpen={adminModalOpen}
+          setIsOpen={setAdminModalOpen}
+          action={adminAction}
+          setAction={setAdminAction}
+          adminToRemove={adminToRemove}
+        />
+      )}
     </div>
   );
 };
