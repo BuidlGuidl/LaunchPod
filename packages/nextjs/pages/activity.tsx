@@ -1,4 +1,3 @@
-import Contributions from "~~/components/homepage/Contributions";
 import PodActivity from "~~/components/pod/PodActivity";
 
 
@@ -7,9 +6,6 @@ const activity = () => {
     <div className="max-w-screen flex flex-col"> 
       <section className="w-full">
         <PodActivity />    
-      </section>
-      <section className="w-full">
-        <Contributions />
       </section>
     </div>
   )

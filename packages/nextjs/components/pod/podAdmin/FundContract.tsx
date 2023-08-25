@@ -50,9 +50,9 @@ const FundContract: React.FC = () => {
   };
 
   const triggerElement = (
-    <button className="btn rounded-md btn-primary py-3 mt-2 text-xl px-6 w-full">
+    <>
       Fund
-    </button>
+    </>
   );
 
   const modalContent = (

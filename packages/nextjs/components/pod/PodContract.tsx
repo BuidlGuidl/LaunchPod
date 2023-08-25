@@ -3,19 +3,17 @@ import { TokenBalance } from "../TokenBalance";
 import { Address, Balance } from "../scaffold-eth";
 import { useState } from "react";
 import { useErc20 } from "~~/hooks/useErc20";
-import { useCreator } from "~~/hooks/useCreator";
-import { useIsAdmin } from "~~/hooks/useIsAdmin";
 import { WithdrawModal } from "../homepage/WithdrawModal";
 import FundContract from "./podAdmin/FundContract";
+import Rescue from "./podAdmin/Rescue";
+import { ContractProps } from "~~/types/podTypes";
 
 
-type Props = {
-    home?: boolean;
-  };
+
   
 
 
-const PodContract = ({ home }: Props) => {
+const PodContract = ({ home, isAdmin, isCreator }: ContractProps) => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const streamContract = useDeployedContractInfo("YourContract");
   
@@ -24,15 +22,13 @@ const PodContract = ({ home }: Props) => {
     functionName: "primaryAdmin",
   });
 
-  
-  // const { isAdmin } = useIsAdmin();
-  // const { isCreator } = useIsCreator(address);
+
   const { isErc20, isEns, isOp } = useErc20();
 
   
 
   return (
-    <div>
+    <>
       <div className="w-auto lg:w-[400px] pb-2">
         <div className="px-4">
           <h1 className="font-bold font-typo-round lg:text-3xl text-2xl upercase md:text-left text-center tracking-wide">
@@ -53,13 +49,25 @@ const PodContract = ({ home }: Props) => {
             </div>
           </div>
           {!home && (
-            // <div className="mb-2">
-            //   <button onClick={() => setModalOpen(true)} className="btn rounded-md btn-primary py-3  px-6 w-full">
-            //     Withdraw
-            //   </button>
             
-            <div className="w-full h-auto">
-              <FundContract />
+            <div className="py-3 px-6 flex flex-row justify-between w-full">
+              {isCreator && 
+                <div className="mb-2 flex justify-center w-full items-center">
+                  <button onClick={() => setModalOpen(true)} className="flex">
+                    Withdraw
+                  </button>
+                </div>
+              }
+              {isAdmin && 
+                <div className="w-full flex flex-row justify-between">
+                  <div>
+                    <FundContract />                
+                  </div>
+                  <div>
+                    <Rescue />
+                  </div>
+                </div>
+              }
             </div>
           )
           }
@@ -71,8 +79,8 @@ const PodContract = ({ home }: Props) => {
           </div>
         </div>
       </div>
-      {/* {modalOpen && <WithdrawModal isOpen={modalOpen} setIsOpen={setModalOpen} />} */}
-    </div>
+      {modalOpen && <WithdrawModal isOpen={modalOpen} setIsOpen={setModalOpen} />}
+    </>
   )
 }
 

@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import { AddressInput } from "../../scaffold-eth";
 import { useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
-import { debounce } from "lodash";
 import Modal from "~~/components/Modal";
 
-type AddAdminProps = {};
 
-const AddAdmin: React.FC<AddAdminProps> = ({ }) => {
+const AddAdmin: React.FC = () => {
   const [adminAddress, setAdminAddress] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
@@ -24,7 +22,7 @@ const AddAdmin: React.FC<AddAdminProps> = ({ }) => {
     // handle error actions here
   };
 
-  const handleAddAdmin = debounce(async () => {
+  const handleAddAdmin = async () => {
     setLoading(true);
 
     try {
@@ -35,7 +33,7 @@ const AddAdmin: React.FC<AddAdminProps> = ({ }) => {
     } finally {
       setLoading(false);
     }
-  }, 500);
+  };
 
   const triggerElement = (
     <div

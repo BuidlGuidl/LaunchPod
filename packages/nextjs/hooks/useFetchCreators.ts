@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth";
+import { useScaffoldEventHistory, useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
 
 export const useFetchCreators = () => {
   const [creators, setCreators] = useState<string[]>([]);
@@ -17,6 +17,24 @@ export const useFetchCreators = () => {
     fromBlock: Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0,
     blockData: true,
   });
+
+  useScaffoldEventSubscriber({
+    contractName: "YourContract",
+    eventName: "CreatorAdded",
+    listener: (address: string, value) => {
+      console.log(address, value);
+      setCreators(prevCreators => [...prevCreators, address]);
+    },
+  });
+
+  useScaffoldEventSubscriber({
+    contractName: "YourContract",
+    eventName: "CreatorRemoved",
+    listener: logs => {
+      setCreators(prevCreators => prevCreators.filter(creator => !logs.includes(creator)));
+    },
+  });
+
 
   useEffect(() => {
     if (Array.isArray(creatorAdded) && Array.isArray(creatorRemoved)) {

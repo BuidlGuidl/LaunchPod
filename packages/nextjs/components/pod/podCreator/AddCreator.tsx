@@ -4,21 +4,16 @@ import { BigNumber } from "ethers";
 import { parseEther } from "ethers/lib/utils.js";
 import { debounce } from "lodash";
 import { useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
-import { useErc20 } from "~~/hooks/useErc20";
 import Modal from "~~/components/Modal";
 
-type AddCreatorProps = {
-//   onClose: () => void;
-};
 
-const AddCreator: React.FC<AddCreatorProps> = ({ }) => {
+const AddCreator: React.FC = () => {
   const [selectedAction, setSelectedAction] = useState<"add" | "batchAdd">("add");
   const [creator, setCreator] = useState<string>("");
   const [cap, setCap] = useState<string>("");
   const [batchCreators, setBatchCreators] = useState<string[]>([]);
   const [batchCaps, setBatchCaps] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-  const { isErc20 } = useErc20();
 
   const { writeAsync: addCreator } = useScaffoldContractWrite({
     contractName: "YourContract",
@@ -175,7 +170,7 @@ const AddCreator: React.FC<AddCreatorProps> = ({ }) => {
   
 
   return (
-    <Modal trigger={triggerElement} modalTitle="AddCreator" modalContent={modalContent} action={modalAction} />
+    <Modal trigger={triggerElement} modalTitle="Add Creator" modalContent={modalContent} action={modalAction} />
   );
 };
 

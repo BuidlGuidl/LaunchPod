@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth";
+import { useScaffoldEventHistory, useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
 
 export const useFetchAdmins = () => {
   const [admins, setAdmins] = useState<string[]>([]);
@@ -18,29 +18,38 @@ export const useFetchAdmins = () => {
     blockData: true,
   });
 
+  useScaffoldEventSubscriber({
+    contractName: "YourContract",
+    eventName: "AdminAdded",
+    listener: logs => {
+      setAdmins(prevAdmins => [...prevAdmins, logs]);
+    },
+  });
+
+  useScaffoldEventSubscriber({
+    contractName: "YourContract",
+    eventName: "AdminRemoved",
+    listener: logs => {
+      setAdmins(prevAdmins => prevAdmins.filter(admin => !logs.includes(admin)));
+    },
+  });
+
   useEffect(() => {
-    console.log("Admins before update:", admins);
     if (Array.isArray(adminAdded) && Array.isArray(adminRemoved)) {
       const addedAdmins = adminAdded.map((admin) => admin.args[0]);
       const removedAdmins = adminRemoved.map((admin) => admin.args[0]);
 
-      console.log("Added admins:", addedAdmins);
-      console.log("Removed admins:", removedAdmins);
+      const updatedAdmins = [...admins, ...addedAdmins].filter(
+        (admin, index, self) =>
+          !removedAdmins.includes(admin) && self.indexOf(admin) === index
+      );
 
-
-      const previousAdmins = [...admins];
-
-      const updatedList = [...admins, ...addedAdmins].filter((admin) => !removedAdmins.includes(admin));
-
-      if (JSON.stringify(updatedList) !== JSON.stringify(previousAdmins)) {
-        setAdmins(updatedList);
-      }
+      setAdmins(updatedAdmins);
     }
   }, [adminAdded, adminRemoved]);
-    
-  console.log("Admins after update:", admins);
 
+    
   return {
-    admins,
+    admins
   };
 };

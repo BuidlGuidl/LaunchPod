@@ -1,73 +1,87 @@
 import { useEffect, useState } from "react";
 import { CreatorsDisplay } from "./podCreator/CreatorsDisplay";
-import { TokenBalance } from "../TokenBalance";
-import { WithdrawModal } from "../homepage/WithdrawModal";
-import { Address, Balance } from "~~/components/scaffold-eth";
-import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 import { useScaffoldContractRead } from "~~/hooks/scaffold-eth";
-import { useErc20 } from "~~/hooks/useErc20";
 import { useFetchCreators } from "~~/hooks/useFetchCreators";
 import { useCreator } from "~~/hooks/useCreator";
 import { useSetCreator } from "~~/hooks/useSetCreator";
-import { useIsAdmin } from "~~/hooks/useIsAdmin";
-import { Spinner } from "../Spinner";
 import { CreatorData } from "~~/types/podTypes";
 import { useAccount } from "wagmi";
 import AddCreator from "./podCreator/AddCreator";
 import PodContract from "./PodContract";
 import AdminsDisplay from "./podAdmin/AdminsDisplay";
-import { useFetchAdmins } from "~~/hooks/useFetchAmins";
+import { useFetchAdmins } from "~~/hooks/useFetchAdmins";
 import AddAdmin from "./podAdmin/AddAdmin";
-
+import Contributions from "./podCreator/Contributions";
+const ADMIN_ROLE = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
 const PodActivity = () => {
-  // const { address, isConnected } = useAccount();
+  const { address, isConnected, isDisconnected } = useAccount();
+  const [creatorsData, setCreatorsData] = useState<CreatorData>({});
+  const [isCreator, setIsCreator] = useState<boolean>(false);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   
+  const { data: isAdminRole, isLoading: isAdminLoading } = useScaffoldContractRead({
+    contractName: "YourContract",
+    functionName: "hasRole",
+    args: [ADMIN_ROLE, address],
+  });
+
   const {
     creators
   } = useFetchCreators();
-
   
-  const { admins } = useFetchAdmins();
+  const {
+    admins
+  } = useFetchAdmins();
 
-  const [creatorsData, setCreatorsData] = useState<CreatorData>({});
-  const [connectedCreator, setConnectedCreator] = useState<Boolean>();
-  // const { address } = useAccount();
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const { isAdmin } = useIsAdmin();
+  // TODO: remove hooks from the useEffect callback.
+  useEffect(() => {
   
-  const streamContract = useDeployedContractInfo("YourContract");
+    if (!isConnected || !address) {
+      return;
+    }
   
-  const { data: primaryAdmin } = useScaffoldContractRead({
-    contractName: "YourContract",
-    functionName: "primaryAdmin",
-  });
+  if (address && isConnected) {
 
-  // if (isConnected) {
-  //   const { isCreator } = useCreator(address);
-  //   isCreator && setConnectedCreator(true);
-  // }
-  // console.log("Its checking connected address", connectedCreator);
+    if (isAdminRole && !isAdminLoading) {
+      setIsAdmin(isAdminRole);
+    }
 
 
+    const { isCreator } = useCreator({ address, creators });
 
-  // Get all creator data.
+    if (isCreator) {
+      setIsCreator(isCreator);
+    }
+
+  }
+
+  }, [
+    isConnected,
+    isDisconnected,
+    address,
+    isAdminRole
+  ]);
+  
+  
   const { data: allCreatorsData } = useScaffoldContractRead({
     contractName: "YourContract",
     functionName: "allCreatorsData",
     args: [creators],
   });
 
-  
-  // Use effect to handle setting the creators data. 
   useEffect(() => {
     if (Array.isArray(allCreatorsData) && creators.length > 0) {
       useSetCreator({allCreatorsData, creators, setCreatorsData});
     }
   }, [allCreatorsData, creators.length > 0]);
 
-
-  // const { isErc20, isEns, isOp } = useErc20();
+  useEffect(() => {
+    if (isDisconnected || !address) {
+      setIsAdmin(false);
+      setIsCreator(false);
+    }
+  },[address, isDisconnected])
 
   return (
     <div className="flex lg:flex-row w-full flex-col-reverse">
@@ -79,7 +93,7 @@ const PodActivity = () => {
           </h1>
         </div>
 
-        <div>
+        <div className="w-full pb-3">
 
           {
             Object.keys(creators).length === 0 && (
@@ -87,41 +101,35 @@ const PodActivity = () => {
           )}
           {
             Object.entries(creatorsData).map(([creatorAddress, creatorData]) => (
-              <CreatorsDisplay key={creatorAddress} creatorData={creatorData} creatorAddress={creatorAddress} />
+              <CreatorsDisplay key={creatorAddress} creatorData={creatorData} creatorAddress={creatorAddress} isAdmin={isAdmin} />
             ))}
         </div>
-
-        <div className="flex flex-row pr-4 justify-end">
-          <AddCreator />
+        {isAdmin &&
+          <div className="flex flex-row pr-4 justify-end">
+            <AddCreator />
+          </div>
+        }
+        <div className="w-full py-3">
+          <Contributions />
         </div>
       </div>
 
       <div className="lg:mx-auto">
-        <PodContract />
-      <div className="lg:mx-auto">
-        {/* Loop through the admins */}
-        {admins.map((adminAddress) => (
-          <AdminsDisplay key={adminAddress} adminAddress={adminAddress} />
-        ))}
-        <div className="w-full flex flex-row justify-end">
-          <AddAdmin />
+        <PodContract isCreator={isCreator} isAdmin={isAdmin} />
+        
+        <div className="lg:mx-auto">
+          {admins.map((adminAddress) => (
+            <AdminsDisplay key={adminAddress} adminAddress={adminAddress} isAdmin={isAdmin} />
+          ))}
+          {isAdmin &&
+            <div className="flex flex-row pr-4 justify-end">
+              <AddAdmin />
+            </div>
+          }
         </div>
-      </div>
-
-      </div>
-
-
-      
+      </div>      
     </div>
   );
 };
 
 export default PodActivity;
-
-{/* {(
-  <div className=" px-4 mt-4">
-    <button onClick={() => setModalOpen(true)} className="btn rounded-md btn-primary py-3 px-6 w-full ">
-      Withdraw
-    </button>
-  </div>
-)} */}

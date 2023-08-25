@@ -2,7 +2,7 @@ import { useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 import { formatEther } from "ethers/lib/utils.js";
 
 export function useCreatorUnlockedAmount(creatorAddress: string) {
-  const { data: creatorAmt, isLoading: isLoadingCreatorAmt } = useScaffoldContractRead({
+  const { data: creatorAmt, isLoading: isLoadingUnlockedAmount } = useScaffoldContractRead({
     contractName: "YourContract",
     functionName: "availableCreatorAmount",
     args: [creatorAddress],
@@ -10,5 +10,5 @@ export function useCreatorUnlockedAmount(creatorAddress: string) {
 
   const unlockedAmount = creatorAmt && formatEther(creatorAmt);
 
-  return { unlockedAmount, isLoadingCreatorAmt };
+  return { unlockedAmount, isLoadingUnlockedAmount };
 }

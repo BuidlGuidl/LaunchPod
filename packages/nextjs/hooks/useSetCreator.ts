@@ -1,7 +1,5 @@
-import { useEffect, useState } from "react";
 import { formatEther } from "ethers/lib/utils.js";
 import { CreatorData } from "~~/types/podTypes";
-import { isEqual } from "~~/utils/isEqual";
 
 type Props = {
   allCreatorsData: any;
@@ -29,14 +27,3 @@ export function useSetCreator({ allCreatorsData, creators, setCreatorsData }: Pr
 
   setCreatorsData(newData);
 }
-
-
-//     if (!isEqual(creatorData, renewedData)) {
-//       setCreatorData(renewedData);
-//     }
-//   }
-
-//   useEffect(() => {
-//     setCreatorsData(creatorData);
-//   }, [setCreatorsData, creatorData]);
-// }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Price } from "../Price";
-import { Address } from "../scaffold-eth";
+import { Price } from "../../Price";
+import { Address } from "../../scaffold-eth";
 import { formatEther } from "ethers/lib/utils.js";
 import { useAccount } from "wagmi";
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth";
@@ -18,7 +18,7 @@ const Contributions = () => {
   });
 
   useEffect(() => {
-    const events = address ? withdrawn.data?.filter(obj => obj.args[0] === address) : withdrawn.data;
+    const events = withdrawn.data;
     setWithdrawnEvents(events);
   }, [withdrawn.isLoading, address, withdrawn.data]);
 
@@ -34,13 +34,13 @@ const Contributions = () => {
   return (
     <div>
       {withdrawnEvents && withdrawnEvents?.length > 0 && (
-        <div className=" md:text-sm text-[0.7rem] border rounded-xl">
+        <div className=" md:text-sm text-md">
           <h1 className="font-bold font-typo-round md:text-xl text-lg  p-4 tracking-wide">
-            {address ? "Your Contributions" : "Contributions"}
+            {"Contributions"}
           </h1>
           {withdrawnEvents.map((event, index) => (
-            <div key={index} className="flex flex-wrap items-center justify-around  border-t py-4 px-6">
-              <div className="flex flex-col w-[30%]">
+            <div key={index} className="flex flex-wrap items-center justify-around py-4 px-6">
+              <div className="flex flex-col text-sm w-[30%]">
                 <Address address={event.args[0]} />
                 <div className="flex md:flex-row  flex-col gap-2 mt-1">
                   <div>{getDate(event.block.timestamp)}</div>
@@ -51,7 +51,7 @@ const Contributions = () => {
                   </div>
                 </div>
               </div>
-              <div className="pl-4 w-[70%] ">{event.args[2]}</div>
+              <div className="pl-4 text-sm lg:text-lg w-[50%] ">{event.args[2]}</div>
             </div>
           ))}
         </div>
