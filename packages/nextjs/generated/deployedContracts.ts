@@ -5,7 +5,7 @@ const contracts = {
       chainId: "31337",
       contracts: {
         YourContract: {
-          address: "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e",
+          address: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
           abi: [
             {
               inputs: [
@@ -152,6 +152,32 @@ const contracts = {
               inputs: [],
               name: "NoValueSent",
               type: "error",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "to",
+                  type: "address",
+                },
+              ],
+              name: "AdminAdded",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "to",
+                  type: "address",
+                },
+              ],
+              name: "AdminRemoved",
+              type: "event",
             },
             {
               anonymous: false,
