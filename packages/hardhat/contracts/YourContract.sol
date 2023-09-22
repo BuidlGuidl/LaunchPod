@@ -28,13 +28,16 @@ error NoFundsInContract();
 error ERC20TransferFailed();
 error ERC20SendingFailed(address token, address recipient);
 error ERC20FundsTransferFailed(address token, address to, uint256 amount);
+error BelowMinimumCap(uint256 provided, uint256 minimum);
 
 contract YourContract is AccessControl, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
-    // Fixed cycle and max creators
-    uint256 immutable CYCLE = 30 days;
-    uint256 immutable MAXCREATORS = 25;
+    // Fixed cycle, max creators and minimum cap
+    uint256 constant CYCLE = 30 days;
+    uint256 constant MAXCREATORS = 25;
+    uint256 constant MINIMUM_CAP = 0.5 ether;
+    uint256 constant MINIMUM_ERC20_CAP = 10 * 10**18;
 
     // ERC20 support
     bool public isERC20 = false; 
@@ -137,10 +140,10 @@ contract YourContract is AccessControl, ReentrancyGuard {
             emit FundsReceived(msg.sender, msg.value);
         } else {
             if (_amount == 0) revert NoValueSent();
-            uint256 currentBalance = IERC20(tokenAddress).balanceOf(address(this));
+            
             IERC20(tokenAddress).safeTransferFrom(msg.sender, address(this), _amount);
-            uint256 newBalance = IERC20(tokenAddress).balanceOf(address(this));
-            if (newBalance == currentBalance) revert ERC20TransferFailed();
+            
+            
             emit ERC20FundsReceived(tokenAddress, msg.sender, _amount);
         }
     } 
@@ -156,9 +159,12 @@ contract YourContract is AccessControl, ReentrancyGuard {
     ) public view returns (CreatorFlowInfo[] memory) {
         uint256 creatorLength = _creators.length;
         CreatorFlowInfo[] memory result = new CreatorFlowInfo[](creatorLength);
-        for (uint256 i = 0; i < creatorLength; ++i) {
+        for (uint256 i = 0; i < creatorLength;) {
             address creatorAddress = _creators[i];
             result[i] = flowingCreators[creatorAddress];
+            unchecked {
+                ++i;
+            }
         }
         return result;
     }
@@ -217,6 +223,9 @@ contract YourContract is AccessControl, ReentrancyGuard {
         address payable _creator,
         uint256 _cap
     ) internal view {
+        //check if minimum cap is met, eth mode and erc20 mode
+        if (_cap < MINIMUM_CAP && !isERC20) revert BelowMinimumCap(_cap, MINIMUM_CAP);
+        if (_cap < MINIMUM_ERC20_CAP && isERC20) revert BelowMinimumCap(_cap, MINIMUM_ERC20_CAP);
         if (_creator == address(0)) revert InvalidCreatorAddress();
         if (isAdmin[_creator]) revert InvalidCreatorAddress();
         if (_cap == 0) revert CapCannotBeZero();
@@ -224,7 +233,7 @@ contract YourContract is AccessControl, ReentrancyGuard {
         
     }
 
-    // Update a creator's flow cap and cycle.
+    // Update a creator's flow cap
     function updateCreatorFlowCapCycle(
         address payable _creator,
         uint256 _newCap
@@ -240,6 +249,7 @@ contract YourContract is AccessControl, ReentrancyGuard {
 
         if (CYCLE < timePassed) {
             creatorFlow.last = timestamp - (CYCLE);
+            
         }
 
         emit CreatorUpdated(_creator, _newCap);
@@ -298,10 +308,7 @@ contract YourContract is AccessControl, ReentrancyGuard {
 
             IERC20(tokenAddress).safeTransfer(msg.sender, _amount);
 
-            uint256 newBalance = IERC20(tokenAddress).balanceOf(address(this));
-            if (newBalance != contractFunds - _amount) {
-                revert ERC20FundsTransferFailed(tokenAddress, msg.sender, _amount);
-            }
+
         }
 
         creatorFlow.last =
