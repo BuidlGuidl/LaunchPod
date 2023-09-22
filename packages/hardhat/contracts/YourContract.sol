@@ -17,7 +17,6 @@ error NoActiveFlowForCreator(address creator);
 error InsufficientInFlow(uint256 requested, uint256 available);
 error EtherSendingFailed(address recipient);
 error LengthsMismatch();
-error CapCannotBeZero();
 error InvalidCreatorAddress();
 error CreatorAlreadyExists();
 error ContractIsStopped();
@@ -228,7 +227,6 @@ contract YourContract is AccessControl, ReentrancyGuard {
         if (_cap < MINIMUM_ERC20_CAP && isERC20) revert BelowMinimumCap(_cap, MINIMUM_ERC20_CAP);
         if (_creator == address(0)) revert InvalidCreatorAddress();
         if (isAdmin[_creator]) revert InvalidCreatorAddress();
-        if (_cap == 0) revert CapCannotBeZero();
         if (flowingCreators[_creator].cap > 0) revert CreatorAlreadyExists();
         
     }
@@ -238,7 +236,9 @@ contract YourContract is AccessControl, ReentrancyGuard {
         address payable _creator,
         uint256 _newCap
     ) public onlyAdmin isFlowActive(_creator) {
-        if (_newCap == 0) revert CapCannotBeZero();
+        if (_newCap< MINIMUM_CAP && !isERC20) revert BelowMinimumCap(_newCap, MINIMUM_CAP);
+        if (_newCap< MINIMUM_ERC20_CAP && isERC20) revert BelowMinimumCap(_newCap, MINIMUM_ERC20_CAP);
+
 
         CreatorFlowInfo storage creatorFlow = flowingCreators[_creator];
 
@@ -249,7 +249,7 @@ contract YourContract is AccessControl, ReentrancyGuard {
 
         if (CYCLE < timePassed) {
             creatorFlow.last = timestamp - (CYCLE);
-            
+
         }
 
         emit CreatorUpdated(_creator, _newCap);
