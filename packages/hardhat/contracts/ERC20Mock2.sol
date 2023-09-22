@@ -8,8 +8,8 @@ contract ERC20Mock2 is ERC20 {
 
   constructor()
    ERC20("MOCK2", "MK2") {
-    _mint(msg.sender, 100);
-    faucetAmount = 100;
+    _mint(msg.sender, 200 * 10**18);
+    faucetAmount = 100 * 10**18;
   }
 
   function mint(address to, uint256 amount) public {
@@ -21,7 +21,7 @@ contract ERC20Mock2 is ERC20 {
   }
 
   function faucet(address to) public {
-    require(faucetAmount > 0, "Faucet amount must be greater than 0");
+
     _mint(to, faucetAmount);
   }
 }
