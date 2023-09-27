@@ -15,7 +15,7 @@ error NoValueSent();
 error InsufficientFundsInContract(uint256 requested, uint256 available);
 error NoActiveFlowForCreator(address creator);
 error InsufficientInFlow(uint256 requested, uint256 available);
-error EtherSendingFailed(address recipient);
+error EtherSendingFailed();
 error LengthsMismatch();
 error InvalidCreatorAddress();
 error CreatorAlreadyExists();
@@ -265,7 +265,7 @@ contract YourContract is AccessControl, ReentrancyGuard {
       }
 
       (bool sent, ) = msg.sender.call{value: _amount}("");
-      if (!sent) revert EtherSendingFailed(msg.sender);
+      if (!sent) revert EtherSendingFailed();
     } else {
       uint256 contractFunds = IERC20(tokenAddress).balanceOf(address(this));
       if (contractFunds < _amount) {
@@ -286,11 +286,10 @@ contract YourContract is AccessControl, ReentrancyGuard {
 
     // Drain Ether
     if (_token == address(0)) {
-      address cachedPrimaryAdmin = primaryAdmin;
       remainingBalance = address(this).balance;
       if (remainingBalance > 0) {
-        (bool sent, ) = cachedPrimaryAdmin .call{value: remainingBalance}("");
-        if (!sent) revert EtherSendingFailed(cachedPrimaryAdmin);
+        (bool sent, ) = primaryAdmin.call{value: remainingBalance}("");
+        if (!sent) revert EtherSendingFailed();
         emit AgreementDrained(remainingBalance);
       }
       return;
