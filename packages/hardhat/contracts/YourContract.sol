@@ -35,17 +35,17 @@ contract YourContract is AccessControl, ReentrancyGuard {
   // Fixed cycle, max creators and minimum cap
   uint256 constant CYCLE = 30 days;
   uint256 constant MAXCREATORS = 25;
-  uint256 constant MINIMUM_CAP = 0.3 ether;
+  uint256 constant MINIMUM_CAP = 0.5 ether;
   uint256 constant MINIMUM_ERC20_CAP = 10 * 10 ** 18;
 
   // ERC20 support
-  bool public isERC20 = false;
+  bool public isERC20;
 
   // Token address for ERC20 support
   address public tokenAddress;
 
   // Emergency mode variable
-  bool public stopped = false;
+  bool public stopped;
 
   // Primary admin for remaining balances
   address public primaryAdmin;
@@ -286,10 +286,11 @@ contract YourContract is AccessControl, ReentrancyGuard {
 
     // Drain Ether
     if (_token == address(0)) {
+      address cachedPrimaryAdmin = primaryAdmin;
       remainingBalance = address(this).balance;
       if (remainingBalance > 0) {
-        (bool sent, ) = primaryAdmin.call{value: remainingBalance}("");
-        if (!sent) revert EtherSendingFailed(primaryAdmin);
+        (bool sent, ) = cachedPrimaryAdmin .call{value: remainingBalance}("");
+        if (!sent) revert EtherSendingFailed(cachedPrimaryAdmin);
         emit AgreementDrained(remainingBalance);
       }
       return;
@@ -299,8 +300,6 @@ contract YourContract is AccessControl, ReentrancyGuard {
     remainingBalance = IERC20(_token).balanceOf(address(this));
     if (remainingBalance > 0) {
       IERC20(_token).safeTransfer(primaryAdmin, remainingBalance);
-      uint256 newBalance = IERC20(_token).balanceOf(address(this));
-      if (newBalance != 0) revert ERC20FundsTransferFailed(_token, primaryAdmin, remainingBalance);
       emit AgreementDrained(remainingBalance);
     }
   }
