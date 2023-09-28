@@ -216,12 +216,12 @@ it("Ether mode life-cycle", async () => {
         const user_11_availableAmount = await contract.availableCreatorAmount(user_11.address);
         console.log("      ⚖️  User 11 available amount: ", ethers.utils.formatEther(user_11_availableAmount), " eth");
         console.log("      🔥 Updating cap of user 11 to 1 ether");
-        await expect(contract.connect(admin).updateCreatorFlowCapCycle(user_11.address, ethers.utils.parseEther("1")))
-        const user_11_availableAmount_2 = await contract.availableCreatorAmount(user_11.address);
-        console.log("      ⚖️  User 11 available amount: ", ethers.utils.formatEther(user_11_availableAmount_2), );
-        console.log("      ⏰ Simulating the passage of time of 15 days");
-        await ethers.provider.send("evm_increaseTime", [15 * 24 * 60 * 60]);
-        await ethers.provider.send("evm_mine", []);
+        await contract.connect(admin).updateCreatorFlowCapCycle(user_11.address, ethers.utils.parseEther("1"));
+        //const user_11_availableAmount_2 = await contract.availableCreatorAmount(user_11.address);
+        //console.log("      ⚖️  User 11 available amount: ", ethers.utils.formatEther(user_11_availableAmount_2));
+        //console.log("      ⏰ Simulating the passage of time of 15 days");
+        //await ethers.provider.send("evm_increaseTime", [15 * 24 * 60 * 60]);
+        //await ethers.provider.send("evm_mine", []);
         const user_11_availableAmount_3 = await contract.availableCreatorAmount(user_11.address);
         console.log("      ⚖️  User 11 available amount: ", ethers.utils.formatEther(user_11_availableAmount_3), " eth");
         await expect(contract.connect(user_11).flowWithdraw(user_11_availableAmount_3, "testing"))

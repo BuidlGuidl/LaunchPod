@@ -24,7 +24,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const ERC20Mock1 = await get("ERC20Mock1");
   const ERC20Mock1Address = ERC20Mock1.address;
   const arrayofcreators = ["0x61097BA76cD906d2ba4FD106E757f7Eb455fc295","0x498cBe94d0f1730D0D745752340044AB03086011"];
-  const caps = [10,10];
+  const caps = [10* 10**18,10* 10**18];
   const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
   await deploy("YourContract", {
