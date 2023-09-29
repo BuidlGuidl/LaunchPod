@@ -1,11 +1,24 @@
-import { useFetchCreators } from "./useFetchCreators";
+import { useScaffoldContractRead } from "./scaffold-eth";
 import { useAccount } from "wagmi";
 
 export function useIsCreator() {
   const { address, isConnected } = useAccount();
-  const { creators, isLoadingCreators } = useFetchCreators();
 
-  if (!isConnected || isLoadingCreators) {
+  const { data: creatorIndex } = useScaffoldContractRead({
+    contractName: "YourContract",
+    functionName: "creatorIndex",
+    args: [address],
+  });
+
+  const { data: creator } = useScaffoldContractRead({
+    contractName: "YourContract",
+    functionName: "activeCreators",
+    args: [creatorIndex],
+  });
+
+  console.log(creatorIndex?.toString());
+
+  if (!isConnected) {
     return {
       isCreator: false,
       isLoading: true,
@@ -13,7 +26,7 @@ export function useIsCreator() {
   }
 
   return {
-    isCreator: !address || !creators || creators.find(creator => address === creator) !== undefined,
+    isCreator: !address || creator == address,
     isLoading: false,
   };
 }

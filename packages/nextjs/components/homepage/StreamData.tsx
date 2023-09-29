@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { AdminModal } from "../AdminModal";
-import { HackersInfoDisplay } from "../HackersInfoDisplay";
 import { TokenBalance } from "../TokenBalance";
+import { AdminModal } from "./AdminModal";
+import { HackersInfoDisplay } from "./HackersInfoDisplay";
 import { WithdrawModal } from "./WithdrawModal";
 import { Tooltip } from "react-tooltip";
 import { useAccount } from "wagmi";
@@ -52,7 +52,6 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
   const uniqueAdmins = admins.filter((value, index, self) => {
     return self.indexOf(value) === index;
   });
-  console.log(uniqueAdmins);
 
   // Get all creator data.
   const { data: allCreatorsData } = useScaffoldContractRead({
@@ -70,12 +69,18 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
     "addCreator" | "fundContract" | "rescueEth" | "rescueToken" | "addAdmin" | "removeAdmin"
   >("addCreator");
 
+  console.log(allCreatorsData);
+
   return (
     <div className="flex lg:flex-wrap md:flex-row flex-col border rounded-xl">
       <div className="container  lg:w-2/3  pt-4">
         <div className="flex flex-col ">
           <div className="py-2 flex justify-between">
-            <h1 className=" font-bold font-typo-round md:text-xl text-lg  px-4 md:text-left text-center tracking-wide">
+            <h1
+              className={`font-bold font-typo-round md:text-xl text-lg  px-4 md:text-left text-center tracking-wide ${
+                !isAdmin ? "w-full" : ""
+              }`}
+            >
               {creatorPage ? "Your Stream" : "Hacker Streams"}
             </h1>
             {isAdmin && (
@@ -133,7 +138,11 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
       </div>
       <div className="lg:w-1/3 pt-4 md:border-l pb-2">
         <div className="py-2 border-b px-4">
-          <h1 className=" font-bold font-typo-round md:text-xl text-lg  upercase md:text-left text-center tracking-wide">
+          <h1
+            className={`font-bold font-typo-round md:text-xl text-lg  upercase  tracking-wide ${
+              !isAdmin ? "text-center md:text-left" : ""
+            }`}
+          >
             Contract Data
           </h1>
         </div>
