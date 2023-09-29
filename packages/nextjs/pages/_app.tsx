@@ -42,7 +42,7 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
       >
         <div className="flex gotham-font font-semibold flex-col min-h-screen overflow-hidden">
           <Header />
-          <main className="mt-20 relative flex flex-col flex-initial w-full items-center mx-auto">
+          <main className="mt-10 relative flex flex-col flex-initial w-full items-center mx-auto">
             <Component {...pageProps} />
           </main>
           <div className="mt-auto">

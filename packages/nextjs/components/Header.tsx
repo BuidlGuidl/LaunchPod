@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { LabFlaskIcon } from "./LabFlaskIcon";
-import { SettingsIcon } from "./SettingsIcon";
 import { Bars3Icon, BugAntIcon } from "@heroicons/react/24/outline";
 import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { useOutsideClick } from "~~/hooks/scaffold-eth";
@@ -56,12 +55,6 @@ export const Header = () => {
       {isAdmin && (
         <>
           <li>
-            <NavLink href="/admin">
-              <SettingsIcon />
-              Admin
-            </NavLink>
-          </li>
-          <li>
             <NavLink href="/debug">
               <BugAntIcon className="h-4 w-4" />
               Debug Contracts
@@ -73,8 +66,8 @@ export const Header = () => {
   );
 
   return (
-    <div className="sticky top-[2rem] mx-auto place-self-center navbar bg-base-100 min-h-0 flex-shrink-0 justify-between z-20 shadow-sm drop-shadow-[0_25px_25px_hsl(var(--s))] w-3/4 rounded-full">
-      <div className="navbar-start w-[75%] lg:w-1/2">
+    <div className="sticky mx-auto place-self-center navbar bg-base-100 min-h-0 flex-shrink-0 justify-between z-20 shadow-sm drop-shadow-[0_1px_10px_hsl(var(--s))]  px-6">
+      <div className=" navbar-start w-[75%] lg:w-1/2">
         <div className="lg:hidden dropdown" ref={burgerMenuRef}>
           <button
             className={`ml-1 btn btn-ghost ${isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"}`}

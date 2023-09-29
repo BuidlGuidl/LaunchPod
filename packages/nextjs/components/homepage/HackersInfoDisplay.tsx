@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
+import { Price } from "../Price";
+import { Address } from "../scaffold-eth";
 import { AdminModal } from "./AdminModal";
-import { Price } from "./Price";
-import { CreatorInfo } from "./homepage/StreamData";
-import { Address } from "./scaffold-eth";
+import { CreatorInfo } from "./StreamData";
 import { Tooltip } from "react-tooltip";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
