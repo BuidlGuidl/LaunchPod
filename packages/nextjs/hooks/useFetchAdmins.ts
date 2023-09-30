@@ -6,6 +6,7 @@ export const useFetchAdmins = () => {
   const [admins, setAdmins] = useState<string[]>([]);
 
   const [isValidatingAdmins, setIsValidatingAdmins] = useState(false);
+  const validAdmins: string[] = [];
 
   const { data: streamContract } = useDeployedContractInfo("YourContract");
 
@@ -74,18 +75,22 @@ export const useFetchAdmins = () => {
       if (addedAdmins) {
         for (let i = addedAdmins.length - 1; i >= 0; i--) {
           const isValid = await validateAdmin(addedAdmins[i]);
-          if (!isValid) {
-            addedAdmins.splice(i, 1);
+          if (isValid) {
+            validAdmins.push(addedAdmins[i]);
           }
         }
-
-        setAdmins(addedAdmins);
       }
     };
 
     validateAdmins();
     setIsValidatingAdmins(false);
   }, [addedAdmins, streamContract]);
+
+  useEffect(() => {
+    setAdmins(validAdmins);
+  }, [isValidatingAdmins]);
+
+  console.log(admins);
 
   return {
     admins,
