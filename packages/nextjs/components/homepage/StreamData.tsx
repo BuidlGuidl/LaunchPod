@@ -69,8 +69,6 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
     "addCreator" | "fundContract" | "rescueEth" | "rescueToken" | "addAdmin" | "removeAdmin"
   >("addCreator");
 
-  console.log(allCreatorsData);
-
   return (
     <div className="flex lg:flex-wrap md:flex-row flex-col border rounded-xl">
       <div className="container  lg:w-2/3  pt-4">
@@ -118,6 +116,7 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
               <div className="text-center py-6">No Hacker Streams</div>
             )}
             {!isLoadingCreators &&
+              creators.length > 0 &&
               Object.entries(creatorsData).map(([creatorAddress, creatorData]) => (
                 <HackersInfoDisplay key={creatorAddress} creatorData={creatorData} creatorAddress={creatorAddress} />
               ))}

@@ -3,7 +3,7 @@ import { Price } from "../Price";
 import { Address } from "../scaffold-eth";
 import { formatEther } from "ethers/lib/utils.js";
 import { useAccount } from "wagmi";
-import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth";
+import { useScaffoldEventHistory, useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
 
 const Contributions = ({ creatorPage }: { creatorPage: boolean }) => {
   const [withdrawnEvents, setWithdrawnEvents] = useState<any[] | undefined>([]);
@@ -21,6 +21,24 @@ const Contributions = ({ creatorPage }: { creatorPage: boolean }) => {
     const events = creatorPage ? withdrawn.data?.filter(obj => obj.args[0] === address) : withdrawn.data;
     setWithdrawnEvents(events);
   }, [withdrawn.isLoading, address, creatorPage, withdrawn.data]);
+
+  useScaffoldEventSubscriber({
+    contractName: "YourContract",
+    eventName: "Withdrawn",
+    listener: (creator, amount, reason) => {
+      // const currentCreators = creators;
+      // currentCreators.push(creator);
+      // setCreators(currentCreators);
+      const newEvent = { args: [creator, amount, reason], block: { timestamp: Math.floor(Date.now() / 1000) } };
+      const currentEvents = withdrawnEvents;
+      currentEvents?.push(newEvent);
+      setWithdrawnEvents(currentEvents);
+      console.log(withdrawnEvents);
+      // setWithdrawnEvents(prev => [...prev, newEvent]);
+    },
+  });
+
+  // console.log(withdrawnEvents);
 
   const getDate = (timestamp: number) => {
     const date = new Date(timestamp * 1000);
