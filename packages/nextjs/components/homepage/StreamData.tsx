@@ -74,6 +74,10 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
     "addCreator" | "fundContract" | "rescueEth" | "rescueToken" | "addAdmin" | "removeAdmin"
   >("addCreator");
 
+  useEffect(() => {
+    setAdminModalOpen(false);
+  }, [creatorsData, uniqueAdmins]);
+
   return (
     <div className="flex lg:flex-wrap md:flex-row flex-col border rounded-xl">
       <div className="container  lg:w-2/3  pt-4">

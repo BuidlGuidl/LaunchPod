@@ -34,13 +34,6 @@ export const useFetchAdmins = () => {
     },
   });
 
-  useEffect(() => {
-    if (adminAdded) {
-      const addedAdmins = adminAdded.map(admin => admin.args[0]);
-      setAdmins(prev => [...prev, ...addedAdmins]);
-    }
-  }, [adminAdded]);
-
   useScaffoldEventSubscriber({
     contractName: "YourContract",
     eventName: "AdminRemoved",
@@ -87,10 +80,9 @@ export const useFetchAdmins = () => {
   }, [addedAdmins, streamContract]);
 
   useEffect(() => {
+    console.log(validAdmins);
     setAdmins(validAdmins);
   }, [isValidatingAdmins]);
-
-  console.log(admins);
 
   return {
     admins,
