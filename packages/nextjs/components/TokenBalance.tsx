@@ -11,7 +11,7 @@ type TTokenBalanceProps = {
  * Display (ETH & USD) balance of an ETH address.
  */
 export const TokenBalance = ({ address, className = "", isEns, isOp }: TTokenBalanceProps) => {
-  const { balance, price, onToggleBalance, isTokenBalance } = useTokenBalance({ address, isEns, isOp });
+  const { balance, price, isTokenBalance } = useTokenBalance({ address, isEns, isOp });
 
   if (!address || balance === null) {
     return (
