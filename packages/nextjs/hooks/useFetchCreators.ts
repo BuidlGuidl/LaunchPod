@@ -5,7 +5,6 @@ import { useDeployedContractInfo, useScaffoldEventHistory, useScaffoldEventSubsc
 export const useFetchCreators = () => {
   const [creators, setCreators] = useState<string[]>([]);
   const [isValidatingCreators, setIsValidatingCreators] = useState(false);
-  const validCreators: string[] = [];
 
   // Read the creatorAdded events to get added creators.
   const {
@@ -40,7 +39,8 @@ export const useFetchCreators = () => {
   const { data: streamContract } = useDeployedContractInfo("YourContract");
 
   useEffect(() => {
-    setIsValidatingCreators(true);
+    console.log("useEffect triggered"); // Add this line
+
     const validateCreator = async (creator: string) => {
       let fetchedCreator;
       if (streamContract) {
@@ -68,8 +68,8 @@ export const useFetchCreators = () => {
         return false;
       }
     };
-
     const validateCreators = async () => {
+      const validCreators: string[] = [];
       if (addedCreators) {
         for (let i = addedCreators.length - 1; i >= 0; i--) {
           const isValid = await validateCreator(addedCreators[i]);
@@ -78,15 +78,13 @@ export const useFetchCreators = () => {
           }
         }
       }
+      setCreators(validCreators);
     };
 
+    setIsValidatingCreators(true);
     validateCreators();
     setIsValidatingCreators(false);
-  }, [addedCreators, streamContract]);
-
-  useEffect(() => {
-    setCreators(validCreators);
-  }, [isValidatingCreators]);
+  }, [isLoadingCreators, streamContract]);
 
   return {
     creators,

@@ -6,7 +6,6 @@ export const useFetchAdmins = () => {
   const [admins, setAdmins] = useState<string[]>([]);
 
   const [isValidatingAdmins, setIsValidatingAdmins] = useState(false);
-  const validAdmins: string[] = [];
 
   const { data: streamContract } = useDeployedContractInfo("YourContract");
 
@@ -43,7 +42,7 @@ export const useFetchAdmins = () => {
   });
 
   useEffect(() => {
-    setIsValidatingAdmins(true);
+    console.log("useEffect triggered"); // Add this line
     const validateAdmin = async (admin: string) => {
       if (streamContract) {
         try {
@@ -54,7 +53,6 @@ export const useFetchAdmins = () => {
             functionName: "hasRole",
             args: [ADMIN_ROLE, admin],
           });
-
           return isAdmin;
         } catch (error) {
           return false;
@@ -65,6 +63,7 @@ export const useFetchAdmins = () => {
     };
 
     const validateAdmins = async () => {
+      const validAdmins: string[] = [];
       if (addedAdmins) {
         for (let i = addedAdmins.length - 1; i >= 0; i--) {
           const isValid = await validateAdmin(addedAdmins[i]);
@@ -73,16 +72,13 @@ export const useFetchAdmins = () => {
           }
         }
       }
+      setAdmins(validAdmins);
     };
 
+    setIsValidatingAdmins(true);
     validateAdmins();
     setIsValidatingAdmins(false);
-  }, [addedAdmins, streamContract]);
-
-  useEffect(() => {
-    console.log(validAdmins);
-    setAdmins(validAdmins);
-  }, [isValidatingAdmins]);
+  }, [streamContract, isLoadingAdmins]);
 
   return {
     admins,

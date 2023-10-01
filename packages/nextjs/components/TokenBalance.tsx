@@ -27,7 +27,7 @@ export const TokenBalance = ({ address, className = "", isEns, isOp }: TTokenBal
   return (
     <button
       className={`btn btn-sm btn-ghost flex flex-col font-normal items-center hover:bg-transparent ${className}`}
-      onClick={onToggleBalance}
+      // onClick={onToggleBalance}
     >
       <div className="w-full flex items-center justify-center">
         {isTokenBalance ? (
