@@ -50,9 +50,6 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
   } = useFetchCreators();
 
   const { admins, isLoadingAdmins } = useFetchAdmins();
-  const uniqueAdmins = admins.filter((value, index, self) => {
-    return self.indexOf(value) === index;
-  });
 
 
   // Get all creator data.
