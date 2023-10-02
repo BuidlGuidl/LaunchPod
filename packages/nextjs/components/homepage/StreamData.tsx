@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TokenBalance } from "../TokenBalance";
 import { AdminModal } from "./AdminModal";
 import { HackersInfoDisplay } from "./HackersInfoDisplay";
@@ -29,6 +29,7 @@ export type CreatorData = {
 const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
   const [creatorsData, setCreatorsData] = useState<CreatorData>({});
   const [adminToRemove, setAdminToRemove] = useState("");
+  const [uniqueAdmins, setUniqueAdmins] = useState<string[]>([]);
   const { address } = useAccount();
 
   const { isCreator } = useIsCreator();
@@ -49,9 +50,7 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
   } = useFetchCreators();
 
   const { admins, isLoadingAdmins } = useFetchAdmins();
-  const uniqueAdmins = admins.filter((value, index, self) => {
-    return self.indexOf(value) === index;
-  });
+
 
   // Get all creator data.
   const { data: allCreatorsData } = useScaffoldContractRead({
@@ -68,6 +67,17 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
   const [adminAction, setAdminAction] = useState<
     "addCreator" | "fundContract" | "rescueEth" | "rescueToken" | "addAdmin" | "removeAdmin"
   >("addCreator");
+
+  useEffect(() => {
+    const filteredAdmins = admins.filter((value, index, self) => {
+      return self.indexOf(value) === index;
+    });
+    setUniqueAdmins(filteredAdmins);
+  }, [admins]);
+
+  useEffect(() => {
+    setAdminModalOpen(false);
+  }, [creatorsData, uniqueAdmins]);
 
   console.log(allCreatorsData);
 

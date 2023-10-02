@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
-import { useScaffoldEventHistory } from "./scaffold-eth";
+import { useDeployedContractInfo, useScaffoldEventHistory, useScaffoldEventSubscriber } from "./scaffold-eth";
+import { readContract } from "@wagmi/core";
 
 export const useFetchAdmins = () => {
   const [admins, setAdmins] = useState<string[]>([]);
 
-  // Read the adminAdded events to get added admins.
+  const [isValidatingAdmins, setIsValidatingAdmins] = useState(false);
+
+  const { data: streamContract } = useDeployedContractInfo("YourContract");
+
   const {
     data: adminAdded,
     isLoading: isLoadingAdmins,
@@ -16,35 +20,69 @@ export const useFetchAdmins = () => {
     blockData: true,
   });
 
-  useEffect(() => {
-    if (adminAdded) {
-      const addedAdmins = adminAdded.map(admin => admin.args[0]);
-      setAdmins(prev => [...prev, ...addedAdmins]);
-    }
-  }, [adminAdded]);
+  const addedAdmins = adminAdded?.map(admin => admin.args[0]);
 
-  const {
-    data: adminRemoved,
-    isLoading: isLoadingRemovedAdmins,
-    error: errorReadingRemovedAdmins,
-  } = useScaffoldEventHistory({
+  useScaffoldEventSubscriber({
+    contractName: "YourContract",
+    eventName: "AdminAdded",
+    listener: admin => {
+      // const currentCreators = creators;
+      // currentCreators.push(creator);
+      // setCreators(currentCreators);
+      setAdmins(prev => [...prev, admin]);
+    },
+  });
+
+  useScaffoldEventSubscriber({
     contractName: "YourContract",
     eventName: "AdminRemoved",
-    fromBlock: Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0,
-    blockData: true,
+    listener: admin => {
+      setAdmins(prev => prev.filter(existingAdmin => admin != existingAdmin));
+    },
   });
 
   useEffect(() => {
-    if (adminRemoved && adminRemoved.length !== 0) {
-      console.log(adminRemoved);
-      const removedAdmins = adminRemoved.map(admin => admin.args[0]);
-      setAdmins(prev => prev.filter(admin => !removedAdmins.includes(admin)));
-    }
-  }, [adminRemoved, admins]);
+    console.log("useEffect triggered"); // Add this line
+    const validateAdmin = async (admin: string) => {
+      if (streamContract) {
+        try {
+          const ADMIN_ROLE = "0x0000000000000000000000000000000000000000000000000000000000000000";
+          const isAdmin = await readContract({
+            address: streamContract.address,
+            abi: streamContract.abi,
+            functionName: "hasRole",
+            args: [ADMIN_ROLE, admin],
+          });
+          return isAdmin;
+        } catch (error) {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    };
+
+    const validateAdmins = async () => {
+      const validAdmins: string[] = [];
+      if (addedAdmins) {
+        for (let i = addedAdmins.length - 1; i >= 0; i--) {
+          const isValid = await validateAdmin(addedAdmins[i]);
+          if (isValid) {
+            validAdmins.push(addedAdmins[i]);
+          }
+        }
+      }
+      setAdmins(validAdmins);
+    };
+
+    setIsValidatingAdmins(true);
+    validateAdmins();
+    setIsValidatingAdmins(false);
+  }, [streamContract, isLoadingAdmins]);
 
   return {
     admins,
-    isLoadingAdmins: isLoadingAdmins || isLoadingRemovedAdmins,
-    errorReadingCreators: errorReadingAdmins || errorReadingRemovedAdmins,
+    isLoadingAdmins: isLoadingAdmins || isValidatingAdmins,
+    errorReadingCreators: errorReadingAdmins,
   };
 };
