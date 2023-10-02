@@ -283,6 +283,7 @@ export const AdminModal = ({
   };
 
   console.log(loading, successMessage, errorMessage);
+  console.log(adminAddr);
 
   return (
     <div className="border-2 rounded-xl overflow-hidden border-black w-fit text-xs bg-base-200 h-full">
