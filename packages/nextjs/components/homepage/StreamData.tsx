@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { TokenBalance } from "../TokenBalance";
 import { AdminModal } from "./AdminModal";
 import { HackersInfoDisplay } from "./HackersInfoDisplay";
@@ -30,7 +30,6 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
   const [creatorsData, setCreatorsData] = useState<CreatorData>({});
   const [adminToRemove, setAdminToRemove] = useState("");
   const { address } = useAccount();
-  const [uniqueAdmins, setUniqueAdmins] = useState<string[]>([]);
 
   const { isCreator } = useIsCreator();
 
@@ -50,13 +49,9 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
   } = useFetchCreators();
 
   const { admins, isLoadingAdmins } = useFetchAdmins();
-
-  useEffect(() => {
-    const filteredAdmins = admins.filter((value, index, self) => {
-      return self.indexOf(value) === index;
-    });
-    setUniqueAdmins(filteredAdmins);
-  }, [admins]);
+  const uniqueAdmins = admins.filter((value, index, self) => {
+    return self.indexOf(value) === index;
+  });
 
   // Get all creator data.
   const { data: allCreatorsData } = useScaffoldContractRead({
@@ -74,9 +69,7 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
     "addCreator" | "fundContract" | "rescueEth" | "rescueToken" | "addAdmin" | "removeAdmin"
   >("addCreator");
 
-  useEffect(() => {
-    setAdminModalOpen(false);
-  }, [creatorsData, uniqueAdmins]);
+  console.log(allCreatorsData);
 
   return (
     <div className="flex lg:flex-wrap md:flex-row flex-col border rounded-xl">
@@ -125,7 +118,6 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
               <div className="text-center py-6">No Hacker Streams</div>
             )}
             {!isLoadingCreators &&
-              creators.length > 0 &&
               Object.entries(creatorsData).map(([creatorAddress, creatorData]) => (
                 <HackersInfoDisplay key={creatorAddress} creatorData={creatorData} creatorAddress={creatorAddress} />
               ))}
