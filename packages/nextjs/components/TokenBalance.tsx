@@ -1,3 +1,4 @@
+import { useErc20 } from "~~/hooks/useErc20";
 import { useTokenBalance } from "~~/hooks/useTokenBalance";
 
 type TTokenBalanceProps = {
@@ -12,6 +13,7 @@ type TTokenBalanceProps = {
  */
 export const TokenBalance = ({ address, className = "", isEns, isOp }: TTokenBalanceProps) => {
   const { balance, price, isTokenBalance } = useTokenBalance({ address, isEns, isOp });
+  const { tokenSymbol } = useErc20();
 
   if (!address || balance === null) {
     return (
@@ -32,9 +34,10 @@ export const TokenBalance = ({ address, className = "", isEns, isOp }: TTokenBal
       <div className="w-full flex items-center justify-center">
         {isTokenBalance ? (
           <>
-            <span>{balance?.toFixed(4)}</span>
+            <span>{balance?.toFixed(2)}</span>
             {isEns && <span className="text-xs font-bold ml-1">ENS</span>}
             {isOp && <span className="text-xs font-bold ml-1">OP</span>}
+            {!isEns && !isOp && <span className="text-xs font-bold ml-1">{tokenSymbol}</span>}
           </>
         ) : (
           <>
