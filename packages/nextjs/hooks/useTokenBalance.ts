@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useScaffoldEventSubscriber } from "./scaffold-eth";
 import { useErc20 } from "./useErc20";
 import { useTokenPrice } from "./useTokenPrice";
 import { readContract } from "@wagmi/core";
@@ -16,8 +17,17 @@ export const useTokenBalance = ({ address, isEns, isOp }: TTokenBalanceHookProps
   const [balance, setBalance] = useState<number | null>(null);
   const { ensPrice, opPrice } = useTokenPrice();
   const price = isEns ? ensPrice : isOp ? opPrice : 0;
+  const [updateBalance, setUpdataBalance] = useState(false);
 
   const { tokenAddress } = useErc20();
+
+  useScaffoldEventSubscriber({
+    contractName: "YourContract",
+    eventName: "ERC20FundsReceived",
+    listener: () => {
+      setUpdataBalance(true);
+    },
+  });
 
   useEffect(() => {
     (async () => {
@@ -30,8 +40,9 @@ export const useTokenBalance = ({ address, isEns, isOp }: TTokenBalanceHookProps
         });
         setBalance(parseFloat(formatEther(data)));
       }
+      if (updateBalance) setUpdataBalance(false);
     })();
-  }, [tokenAddress, address]);
+  }, [tokenAddress, address, updateBalance]);
 
   const onToggleBalance = useCallback(() => {
     if (price > 0) {

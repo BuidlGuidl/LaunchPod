@@ -6,6 +6,7 @@ import { erc20ABI, useAccount, useNetwork } from "wagmi";
 import { getParsedEthersError } from "~~/components/scaffold-eth";
 import { useTransactor } from "~~/hooks/scaffold-eth";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
+import { useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
 import { getTargetNetwork, notification } from "~~/utils/scaffold-eth";
 
 export const useApproveForFundng = ({
@@ -26,6 +27,16 @@ export const useApproveForFundng = ({
 
   const [allowance, setAllowance] = useState<number>();
   const [balance, setBalance] = useState<number>();
+
+  const [updateAllowance, setUpdateAllowance] = useState(false);
+
+  useScaffoldEventSubscriber({
+    contractName: "YourContract",
+    eventName: "ERC20FundsReceived",
+    listener: () => {
+      setUpdateAllowance(true);
+    },
+  });
 
   const sendContractWriteTx = async () => {
     let config;
@@ -74,8 +85,9 @@ export const useApproveForFundng = ({
         });
         setAllowance(parseInt(formatEther(data)));
       }
+      if (updateAllowance) setUpdateAllowance(false);
     })();
-  }, [tokenAddress, address, deployedContract, isMining]);
+  }, [tokenAddress, address, deployedContract, isMining, updateAllowance]);
 
   useEffect(() => {
     (async () => {

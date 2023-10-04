@@ -83,8 +83,10 @@ export const AdminModal = ({
     functionName: "addCreatorFlow",
     args: [
       batchCreators ? batchCreators[0] : "",
-      batchCaps && batchCaps !== undefined && batchCaps[0] !== ""
+      batchCaps && batchCaps !== undefined && batchCaps[0] !== "" && batchCaps.length == 1 && !isErc20
         ? BigNumber.from(parseEther(batchCaps[0]))
+        : batchCaps && batchCaps !== undefined && batchCaps[0] !== "" && batchCaps.length == 1 && isErc20
+        ? parseEther(batchCaps[0])
         : BigNumber.from(0),
     ],
   });
@@ -97,7 +99,13 @@ export const AdminModal = ({
     functionName: "addBatch",
     args: [
       batchCreators,
-      batchCaps?.map(value => (value && value !== undefined ? BigNumber.from(parseEther(value)) : BigNumber.from(0))),
+      batchCaps?.map(value =>
+        value && value != undefined && !isErc20
+          ? BigNumber.from(parseEther(value))
+          : value && value != undefined && isErc20
+          ? parseEther(value)
+          : BigNumber.from(0),
+      ),
     ],
   });
 
@@ -168,8 +176,8 @@ export const AdminModal = ({
     await addBatch();
 
     setSuccessMessage("Creators added successfully.");
-    setBatchCreators([]);
-    setBatchCaps([]);
+    setBatchCreators([""]);
+    setBatchCaps([""]);
   }, 500);
 
   const debouncedUpdateCreator = debounce(async () => {
@@ -283,7 +291,6 @@ export const AdminModal = ({
   };
 
   console.log(loading, successMessage, errorMessage);
-  console.log(adminAddr);
 
   return (
     <div className="border-2 rounded-xl overflow-hidden border-black w-fit text-xs bg-base-200 h-full">
