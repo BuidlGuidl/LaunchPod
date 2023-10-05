@@ -1,8 +1,9 @@
 import { Dispatch, SetStateAction, useState } from "react";
-import { Address } from "./scaffold-eth";
-import { EtherInput } from "./scaffold-eth";
-import { AddressInput } from "./scaffold-eth";
+import { Address } from "../scaffold-eth";
+import { EtherInput } from "../scaffold-eth";
+import { AddressInput } from "../scaffold-eth";
 import { BigNumber } from "ethers";
+import { ethers } from "ethers";
 import { parseEther } from "ethers/lib/utils.js";
 import { debounce } from "lodash";
 import { TrashIcon } from "@heroicons/react/24/outline";
@@ -41,9 +42,23 @@ export const AdminModal = ({
   const [errorMessage, setErrorMessage] = useState("");
 
   const { isErc20, tokenAddress } = useErc20();
-  const [rescueToken, setRescueToken] = useState<string>(tokenAddress || "");
+  const [rescueTokenAddr, setRescueTokenAddr] = useState<string>(tokenAddress || "");
 
   const [adminAddr, setAdminAddr] = useState<string>("");
+
+  const buttonDisabled =
+    action == "addAdmin"
+      ? !ethers.utils.isAddress(adminAddr)
+      : action == "fundContract"
+      ? fundingValue <= 0
+      : action == "rescueToken"
+      ? !ethers.utils.isAddress(rescueTokenAddr)
+      : action == "addCreator"
+      ? batchCreators?.some(creator => !ethers.utils.isAddress(creator)) ||
+        batchCaps?.some(cap => cap == "" || parseFloat(cap) <= 0)
+      : action == "updateCreator"
+      ? cap == "" || parseFloat(cap) < 0
+      : false;
 
   const { writeAsync: removeCreator } = useScaffoldContractWrite({
     contractName: "YourContract",
@@ -68,8 +83,10 @@ export const AdminModal = ({
     functionName: "addCreatorFlow",
     args: [
       batchCreators ? batchCreators[0] : "",
-      batchCaps && batchCaps !== undefined && batchCaps[0] !== ""
+      batchCaps && batchCaps !== undefined && batchCaps[0] !== "" && batchCaps.length == 1 && !isErc20
         ? BigNumber.from(parseEther(batchCaps[0]))
+        : batchCaps && batchCaps !== undefined && batchCaps[0] !== "" && batchCaps.length == 1 && isErc20
+        ? parseEther(batchCaps[0])
         : BigNumber.from(0),
     ],
   });
@@ -82,7 +99,13 @@ export const AdminModal = ({
     functionName: "addBatch",
     args: [
       batchCreators,
-      batchCaps?.map(value => (value && value !== undefined ? BigNumber.from(parseEther(value)) : BigNumber.from(0))),
+      batchCaps?.map(value =>
+        value && value != undefined && !isErc20
+          ? BigNumber.from(parseEther(value))
+          : value && value != undefined && isErc20
+          ? parseEther(value)
+          : BigNumber.from(0),
+      ),
     ],
   });
 
@@ -97,7 +120,7 @@ export const AdminModal = ({
     contractName: "YourContract",
     functionName: "drainAgreement",
     //args is token address
-    args: [rescueToken],
+    args: [rescueTokenAddr],
   });
 
   // hook for rescuing eth
@@ -153,8 +176,8 @@ export const AdminModal = ({
     await addBatch();
 
     setSuccessMessage("Creators added successfully.");
-    setBatchCreators([]);
-    setBatchCaps([]);
+    setBatchCreators([""]);
+    setBatchCaps([""]);
   }, 500);
 
   const debouncedUpdateCreator = debounce(async () => {
@@ -296,7 +319,7 @@ export const AdminModal = ({
                 </span>{" "}
                 hacker stream{" "}
               </label>
-              <label htmlFor="cap" className="block mt-4">
+              <label htmlFor="cap" className="block mt-4 mb-2">
                 Cap:
               </label>
               <EtherInput value={cap.toString()} onChange={value => setCap(value)} placeholder="Enter cap amount" />
@@ -308,7 +331,7 @@ export const AdminModal = ({
                 {batchCreators &&
                   batchCreators.map((creator, index) => (
                     <div key={index}>
-                      <label htmlFor={`batch-creators-${index}`} className="block mt-4">
+                      <label htmlFor={`batch-creators-${index}`} className="block mt-4 mb-2 ">
                         Creator Address{index != 0 && " " + (index + 1)}:
                       </label>
                       {index != 0 && (
@@ -337,7 +360,7 @@ export const AdminModal = ({
                           onChange={value => handleInputChange(index, value, setBatchCreators)}
                         />
                       )}
-                      <label htmlFor={`batch-caps-${index}`} className="block mt-4">
+                      <label htmlFor={`batch-caps-${index}`} className="block mt-4 mb-2">
                         Cap{index != 0 && " " + (index + 1)}:
                       </label>
 
@@ -370,7 +393,7 @@ export const AdminModal = ({
           {isOpen && action == "fundContract" && (
             <div>
               <div>
-                <label htmlFor="creator" className="block mt-4">
+                <label htmlFor="creator" className="block mt-4 mb-2">
                   Funding amount:
                 </label>
                 <EtherInput value={fundingValue.toString()} onChange={e => setFundingValue(Number(e))} />
@@ -380,12 +403,12 @@ export const AdminModal = ({
           {isOpen && action === "rescueToken" && (
             <div>
               <p className="">Transfer token balance from the contract to primary admin</p>
-              <label htmlFor="token" className="block mt-4">
+              <label htmlFor="token" className="block mt-4 mb-2">
                 Token Address:
               </label>
               <AddressInput
-                value={rescueToken === "0x0000000000000000000000000000000000000000" ? "" : rescueToken}
-                onChange={value => setRescueToken(value)}
+                value={rescueTokenAddr === "0x0000000000000000000000000000000000000000" ? "" : rescueTokenAddr}
+                onChange={value => setRescueTokenAddr(value)}
               />
             </div>
           )}
@@ -396,7 +419,7 @@ export const AdminModal = ({
           )}
           {isOpen && action === "addAdmin" && (
             <div>
-              <label htmlFor="admin" className="block mt-4">
+              <label htmlFor="admin" className="block mt-4 mb-2">
                 Admin Address:
               </label>
               <AddressInput value={adminAddr} onChange={value => setAdminAddr(value)} />
@@ -413,7 +436,11 @@ export const AdminModal = ({
               </label>
             </div>
           )}
-          <button className="btn btn-primary rounded-lg w-full mt-2 ml-auto" onClick={handleModalAction}>
+          <button
+            className="btn btn-primary rounded-lg w-full mt-2 ml-auto"
+            disabled={buttonDisabled}
+            onClick={handleModalAction}
+          >
             {action == "removeCreator" && "Remove"}
             {action == "updateCreator" && "update"}
             {action == "addCreator" && (batchCreators && batchCreators.length > 1 ? "Add Batch" : "Add Creator")}

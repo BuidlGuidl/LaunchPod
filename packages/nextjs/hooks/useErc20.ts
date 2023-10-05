@@ -5,6 +5,7 @@ import { useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 
 export function useErc20() {
   const [tokenName, setTokenName] = useState("");
+  const [tokenSymbol, setTokenSymbol] = useState("");
   const [isEns, setIsEns] = useState(false);
   const [isOp, setIsOp] = useState(false);
 
@@ -21,12 +22,18 @@ export function useErc20() {
   useEffect(() => {
     (async () => {
       if (tokenAddress && tokenAddress != "0x0000000000000000000000000000000000000000") {
-        const data = await readContract({
+        const name = await readContract({
           address: tokenAddress,
           abi: erc20ABI,
           functionName: "name",
         });
-        setTokenName(data);
+        const symbol = await readContract({
+          address: tokenAddress,
+          abi: erc20ABI,
+          functionName: "name",
+        });
+        setTokenName(name);
+        setTokenSymbol(symbol);
       }
     })();
   }, [tokenAddress]);
@@ -48,6 +55,7 @@ export function useErc20() {
     isLoading: false,
     tokenAddress: tokenAddress,
     tokenName: tokenName,
+    tokenSymbol,
     isEns,
     isOp,
   };
