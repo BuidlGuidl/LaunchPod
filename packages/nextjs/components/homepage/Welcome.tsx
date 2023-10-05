@@ -3,15 +3,12 @@ import React from "react";
 const Welcome = () => {
   return (
     <div className="md:text-sm text-[0.7rem] border rounded-xl p-4">
-      <h1 className="font-bold font-typo-round md:text-2xl text-xl tracking-widest ">Welcome!</h1>
+      <h1 className="font-bold font-typo-round md:text-2xl text-xl tracking-widest ">Welcome to LaunchPod!</h1>
       <p>
-        We&lsquo;re running an experiment to retroactively fund open-source work by providing a monthly UBI to
-        open-source developers, handpicked by Jessy and Jessy&lsquo;s Hacker House, and rewarding them for their ongoing
-        contributions to the ecosystem.
+        🚀 LaunchPod is on a mission to uplift the Ethereum ecosystem! 🌍 By offering monthly UBI to elite devs, we're spotlighting their invaluable contributions to our shared digital future. 🛠️
       </p>
       <p>
-        Chosen developers can submit their monthly projects, automatically claim grant streams, and showcase their work
-        to the public.
+        🔗 Developers, this is your platform. Present your projects and access grants designed to amplify your impact within the Ethereum space. 💡
       </p>
       <p>This initiative is made possible by BuidlGuidl!</p>
     </div>
