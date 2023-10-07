@@ -25,6 +25,9 @@ export const InputBase = <T extends { toString: () => string } = string>({
     modifier = "border-disabled bg-base-300";
   }
 
+  const body = document.body;
+  const isDarkMode = body.getAttribute("data-theme") === "scaffoldEthDark";
+
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       onChange(e.target.value as unknown as T);
@@ -35,8 +38,10 @@ export const InputBase = <T extends { toString: () => string } = string>({
   return (
     <div className={`flex border-2 border-base-300 rounded-full text-accent ${modifier}`}>
       {prefix}
+      
+      
       <input
-        className="input input-ghost focus:outline-none focus:bg-transparent focus:text-gray-400 h-[2.2rem] min-h-[2.2rem] px-4 border w-full font-medium placeholder:text-accent/50 text-gray-400"
+        className={`input input-ghost focus:outline-none focus:bg-transparent h-[2.2rem] min-h-[2.2rem] px-4 border w-full font-medium placeholder:text-accent/50 ${isDarkMode ? "text-yellow-400" : "text-gray-800"}`}
         placeholder={placeholder}
         name={name}
         value={value?.toString()}
