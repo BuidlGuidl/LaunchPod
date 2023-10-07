@@ -44,7 +44,7 @@ export const HackersInfoDisplay: React.FC<{ creatorData: CreatorInfo; creatorAdd
       </div>
       <div className="flex flex-col gap-1 text-sm w-2/3 md:w-[50%]">
         <div className="flex flex-row justify-center">
-          <div className="flex md:text-sm text-[0.7rem] font-semibold">
+          <div className="flex md:text-base text-[0.8rem] ">
             <span className="px-1">
               <Price value={Number(unlockedAmount)} />
             </span>
@@ -58,7 +58,7 @@ export const HackersInfoDisplay: React.FC<{ creatorData: CreatorInfo; creatorAdd
           <progress className="progress progress-primary z-0" value={percentage} max="100"></progress>
         </div>
         <div className="flex flex-row justify-center">
-          <div className="md:text-sm text-[0.7rem] font-semibold flex flex-row items-center gap-1">
+          <div className="md:text-base text-[0.8rem]  flex flex-row items-center gap-1">
             <div className=" tracking-tighter">Last:</div>
             <div className=" tracking-tighter ">
               {withdrawnEvents && withdrawnEvents.length > 0

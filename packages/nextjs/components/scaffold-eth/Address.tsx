@@ -81,7 +81,7 @@ export const Address = ({ address, disableAddressLink, format, hideIcons }: TAdd
         <span className="ml-1.5 text-md font-normal">{displayAddress}</span>
       ) : (
         <a
-          className="ml-1.5 md:text-sm text-[0.7rem] font-semibold"
+          className="ml-1.5 md:text-base text-[0.8rem] font-normal"
           target="_blank"
           href={blockExplorerAddressLink}
           rel="noopener noreferrer"

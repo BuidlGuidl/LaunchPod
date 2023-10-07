@@ -167,9 +167,9 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
           <div className="  py-3 rounded-md px-2 bg-base-300 w-full ">
             <div className="w-full bg-primary rounded-md py-2 px-2 mb-3 flex justify-center">
               {isErc20 ? (
-                <TokenBalance className="text-3xl" address={streamContract.data?.address} isEns={isEns} isOp={isOp} />
+                <TokenBalance className="text-2xl" address={streamContract.data?.address} isEns={isEns} isOp={isOp} />
               ) : (
-                <Balance className="text-3xl" address={streamContract.data?.address} />
+                <Balance className="text-2xl" address={streamContract.data?.address} />
               )}
               {isAdmin && (
                 <div>

@@ -52,7 +52,7 @@ export const WithdrawModal = ({
             <label className="block mt-2 mb-2">Reason:</label>
 
             <textarea
-              className="textarea textarea-bordered  focus:bg-transparent focus:text-gray-400 h-[2.2rem] min-h-[6.2rem] px-4  w-full font-medium placeholder:text-accent/50 text-gray-400 rounded-lg"
+              className="textarea textarea-bordered  focus:bg-transparent focus:text-gray-500 h-[2.2rem] min-h-[6.2rem] px-4  w-full font-medium placeholder:text-accent/50 text-gray-500 rounded-lg"
               placeholder={`Enter Reason (limit: ${characterLimit} characters)`}
               value={reason}
               onChange={e => handleReasonChange(e.target.value)}

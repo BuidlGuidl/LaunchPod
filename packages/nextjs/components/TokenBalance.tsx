@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { useErc20 } from "~~/hooks/useErc20";
 import { useTokenBalance } from "~~/hooks/useTokenBalance";
 
@@ -31,13 +32,15 @@ export const TokenBalance = ({ address, className = "", isEns, isOp }: TTokenBal
       className={`btn btn-sm btn-ghost flex flex-col font-normal items-center hover:bg-transparent ${className}`}
       // onClick={onToggleBalance}
     >
-      <div className="w-full flex items-center justify-center">
+      <div className="w-full flex items-center ">
         {isTokenBalance ? (
           <>
-            <span>{balance?.toFixed(2)}</span>
-            {isEns && <span className="text-xs font-bold ml-1">ENS</span>}
-            {isOp && <span className="text-xs font-bold ml-1">OP</span>}
-            {!isEns && !isOp && <span className="text-xs font-bold ml-1">{tokenSymbol}</span>}
+            {isEns && <Image className="mr-2" src="/assets/ensLogo.png" alt="ens logo" width={25} height={25} />}
+            {isOp && <Image className="mr-2" src="/assets/opLogo.png" alt="op logo" width={25} height={25} />}
+            <span> {balance?.toFixed(2)}</span>
+            {isEns && <span className="text-base ml-1">ENS</span>}
+            {isOp && <span className=" ml-1">OP</span>}
+            {!isEns && !isOp && <div className="text-base  ml-1">{tokenSymbol}</div>}
           </>
         ) : (
           <>
