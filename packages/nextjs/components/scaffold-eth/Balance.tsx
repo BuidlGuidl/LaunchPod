@@ -41,7 +41,7 @@ export const Balance = ({ address, className = "" }: TBalanceProps) => {
         {isEthBalance ? (
           <>
             <span>{balance?.toFixed(4)}</span>
-            <span className="text-xs font-bold ml-1">{configuredNetwork.nativeCurrency.symbol}</span>
+            <span className=" ml-1">{configuredNetwork.nativeCurrency.symbol}</span>
           </>
         ) : (
           <>

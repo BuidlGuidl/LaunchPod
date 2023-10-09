@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Address } from "../scaffold-eth";
 import { EtherInput } from "../scaffold-eth";
 import { AddressInput } from "../scaffold-eth";
@@ -42,7 +42,7 @@ export const AdminModal = ({
   const [errorMessage, setErrorMessage] = useState("");
 
   const { isErc20, tokenAddress } = useErc20();
-  const [rescueTokenAddr, setRescueTokenAddr] = useState<string>(tokenAddress || "");
+  const [rescueTokenAddr, setRescueTokenAddr] = useState<string>("");
 
   const [adminAddr, setAdminAddr] = useState<string>("");
 
@@ -290,11 +290,15 @@ export const AdminModal = ({
     }
   };
 
+  useEffect(() => {
+    if (tokenAddress && tokenAddress !== "0x0000000000000000000000000000000000000000") setRescueTokenAddr(tokenAddress);
+  }, [tokenAddress]);
+
   console.log(loading, successMessage, errorMessage);
 
   return (
     <div className="border-2 rounded-xl overflow-hidden border-black w-fit text-xs bg-base-200 h-full">
-      <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-20 md:text-sm text-[0.7rem]">
+      <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-20 md:text-base text-[0.8rem]">
         <div className=" modal-box">
           <label onClick={closePopup} className="btn btn-sm btn-circle absolute right-2 top-2">
             ✕
@@ -437,7 +441,7 @@ export const AdminModal = ({
             </div>
           )}
           <button
-            className="btn btn-primary rounded-lg w-full mt-2 ml-auto"
+            className="btn btn-primary text-lg font-normal rounded-lg w-full mt-2 ml-auto"
             disabled={buttonDisabled}
             onClick={handleModalAction}
           >
