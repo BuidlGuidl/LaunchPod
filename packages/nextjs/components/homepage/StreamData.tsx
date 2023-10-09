@@ -51,7 +51,6 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
 
   const { admins, isLoadingAdmins } = useFetchAdmins();
 
-
   // Get all creator data.
   const { data: allCreatorsData } = useScaffoldContractRead({
     contractName: "YourContract",
@@ -79,7 +78,7 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
     setAdminModalOpen(false);
   }, [creatorsData, uniqueAdmins]);
 
-  console.log(allCreatorsData);
+  console.log(creatorsData);
 
   return (
     <div className="flex lg:flex-wrap md:flex-row flex-col border rounded-xl">
@@ -124,7 +123,7 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
                   </div>
                 </div>
               ))}
-            {!isLoadingCreators && Object.keys(creators).length === 0 && (
+            {!isLoadingCreators && Object.keys(creatorsData).length === 0 && (
               <div className="text-center py-6">No Hacker Streams</div>
             )}
             {!isLoadingCreators &&
