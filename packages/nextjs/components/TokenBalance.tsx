@@ -35,11 +35,11 @@ export const TokenBalance = ({ address, className = "", isEns, isOp }: TTokenBal
       <div className="w-full flex items-center ">
         {isTokenBalance ? (
           <>
-            {isEns && <Image className="mr-2" src="/assets/ensLogo.png" alt="ens logo" width={25} height={25} />}
-            {isOp && <Image className="mr-2" src="/assets/opLogo.png" alt="op logo" width={25} height={25} />}
             <span> {balance?.toFixed(2)}</span>
-            {isEns && <span className="text-base ml-1">ENS</span>}
-            {isOp && <span className=" ml-1">OP</span>}
+            {isEns && <Image className=" ml-1" src="/assets/ensLogo.png" alt="ens logo" width={25} height={25} />}
+            {isOp && <Image className=" ml-1" src="/assets/opLogo.png" alt="op logo" width={25} height={25} />}
+            {/* {isEns && <span className="text-base ml-1">ENS</span>}
+            {isOp && <span className=" ml-1">OP</span>} */}
             {!isEns && !isOp && <div className="text-base  ml-1">{tokenSymbol}</div>}
           </>
         ) : (
