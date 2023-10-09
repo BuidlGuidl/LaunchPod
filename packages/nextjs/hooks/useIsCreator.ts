@@ -16,8 +16,6 @@ export function useIsCreator() {
     args: [creatorIndex],
   });
 
-  console.log(creatorIndex?.toString());
-
   if (!isConnected) {
     return {
       isCreator: false,

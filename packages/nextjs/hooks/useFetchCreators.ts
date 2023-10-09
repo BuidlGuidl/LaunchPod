@@ -23,6 +23,7 @@ export const useFetchCreators = () => {
   useScaffoldEventSubscriber({
     contractName: "YourContract",
     eventName: "CreatorAdded",
+    // eslint-disable-next-line
     listener: (creator, cap) => {
       setCreators(prev => [...prev, creator]);
     },
@@ -84,6 +85,7 @@ export const useFetchCreators = () => {
     setIsValidatingCreators(true);
     validateCreators();
     setIsValidatingCreators(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoadingCreators, streamContract]);
 
   return {
