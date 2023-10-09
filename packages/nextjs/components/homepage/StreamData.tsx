@@ -78,8 +78,6 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
     setAdminModalOpen(false);
   }, [creatorsData, uniqueAdmins]);
 
-  console.log(creatorsData);
-
   return (
     <div className="flex lg:flex-wrap md:flex-row flex-col border rounded-xl">
       <div className="container  lg:w-2/3  pt-4">
