@@ -32,6 +32,10 @@ export function useSetCreator({ allCreatorsData, creators, setCreatorsData }: Pr
   }
 
   useEffect(() => {
-    setCreatorsData(creatorData);
-  }, [setCreatorsData, creatorData]);
+    if (creators.length == 0) {
+      setCreatorsData({});
+    } else {
+      setCreatorsData(creatorData);
+    }
+  }, [setCreatorsData, creatorData, creators]);
 }
