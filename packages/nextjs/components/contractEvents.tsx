@@ -162,9 +162,8 @@ const ContractEvents = () => {
           {agreementDrainedEvents.map((event, index) => (
             <div key={index}>
               <div className="flex flex-row items-center">
-                <Address address={event.args[0]} />
                 <div className="pl-4">
-                  Ξ <Price value={Number(formatEther(event.args[1]))} />
+                  Ξ <Price value={Number(formatEther(event.args[1]))} /> by Admin
                 </div>
               </div>
             </div>

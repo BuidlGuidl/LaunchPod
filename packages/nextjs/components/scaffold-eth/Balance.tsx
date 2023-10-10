@@ -11,7 +11,7 @@ type TBalanceProps = {
  */
 export const Balance = ({ address, className = "" }: TBalanceProps) => {
   const configuredNetwork = getTargetNetwork();
-  const { balance, price, isError, isLoading, onToggleBalance, isEthBalance } = useAccountBalance(address);
+  const { balance, price, isError, isLoading, isEthBalance } = useAccountBalance(address);
 
   if (!address || isLoading || balance === null) {
     return (
@@ -35,13 +35,13 @@ export const Balance = ({ address, className = "" }: TBalanceProps) => {
   return (
     <button
       className={`btn btn-sm btn-ghost flex flex-col font-normal items-center hover:bg-transparent ${className}`}
-      onClick={onToggleBalance}
+      // onClick={onToggleBalance}
     >
       <div className="w-full flex items-center justify-center">
         {isEthBalance ? (
           <>
             <span>{balance?.toFixed(4)}</span>
-            <span className="text-xs font-bold ml-1">{configuredNetwork.nativeCurrency.symbol}</span>
+            <span className=" ml-1">{configuredNetwork.nativeCurrency.symbol}</span>
           </>
         ) : (
           <>

@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth";
+import { readContract } from "@wagmi/core";
+import { useDeployedContractInfo, useScaffoldEventHistory, useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
 
 export const useFetchCreators = () => {
   const [creators, setCreators] = useState<string[]>([]);
+  const [isValidatingCreators, setIsValidatingCreators] = useState(false);
 
   // Read the creatorAdded events to get added creators.
   const {
@@ -16,63 +18,79 @@ export const useFetchCreators = () => {
     blockData: true,
   });
 
-  useEffect(() => {
-    if (creatorAdded) {
-      const addedCreators = creatorAdded.map(creator => creator.args[0]);
-      setCreators(prev => [...prev, ...addedCreators]);
-    }
-  }, [creatorAdded]);
+  const addedCreators = creatorAdded?.map(creator => creator.args[0]);
 
-  const {
-    data: creatorRemoved,
-    isLoading: isLoadingRemovedCreators,
-    error: errorReadingRemovedCreators,
-  } = useScaffoldEventHistory({
+  useScaffoldEventSubscriber({
+    contractName: "YourContract",
+    eventName: "CreatorAdded",
+    // eslint-disable-next-line
+    listener: (creator, cap) => {
+      setCreators(prev => [...prev, creator]);
+    },
+  });
+
+  useScaffoldEventSubscriber({
     contractName: "YourContract",
     eventName: "CreatorRemoved",
-    fromBlock: Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0,
-    blockData: true,
+    listener: creator => {
+      setCreators(prev => prev.filter(existingCreator => creator != existingCreator));
+    },
   });
 
-  useEffect(() => {
-    if (creatorRemoved && creatorRemoved.length !== 0) {
-      console.log(creatorRemoved);
-      const removedCreators = creatorRemoved.map(creator => creator.args[0]);
-      setCreators(prev => prev.filter(creator => !removedCreators.includes(creator)));
-    }
-  }, [creatorRemoved, creators]);
-
-  // Read the creatorUpdated events to get updated creators.
-  const {
-    data: creatorUpdated,
-    isLoading: isLoadingUpdatedCreators,
-    error: errorReadingUpdatedCreators,
-  } = useScaffoldEventHistory({
-    contractName: "YourContract",
-    eventName: "CreatorUpdated",
-    fromBlock: Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0,
-    blockData: true,
-  });
+  const { data: streamContract } = useDeployedContractInfo("YourContract");
 
   useEffect(() => {
-    if (creatorUpdated && creatorUpdated.length !== 0) {
-      creatorUpdated.forEach(creator => {
-        const updatedCreator = creator.args[0];
-        setCreators(prev => {
-          const updatedCreators = [...prev];
-          const index = updatedCreators.indexOf(updatedCreator);
-          if (index !== -1) {
-            updatedCreators[index] = updatedCreator;
+    console.log("useEffect triggered"); // Add this line
+
+    const validateCreator = async (creator: string) => {
+      let fetchedCreator;
+      if (streamContract) {
+        try {
+          const creatorIndex = await readContract({
+            address: streamContract.address,
+            abi: streamContract.abi,
+            functionName: "creatorIndex",
+            args: [creator],
+          });
+
+          fetchedCreator = await readContract({
+            address: streamContract.address,
+            abi: streamContract.abi,
+            functionName: "activeCreators",
+            args: [creatorIndex],
+          });
+        } catch (error) {
+          return false;
+        }
+      }
+      if (fetchedCreator === creator) {
+        return true;
+      } else {
+        return false;
+      }
+    };
+    const validateCreators = async () => {
+      const validCreators: string[] = [];
+      if (addedCreators) {
+        for (let i = addedCreators.length - 1; i >= 0; i--) {
+          const isValid = await validateCreator(addedCreators[i]);
+          if (isValid) {
+            validCreators.push(addedCreators[i]);
           }
-          return updatedCreators;
-        });
-      });
-    }
-  }, [creatorUpdated, creators]);
+        }
+      }
+      setCreators(validCreators);
+    };
+
+    setIsValidatingCreators(true);
+    validateCreators();
+    setIsValidatingCreators(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoadingCreators, streamContract]);
 
   return {
     creators,
-    isLoadingCreators: isLoadingCreators || isLoadingRemovedCreators || isLoadingUpdatedCreators,
-    errorReadingCreators: errorReadingCreators || errorReadingRemovedCreators || errorReadingUpdatedCreators,
+    isLoadingCreators: isLoadingCreators || isValidatingCreators,
+    errorReadingCreators: errorReadingCreators,
   };
 };

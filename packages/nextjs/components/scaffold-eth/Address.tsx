@@ -11,12 +11,13 @@ type TAddressProps = {
   address?: string;
   disableAddressLink?: boolean;
   format?: "short" | "long";
+  hideIcons?: boolean;
 };
 
 /**
  * Displays an address (or ENS) with a Blockie image and option to copy address.
  */
-export const Address = ({ address, disableAddressLink, format }: TAddressProps) => {
+export const Address = ({ address, disableAddressLink, format, hideIcons }: TAddressProps) => {
   const [ens, setEns] = useState<string | null>();
   const [ensAvatar, setEnsAvatar] = useState<string | null>();
   const [addressCopied, setAddressCopied] = useState(false);
@@ -65,20 +66,22 @@ export const Address = ({ address, disableAddressLink, format }: TAddressProps) 
 
   return (
     <div className="flex items-center">
-      <div className="flex-shrink-0">
-        {ensAvatar ? (
-          // Don't want to use nextJS Image here (and adding remote patterns for the URL)
-          // eslint-disable-next-line
-          <img className="rounded-full" src={ensAvatar} width={24} height={24} alt={`${address} avatar`} />
-        ) : (
-          <Blockies className="mx-auto rounded-full" size={8} seed={address.toLowerCase()} scale={3} />
-        )}
-      </div>
+      {!hideIcons && (
+        <div className="flex-shrink-0">
+          {ensAvatar ? (
+            // Don't want to use nextJS Image here (and adding remote patterns for the URL)
+            // eslint-disable-next-line
+            <img className="rounded-full" src={ensAvatar} width={24} height={24} alt={`${address} avatar`} />
+          ) : (
+            <Blockies className="mx-auto rounded-full" size={8} seed={address.toLowerCase()} scale={3} />
+          )}
+        </div>
+      )}
       {disableAddressLink ? (
-        <span className="ml-1.5 text-lg font-normal">{displayAddress}</span>
+        <span className="ml-1.5 text-md font-normal">{displayAddress}</span>
       ) : (
         <a
-          className="ml-1.5 text-sm lg:text-lg font-normal"
+          className="ml-1.5 md:text-base text-[0.8rem] font-normal"
           target="_blank"
           href={blockExplorerAddressLink}
           rel="noopener noreferrer"
@@ -86,26 +89,31 @@ export const Address = ({ address, disableAddressLink, format }: TAddressProps) 
           {displayAddress}
         </a>
       )}
-      {addressCopied ? (
-        <CheckCircleIcon
-          className="ml-1.5 text-xl font-normal text-yellow-600 h-5 w-5 cursor-pointer"
-          aria-hidden="true"
-        />
-      ) : (
-        <CopyToClipboard
-          text={address}
-          onCopy={() => {
-            setAddressCopied(true);
-            setTimeout(() => {
-              setAddressCopied(false);
-            }, 800);
-          }}
-        >
-          <DocumentDuplicateIcon
-            className="ml-1.5 text-xl font-normal primary-content h-5 w-5 cursor-pointer"
-            aria-hidden="true"
-          />
-        </CopyToClipboard>
+
+      {!hideIcons && (
+        <span>
+          {addressCopied ? (
+            <CheckCircleIcon
+              className="ml-1.5 text-lg font-normal text-yellow-600 h-5 w-5 cursor-pointer"
+              aria-hidden="true"
+            />
+          ) : (
+            <CopyToClipboard
+              text={address}
+              onCopy={() => {
+                setAddressCopied(true);
+                setTimeout(() => {
+                  setAddressCopied(false);
+                }, 800);
+              }}
+            >
+              <DocumentDuplicateIcon
+                className="ml-1.5 text-xl font-normal primary-content h-5 w-5 cursor-pointer"
+                aria-hidden="true"
+              />
+            </CopyToClipboard>
+          )}
+        </span>
       )}
     </div>
   );
