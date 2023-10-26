@@ -4,7 +4,6 @@ import { CommonInputProps, InputBase, SIGNED_NUMBER_REGEX } from "~~/components/
 import { useGlobalState } from "~~/services/store/store";
 
 const MAX_DECIMALS_USD = 2;
-const MAX_DECIMALS_ETH = 10;
 
 function etherValueToDisplayValue(usdMode: boolean, etherValue: string, nativeCurrencyPrice: number) {
   if (usdMode && nativeCurrencyPrice) {
@@ -32,10 +31,10 @@ function displayValueToEtherValue(usdMode: boolean, displayValue: string, native
       return displayValue;
     } else {
       // Compute the ETH value if a valid number.
-      return (parsedDisplayValue / nativeCurrencyPrice).toFixed(18).toString();
+      return (parsedDisplayValue / nativeCurrencyPrice).toString();
     }
   } else {
-    return displayValue.trim() === "." ? "0." : displayValue;
+    return displayValue;
   }
 }
 
@@ -44,7 +43,7 @@ function displayValueToEtherValue(usdMode: boolean, displayValue: string, native
  *
  * onChange will always be called with the value in ETH
  */
-export const EtherInput = ({ value, name, placeholder, onChange }: CommonInputProps) => {
+export const EtherInput = ({ value, name, placeholder, onChange, disabled }: CommonInputProps) => {
   const [transitoryDisplayValue, setTransitoryDisplayValue] = useState<string>();
   const nativeCurrencyPrice = useGlobalState(state => state.nativeCurrencyPrice);
   const [usdMode, setUSDMode] = useState(false);
@@ -69,16 +68,8 @@ export const EtherInput = ({ value, name, placeholder, onChange }: CommonInputPr
     // Following condition is a fix to prevent usdMode from experiencing different display values
     // than what the user entered. This can happen due to floating point rounding errors that are introduced in the back and forth conversion
     if (usdMode) {
-      if (newValue === ".") {
-        newValue = "0.";
-      }
       const decimals = newValue.split(".")[1];
       if (decimals && decimals.length > MAX_DECIMALS_USD) {
-        return;
-      }
-    } else {
-      const decimals = newValue.split(".")[1];
-      if (decimals && decimals.length > MAX_DECIMALS_ETH) {
         return;
       }
     }
@@ -105,6 +96,7 @@ export const EtherInput = ({ value, name, placeholder, onChange }: CommonInputPr
       value={displayValue}
       placeholder={placeholder}
       onChange={handleChangeNumber}
+      disabled={disabled}
       prefix={<span className="pl-4 -mr-2 text-accent self-center">{usdMode ? "$" : "Ξ"}</span>}
       suffix={
         <button

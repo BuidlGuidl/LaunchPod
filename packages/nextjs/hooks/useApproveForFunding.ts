@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { prepareWriteContract, readContract, writeContract } from "@wagmi/core";
-import { BigNumber } from "ethers";
-import { formatEther } from "ethers/lib/utils.js";
+import { formatEther } from "viem";
 import { erc20ABI, useAccount, useNetwork } from "wagmi";
-import { getParsedEthersError } from "~~/components/scaffold-eth";
+import { getParsedError } from "~~/components/scaffold-eth";
 import { useTransactor } from "~~/hooks/scaffold-eth";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 import { useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
@@ -39,16 +38,6 @@ export const useApproveForFundng = ({
   });
 
   const sendContractWriteTx = async () => {
-    let config;
-    if (deployedContract && tokenAddress) {
-      config = await prepareWriteContract({
-        address: tokenAddress,
-        abi: erc20ABI,
-        functionName: "approve",
-        args: [deployedContract?.address, BigNumber.from(BigInt(amount * 1.01 * 1000000000000000000).toString())],
-      });
-    }
-
     if (!chain?.id) {
       notification.error("Please connect your wallet");
       return;
@@ -58,12 +47,19 @@ export const useApproveForFundng = ({
       return;
     }
 
-    if (config) {
+    if (deployedContract && tokenAddress) {
+      const config = await prepareWriteContract({
+        address: tokenAddress,
+        abi: erc20ABI,
+        functionName: "approve",
+        args: [deployedContract?.address, BigInt(amount * 1.01 * 1000000000000000000)],
+      });
+
       try {
         setIsMining(true);
-        await writeTx(writeContract(config));
+        await writeTx(() => writeContract(config));
       } catch (e: any) {
-        const message = getParsedEthersError(e);
+        const message = getParsedError(e);
         notification.error(message);
       } finally {
         setIsMining(false);

@@ -30,26 +30,3 @@ p {
 .btn.btn-ghost {
   @apply shadow-none;
 }
-
-@font-face {
-  font-family: "Gotham";
-  src: url("/fonts/Gotham.woff2") format("woff2"), url("/fonts/Gotham.woff") format("woff");
-  font-weight: semibold;
-  font-style: normal;
-}
-
-.gotham-font {
-  font-family: "Gotham";
-}
-
-@font-face {
-  font-family: "Typo-round";
-  src: url("/fonts/typo-round/Typo_Round_Bold_Demo.otf") format("otf"),
-    url("/fonts/typo-round/Typo_Round_Light_Demo.otf") format("otf");
-  font-weight: normal;
-  font-style: normal;
-}
-
-.typo-round {
-  font-family: "Typo-round";
-}

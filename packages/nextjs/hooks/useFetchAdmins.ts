@@ -16,7 +16,7 @@ export const useFetchAdmins = () => {
   } = useScaffoldEventHistory({
     contractName: "YourContract",
     eventName: "AdminAdded",
-    fromBlock: Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0,
+    fromBlock: BigInt(Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0),
     blockData: true,
   });
 
@@ -25,24 +25,26 @@ export const useFetchAdmins = () => {
   useScaffoldEventSubscriber({
     contractName: "YourContract",
     eventName: "AdminAdded",
-    listener: admin => {
-      // const currentCreators = creators;
-      // currentCreators.push(creator);
-      // setCreators(currentCreators);
-      setAdmins(prev => [...prev, admin]);
+    listener: logs => {
+      logs.map(log => {
+        const admin = log.args[0];
+        setAdmins(prev => [...prev, admin] as string[]);
+      });
     },
   });
 
   useScaffoldEventSubscriber({
     contractName: "YourContract",
     eventName: "AdminRemoved",
-    listener: admin => {
-      setAdmins(prev => prev.filter(existingAdmin => admin != existingAdmin));
+    listener: logs => {
+      logs.map(log => {
+        const admin = log.args[0];
+        setAdmins(prev => prev.filter(existingAdmin => admin != existingAdmin));
+      });
     },
   });
 
   useEffect(() => {
-    console.log("useEffect triggered"); // Add this line
     const validateAdmin = async (admin: string) => {
       if (streamContract) {
         try {

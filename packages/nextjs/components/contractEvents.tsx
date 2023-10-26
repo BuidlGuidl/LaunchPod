@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Price } from "./Price";
 import { Address } from "./scaffold-eth";
-import { formatEther } from "ethers/lib/utils.js";
+import { formatEther } from "viem";
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth";
 
 const ContractEvents = () => {
@@ -15,42 +15,46 @@ const ContractEvents = () => {
   const fundsReceived = useScaffoldEventHistory({
     contractName: "YourContract",
     eventName: "FundsReceived",
-    fromBlock: Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0,
+    fromBlock: BigInt(Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0),
     blockData: true,
   });
 
   const withdrawn = useScaffoldEventHistory({
     contractName: "YourContract",
     eventName: "Withdrawn",
-    fromBlock: Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0,
+    fromBlock: BigInt(Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0),
     blockData: true,
   });
 
   const creatorAdded = useScaffoldEventHistory({
     contractName: "YourContract",
     eventName: "CreatorAdded",
-    fromBlock: Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0,
+    fromBlock: BigInt(Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0),
+
     blockData: true,
   });
 
   const creatorUpdated = useScaffoldEventHistory({
     contractName: "YourContract",
     eventName: "CreatorUpdated",
-    fromBlock: Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0,
+    fromBlock: BigInt(Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0),
+
     blockData: true,
   });
 
   const creatorRemoved = useScaffoldEventHistory({
     contractName: "YourContract",
     eventName: "CreatorRemoved",
-    fromBlock: Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0,
+    fromBlock: BigInt(Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0),
+
     blockData: true,
   });
 
   const agreementDrained = useScaffoldEventHistory({
     contractName: "YourContract",
     eventName: "AgreementDrained",
-    fromBlock: Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0,
+    fromBlock: BigInt(Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0),
+
     blockData: true,
   });
 

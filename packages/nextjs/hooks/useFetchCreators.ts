@@ -14,7 +14,7 @@ export const useFetchCreators = () => {
   } = useScaffoldEventHistory({
     contractName: "YourContract",
     eventName: "CreatorAdded",
-    fromBlock: Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0,
+    fromBlock: BigInt(Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0),
     blockData: true,
   });
 
@@ -23,25 +23,29 @@ export const useFetchCreators = () => {
   useScaffoldEventSubscriber({
     contractName: "YourContract",
     eventName: "CreatorAdded",
-    // eslint-disable-next-line
-    listener: (creator, cap) => {
-      setCreators(prev => [...prev, creator]);
+    listener: logs => {
+      logs.map(log => {
+        const creator = log.args[0];
+        setCreators(prev => [...prev, creator] as string[]);
+        console.log(log);
+      });
     },
   });
 
   useScaffoldEventSubscriber({
     contractName: "YourContract",
     eventName: "CreatorRemoved",
-    listener: creator => {
-      setCreators(prev => prev.filter(existingCreator => creator != existingCreator));
+    listener: logs => {
+      logs.map(log => {
+        const creator = log.args[0];
+        setCreators(prev => prev.filter(existingCreator => creator != existingCreator));
+      });
     },
   });
 
   const { data: streamContract } = useDeployedContractInfo("YourContract");
 
   useEffect(() => {
-    console.log("useEffect triggered"); // Add this line
-
     const validateCreator = async (creator: string) => {
       let fetchedCreator;
       if (streamContract) {

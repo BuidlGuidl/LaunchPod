@@ -1,7 +1,6 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { EtherInput } from "../scaffold-eth";
-import { BigNumber } from "ethers";
-import { parseEther } from "ethers/lib/utils.js";
+import { parseEther } from "viem";
 import { useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 
 export const WithdrawModal = ({
@@ -18,7 +17,7 @@ export const WithdrawModal = ({
   const { writeAsync: withdraw } = useScaffoldContractWrite({
     contractName: "YourContract",
     functionName: "flowWithdraw",
-    args: [amount ? BigNumber.from(parseEther(amount)) : BigNumber.from(parseEther("0")), reason],
+    args: [amount ? parseEther(amount) : parseEther("0"), reason],
   });
 
   const closePopup = () => {
@@ -58,7 +57,7 @@ export const WithdrawModal = ({
               onChange={e => handleReasonChange(e.target.value)}
             ></textarea>
             <p className="font-sans italic font-normal -mt-1">Remaining characters: {characterLimit - reason.length}</p>
-            <button className="btn btn-primary rounded-lg w-full mt-2 ml-auto" onClick={withdraw}>
+            <button className="btn btn-primary rounded-lg w-full mt-2 ml-auto" onClick={() => withdraw()}>
               Withdraw
             </button>
           </div>
