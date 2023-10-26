@@ -1,11 +1,11 @@
 const contracts = {
   31337: [
     {
-      name: "localhost",
       chainId: "31337",
+      name: "localhost",
       contracts: {
         YourContract: {
-          address: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+          address: "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e",
           abi: [
             {
               inputs: [
@@ -39,8 +39,19 @@ const contracts = {
               type: "error",
             },
             {
-              inputs: [],
-              name: "CapCannotBeZero",
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "provided",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "minimum",
+                  type: "uint256",
+                },
+              ],
+              name: "BelowMinimumCap",
               type: "error",
             },
             {
@@ -54,39 +65,7 @@ const contracts = {
               type: "error",
             },
             {
-              inputs: [
-                {
-                  internalType: "address",
-                  name: "token",
-                  type: "address",
-                },
-                {
-                  internalType: "address",
-                  name: "to",
-                  type: "address",
-                },
-                {
-                  internalType: "uint256",
-                  name: "amount",
-                  type: "uint256",
-                },
-              ],
-              name: "ERC20FundsTransferFailed",
-              type: "error",
-            },
-            {
               inputs: [],
-              name: "ERC20TransferFailed",
-              type: "error",
-            },
-            {
-              inputs: [
-                {
-                  internalType: "address",
-                  name: "recipient",
-                  type: "address",
-                },
-              ],
               name: "EtherSendingFailed",
               type: "error",
             },

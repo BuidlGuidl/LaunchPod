@@ -3,7 +3,7 @@ import { useScaffoldEventSubscriber } from "./scaffold-eth";
 import { useErc20 } from "./useErc20";
 import { useTokenPrice } from "./useTokenPrice";
 import { readContract } from "@wagmi/core";
-import { formatEther } from "ethers/lib/utils.js";
+import { formatEther } from "viem";
 import { erc20ABI } from "wagmi";
 
 type TTokenBalanceHookProps = {

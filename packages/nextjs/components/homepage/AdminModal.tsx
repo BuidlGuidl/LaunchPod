@@ -2,10 +2,8 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Address } from "../scaffold-eth";
 import { EtherInput } from "../scaffold-eth";
 import { AddressInput } from "../scaffold-eth";
-import { BigNumber } from "ethers";
-import { ethers } from "ethers";
-import { parseEther } from "ethers/lib/utils.js";
 import { debounce } from "lodash";
+import { isAddress, parseEther } from "viem";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
@@ -48,14 +46,14 @@ export const AdminModal = ({
 
   const buttonDisabled =
     action == "addAdmin"
-      ? !ethers.utils.isAddress(adminAddr)
+
+      ? !isAddress(adminAddr)
       : action == "fundContract"
       ? fundingValue <= 0
       : action == "rescueToken"
-      ? !ethers.utils.isAddress(rescueTokenAddr)
+      ? !isAddress(rescueTokenAddr)
       : action == "addCreator"
-      ? batchCreators?.some(creator => !ethers.utils.isAddress(creator)) ||
-        batchCaps?.some(cap => cap == "" || parseFloat(cap) <= 0)
+      ? batchCreators?.some(creator => !isAddress(creator)) || batchCaps?.some(cap => cap == "" || parseFloat(cap) <= 0)
       : action == "updateCreator"
       ? cap == "" || parseFloat(cap) < 0
       : false;
@@ -72,7 +70,7 @@ export const AdminModal = ({
   } = useScaffoldContractWrite({
     contractName: "YourContract",
     functionName: "updateCreatorFlowCapCycle",
-    args: [creatorAddress, cap && cap !== undefined ? BigNumber.from(parseEther(cap)) : BigNumber.from(0)],
+    args: [creatorAddress, BigInt(cap && cap !== undefined ? parseEther(cap) : 0)],
   });
 
   const {
@@ -83,11 +81,13 @@ export const AdminModal = ({
     functionName: "addCreatorFlow",
     args: [
       batchCreators ? batchCreators[0] : "",
-      batchCaps && batchCaps !== undefined && batchCaps[0] !== "" && batchCaps.length == 1 && !isErc20
-        ? BigNumber.from(parseEther(batchCaps[0]))
-        : batchCaps && batchCaps !== undefined && batchCaps[0] !== "" && batchCaps.length == 1 && isErc20
-        ? parseEther(batchCaps[0])
-        : BigNumber.from(0),
+      BigInt(
+        batchCaps && batchCaps !== undefined && batchCaps[0] !== "" && batchCaps.length == 1 && !isErc20
+          ? parseEther(batchCaps[0])
+          : batchCaps && batchCaps !== undefined && batchCaps[0] !== "" && batchCaps.length == 1 && isErc20
+          ? parseEther(batchCaps[0])
+          : 0,
+      ),
     ],
   });
 
@@ -100,11 +100,13 @@ export const AdminModal = ({
     args: [
       batchCreators,
       batchCaps?.map(value =>
-        value && value != undefined && !isErc20
-          ? BigNumber.from(parseEther(value))
-          : value && value != undefined && isErc20
-          ? parseEther(value)
-          : BigNumber.from(0),
+        BigInt(
+          value && value != undefined && !isErc20
+            ? parseEther(value)
+            : value && value != undefined && isErc20
+            ? parseEther(value)
+            : 0,
+        ),
       ),
     ],
   });
@@ -112,8 +114,8 @@ export const AdminModal = ({
   const { writeAsync: fundContract, isLoading: isFundingContract } = useScaffoldContractWrite({
     contractName: "YourContract",
     functionName: "fundContract",
-    args: [BigNumber.from(BigInt(fundingValue * 1000000000000000000).toString())],
-    value: isErc20 ? "0" : fundingValue.toString(),
+    args: [BigInt(fundingValue * 1000000000000000000)],
+    value: parseEther(isErc20 ? "0" : fundingValue.toString()),
   });
 
   const { writeAsync: rescueTokenfunc, isLoading: isRescuingToken } = useScaffoldContractWrite({

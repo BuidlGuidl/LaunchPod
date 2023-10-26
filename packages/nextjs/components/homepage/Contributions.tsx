@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Price } from "../Price";
 import { Address } from "../scaffold-eth";
-import { formatEther } from "ethers/lib/utils.js";
+import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import { useScaffoldEventHistory, useScaffoldEventSubscriber } from "~~/hooks/scaffold-eth";
 
@@ -13,7 +13,7 @@ const Contributions = ({ creatorPage }: { creatorPage: boolean }) => {
   const withdrawn = useScaffoldEventHistory({
     contractName: "YourContract",
     eventName: "Withdrawn",
-    fromBlock: Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0,
+    fromBlock: BigInt(Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0),
     blockData: true,
   });
 
@@ -25,23 +25,21 @@ const Contributions = ({ creatorPage }: { creatorPage: boolean }) => {
   useScaffoldEventSubscriber({
     contractName: "YourContract",
     eventName: "Withdrawn",
-    listener: (creator, amount, reason) => {
-      // const currentCreators = creators;
-      // currentCreators.push(creator);
-      // setCreators(currentCreators);
-      const newEvent = { args: [creator, amount, reason], block: { timestamp: Math.floor(Date.now() / 1000) } };
-      const currentEvents = withdrawnEvents;
-      currentEvents?.push(newEvent);
-      setWithdrawnEvents(currentEvents);
-      console.log(withdrawnEvents);
-      // setWithdrawnEvents(prev => [...prev, newEvent]);
+    listener: logs => {
+      logs.map(log => {
+        const [creator, amount, reason] = log.args;
+        const newEvent = { args: [creator, amount, reason], block: { timestamp: Math.floor(Date.now() / 1000) } };
+        const currentEvents = withdrawnEvents;
+        currentEvents?.push(newEvent);
+        setWithdrawnEvents(currentEvents);
+      });
     },
   });
 
   // console.log(withdrawnEvents);
 
   const getDate = (timestamp: number) => {
-    const date = new Date(timestamp * 1000);
+    const date = new Date(Number(timestamp) * 1000);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
@@ -69,7 +67,7 @@ const Contributions = ({ creatorPage }: { creatorPage: boolean }) => {
                   </div>
                 </div>
               </div>
-              <div className="pl-4 w-[70%] ">{event.args[2]}</div>
+              <div className="pl-4 w-[70%] break-words">{event.args[2]}</div>
             </div>
           ))}
         </div>

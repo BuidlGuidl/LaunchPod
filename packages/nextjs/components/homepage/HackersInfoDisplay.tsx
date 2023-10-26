@@ -28,7 +28,7 @@ export const HackersInfoDisplay: React.FC<{ creatorData: CreatorInfo; creatorAdd
   const withdrawn = useScaffoldEventHistory({
     contractName: "YourContract",
     eventName: "Withdrawn",
-    fromBlock: Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0,
+    fromBlock: BigInt(Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0),
     blockData: true,
   });
 
@@ -62,7 +62,7 @@ export const HackersInfoDisplay: React.FC<{ creatorData: CreatorInfo; creatorAdd
             <div className=" tracking-tighter">Last:</div>
             <div className=" tracking-tighter ">
               {withdrawnEvents && withdrawnEvents.length > 0
-                ? getTimeAgo(withdrawnEvents[0]?.block.timestamp * 1000)
+                ? getTimeAgo(Number(withdrawnEvents[0]?.block.timestamp) * 1000)
                 : "Never"}
             </div>
           </div>

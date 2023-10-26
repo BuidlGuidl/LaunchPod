@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { formatEther } from "ethers/lib/utils.js";
+import { formatEther } from "viem";
 import { CreatorData } from "~~/components/homepage/StreamData";
 import { isEqual } from "~~/utils/isEqual";
 
