@@ -1,11 +1,12 @@
-# Hacker Houses Streams
+# LaunchPod Streams
 
-This **forkable** project aims to provide a platform to retroactively fund open-source work by providing a monthly 
+-->This repo's README.md is currently being edited<--
+
+This **work-in-progress** project aims to provide a platform to retroactively fund open-source work by providing a monthly 
 UBI to handpicked open-source developers, rewarding them for their ongoing contributions.
 
 Developers can submit their contributions (stored in a Smart Contract), automatically claim grant streams, and showcase their work to the public.
 
-![Placeholder image from Hacker-Houses-Streams](https://user-images.githubusercontent.com/55535804/241392637-f9719113-165e-481a-a0a5-6bf4b343ce1a.png)
 
 **Stream mechanism:**
 
@@ -16,35 +17,35 @@ Developers can submit their contributions (stored in a Smart Contract), automati
 
 ## Smart Contract features
 
-We provide a contract that includes basic features for your Hacker House Stream.
+We provide a contract that includes basic features for your LaunchPod Streams.
 
-- **Donations to the Hacker House**. Anyone can show their support to the Hacker House by send ETH to the contract.
+- **Donations to the LaunchPod**. Anyone can show their support to the LaunchPod by sending ETH to the contract.
 - **List of developers and their monthly stream cap**.
 - **Withdrawals**. Each builder can do withdrawals from their available streams when they contribute.
-- **Rechargable streams**. After a withdrawal, the hacker's monthly stream gets recharged during the next 30 days, until reaching their cap (MAX monthly stream).
+- **Rechargable streams**. After a withdrawal, the Creator's monthly stream gets recharged during the next 30 days, until reaching their cap (MAX monthly stream).
 
-## Hacker House Website
+## LaunchPod Website
 
-You get a generic template to set your Hacker House Website. Feel free to add all the visual and copy changes to adapt it to your Hacker House. The template it's a one-page with:
+You get a generic template to set your LaunchPod Website. Feel free to add all the visual and copy changes to adapt it to your LaunchPod. The template it's a one-page with:
 
-- **Hacker House welcome**
-- **List of hackers and their streams** (currentley available and monthly cap)
+- **LaunchPod welcome**
+- **List of creators and their streams** (currently available and monthly cap)
 - **List of contributions** (text submitted by developers for each withdrawal). In that text they can share links to their work (PR, Repo, design..)
 
-Here you can view some examples of active Hacker Houses using this project:
+Here you can view some examples of active Hacker Houses using the project in which LaunchPod was inspired in:
 
 | Hacker House         | Links                                                                                                                                     | Description                                                                                        |
 | -------------------- |-------------------------------------------------------------------------------------------------------------------------------------------| -------------------------------------------------------------------------------------------------- |
 | Jessy's Hacker House | [Repo](https://github.com/BuidlGuidl/hacker-houses-streams/tree/jessy-streams-hacker-house) / [Site](https://hackerhouse.buidlguidl.com/) | One-page template with Jessy's Hacker House design touch                                           |
 | Sand Garden          | [Repo](https://github.com/BuidlGuidl/hacker-houses-streams/tree/carlos-sand-garden) / [Site](http://sandgarden.buidlguidl.com/)           | Multi-page template, includes a Projects section with the list of the projects they are working on |
 
-## Steps to set your own Hacker House
+## Steps to set your own LaunchPod
 
-You'll need to complete a few steps to have your Hacker House running:
+You'll need to complete a few steps to have your LaunchPod running:
 
 - [0. Checking prerequisites](#0-checking-prerequisites)
 - [1. Clone/Fork this repo & install dependencies](#1-clonefork-this-repo--install-dependencies)
-- [2. Configure on-chain data for your Hacker House Stream](#2-configure-on-chain-data-for-your-hacker-house-stream)
+- [2. Configure on-chain data for your LaunchPod Stream](#2-configure-on-chain-data-for-your-LaunchPod-streams)
 - [3. Configure website](#3-configure-website)
 - [4. Test your local environment](#4-test-your-local-environment)
 - [5. Deploy to a Live Network](#5-deploy-to-a-live-network)
@@ -63,44 +64,19 @@ This project is powered by [Scaffold-ETH 2](https://github.com/scaffold-eth/scaf
 ### 1. Clone/Fork this repo & install dependencies
 
 ```shell
-git clone https://github.com/buidlguidl/hacker-houses-streams.git
-cd hacker-houses-streams
+git clone https://github.com/buidlguidl/LaunchPod.git
+cd LaunchPod
 yarn install
 ```
 
-### 2. Configure contract data for your Hacker House Streams
+### 2. Configure primary admin for your LaunchPod
 
-- Paste your builder's addresses into `builderList.ts`.
+- In line 27 of 'LaunchPod/packages/hardhat/deploy/00_deploy_your_contract.ts' set the address that should be the primary admin and the first admin of the smart contract (default setting is deployer). As the primary admin of the contract, such address will receive all the funds in the contract in case the 'drainAgreement()' functioon is called. Also, as the first admin, the primary admin is able to grant/revoke admin role to/from any address via the 'modifyAdminRole(address adminAddress, bool shouldGrant)' function.
 
-  ```jsx
-  const builderList = [
-    "0x34aA3F359A9D614239015126635CE7732c18fDF3",
-    "0x60583563d5879c2e59973e5718c7de2147971807",
-  ];
-  ```
-
-  > **Note:** Add the Ethereum Address `0x...`, ENS names will get resolved at the front-end.
-
-- Check the contract deploy script in `packages/hardhat/deploy/00_deploy_your_contract.ts`.
-
-  - Adapt monthly stream for each builder.
-
-    ```jsx
-    const builderStakes = Array(builderList.length).fill("500000000000000000");
-    ```
-
-  - Transfer ownership from the contract to the Leader of the Hacker House.
-
-    ```jsx
-    console.log("🏷 handing ownership over to atg.eth");
-    await yourContract.transferOwnership(
-      "0x34aA3F359A9D614239015126635CE7732c18fDF3"
-    );
-    ```
 
 ### 3. Configure website
 
-- Adapt generic template copys & metadata on `packages/nextjs/pages/index.tsx`.
+- Adapt generic template on front-end.
 - Customize Look and Feel for each component. We are using Tailwind and daisyUI.
   - `packages/nextjs/tailwind.config.js` (You can play with the colors here)
 
@@ -145,7 +121,7 @@ You can check the generated account with `yarn account`.
 
 You could also use an existing account by adding the private key to the .env file.
 
-2. Deploy your smart contract to the selected the network
+2. Deploy your smart contract to the selected network
 
 By default, `yarn deploy `will deploy the contract to the local network. To deploy to a different network, run:
 

@@ -46,6 +46,7 @@ export const AdminModal = ({
 
   const buttonDisabled =
     action == "addAdmin"
+
       ? !isAddress(adminAddr)
       : action == "fundContract"
       ? fundingValue <= 0
