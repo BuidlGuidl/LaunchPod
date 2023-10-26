@@ -11,7 +11,7 @@ import { Header } from "~~/components/Header";
 import { BlockieAvatar } from "~~/components/scaffold-eth";
 import { useNativeCurrencyPrice } from "~~/hooks/scaffold-eth";
 import { useGlobalState } from "~~/services/store/store";
-import { wagmiConfig } from "~~/services/web3/wagmiConfig";
+import { wagmiClient } from "~~/services/web3/wagmiClient";
 import { appChains } from "~~/services/web3/wagmiConnectors";
 import "~~/styles/globals.css";
 
@@ -33,16 +33,16 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
   }, [isDarkMode]);
 
   return (
-    <WagmiConfig config={wagmiConfig}>
+    <WagmiConfig client={wagmiClient}>
       <NextNProgress />
       <RainbowKitProvider
         chains={appChains.chains}
         avatar={BlockieAvatar}
         theme={isDarkTheme ? darkTheme() : lightTheme()}
       >
-        <div className="flex flex-col min-h-screen">
+        <div className="flex gotham-font flex-col min-h-screen">
           <Header />
-          <main className="mt-10 relative flex flex-col flex-initial w-full items-center mx-auto">
+          <main className="relative flex flex-col flex-initial w-full items-center mx-auto">
             <Component {...pageProps} />
           </main>
           <Footer />
