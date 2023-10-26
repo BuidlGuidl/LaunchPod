@@ -1,43 +1,30 @@
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import { ethers } from "ethers";
+import { isAddress } from "ethers/lib/utils";
+import Blockies from "react-blockies";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { isAddress } from "viem";
-import { hardhat } from "viem/chains";
 import { useEnsAvatar, useEnsName } from "wagmi";
 import { CheckCircleIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outline";
-import { BlockieAvatar } from "~~/components/scaffold-eth";
 import { getBlockExplorerAddressLink, getTargetNetwork } from "~~/utils/scaffold-eth";
 
 type TAddressProps = {
   address?: string;
   disableAddressLink?: boolean;
   format?: "short" | "long";
-  size?: "xs" | "sm" | "base" | "lg" | "xl" | "2xl" | "3xl";
-  hideIcons?: boolean;
-};
-
-const blockieSizeMap = {
-  xs: 6,
-  sm: 7,
-  base: 8,
-  lg: 9,
-  xl: 10,
-  "2xl": 12,
-  "3xl": 15,
 };
 
 /**
  * Displays an address (or ENS) with a Blockie image and option to copy address.
  */
-export const Address = ({ address, disableAddressLink, format, size = "base", hideIcons }: TAddressProps) => {
+export const Address = ({ address, disableAddressLink, format }: TAddressProps) => {
   const [ens, setEns] = useState<string | null>();
   const [ensAvatar, setEnsAvatar] = useState<string | null>();
   const [addressCopied, setAddressCopied] = useState(false);
 
   const { data: fetchedEns } = useEnsName({ address, enabled: isAddress(address ?? ""), chainId: 1 });
   const { data: fetchedEnsAvatar } = useEnsAvatar({
-    name: fetchedEns,
-    enabled: Boolean(fetchedEns),
+    address,
+    enabled: isAddress(address ?? ""),
     chainId: 1,
     cacheTime: 30_000,
   });
@@ -63,7 +50,7 @@ export const Address = ({ address, disableAddressLink, format, size = "base", hi
     );
   }
 
-  if (!isAddress(address)) {
+  if (!ethers.utils.isAddress(address)) {
     return <span className="text-error">Wrong address</span>;
   }
 
@@ -78,24 +65,20 @@ export const Address = ({ address, disableAddressLink, format, size = "base", hi
 
   return (
     <div className="flex items-center">
-      {!hideIcons && (
-        <div className="flex-shrink-0">
-          <BlockieAvatar
-            address={address}
-            ensImage={ensAvatar}
-            size={(blockieSizeMap[size] * 24) / blockieSizeMap["base"]}
-          />
-        </div>
-      )}
+      <div className="flex-shrink-0">
+        {ensAvatar ? (
+          // Don't want to use nextJS Image here (and adding remote patterns for the URL)
+          // eslint-disable-next-line
+          <img className="rounded-full" src={ensAvatar} width={24} height={24} alt={`${address} avatar`} />
+        ) : (
+          <Blockies className="mx-auto rounded-full" size={8} seed={address.toLowerCase()} scale={3} />
+        )}
+      </div>
       {disableAddressLink ? (
-        <span className={`ml-1.5 text-${size} font-normal`}>{displayAddress}</span>
-      ) : getTargetNetwork().id === hardhat.id ? (
-        <span className={`ml-1.5 text-${size} font-normal`}>
-          <Link href={blockExplorerAddressLink}>{displayAddress}</Link>
-        </span>
+        <span className="ml-1.5 text-lg font-normal">{displayAddress}</span>
       ) : (
         <a
-          className={`ml-1.5 text-${size} font-normal`}
+          className="ml-1.5 text-sm lg:text-lg font-normal"
           target="_blank"
           href={blockExplorerAddressLink}
           rel="noopener noreferrer"
@@ -103,31 +86,27 @@ export const Address = ({ address, disableAddressLink, format, size = "base", hi
           {displayAddress}
         </a>
       )}
-      {!hideIcons && (
-        <span>
-          {addressCopied ? (
-            <CheckCircleIcon
-              className="ml-1.5 text-xl font-normal text-sky-600 h-5 w-5 cursor-pointer"
-              aria-hidden="true"
-            />
-          ) : (
-            <CopyToClipboard
-              text={address}
-              onCopy={() => {
-                setAddressCopied(true);
-                setTimeout(() => {
-                  setAddressCopied(false);
-                }, 800);
-              }}
-            >
-              <DocumentDuplicateIcon
-                className="ml-1.5 text-xl font-normal text-sky-600 h-5 w-5 cursor-pointer"
-                aria-hidden="true"
-              />
-            </CopyToClipboard>
-          )}
-        </span>
-      )}{" "}
+      {addressCopied ? (
+        <CheckCircleIcon
+          className="ml-1.5 text-xl font-normal text-yellow-600 h-5 w-5 cursor-pointer"
+          aria-hidden="true"
+        />
+      ) : (
+        <CopyToClipboard
+          text={address}
+          onCopy={() => {
+            setAddressCopied(true);
+            setTimeout(() => {
+              setAddressCopied(false);
+            }, 800);
+          }}
+        >
+          <DocumentDuplicateIcon
+            className="ml-1.5 text-xl font-normal primary-content h-5 w-5 cursor-pointer"
+            aria-hidden="true"
+          />
+        </CopyToClipboard>
+      )}
     </div>
   );
 };

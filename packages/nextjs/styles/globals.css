@@ -30,3 +30,15 @@ p {
 .btn.btn-ghost {
   @apply shadow-none;
 }
+
+@font-face {
+  font-family: "Gotham";
+  src: url("/fonts/Gotham.woff2") format("woff2"),
+       url("/fonts/Gotham.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+.gotham-font {
+  font-family: "Gotham";
+}

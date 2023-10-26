@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { formatEther } from "viem";
-import { CreatorData } from "~~/components/homepage/StreamData";
+import { formatEther } from "ethers/lib/utils.js";
+import { CreatorData } from "~~/pages";
 import { isEqual } from "~~/utils/isEqual";
 
 type Props = {
@@ -32,10 +32,6 @@ export function useSetCreator({ allCreatorsData, creators, setCreatorsData }: Pr
   }
 
   useEffect(() => {
-    if (creators.length == 0) {
-      setCreatorsData({});
-    } else {
-      setCreatorsData(creatorData);
-    }
-  }, [setCreatorsData, creatorData, creators]);
+    setCreatorsData(creatorData);
+  }, [setCreatorsData, creatorData]);
 }

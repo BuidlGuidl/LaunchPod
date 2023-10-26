@@ -8,6 +8,11 @@ export const SwitchTheme = ({ className }: { className?: string }) => {
 
   useEffect(() => {
     const body = document.body;
+    body.setAttribute("data-theme", "scaffoldEthDark"); // Set the initial theme to dark mode
+  }, []);
+
+  useEffect(() => {
+    const body = document.body;
     body.setAttribute("data-theme", isDarkMode ? "scaffoldEthDark" : "scaffoldEth");
   }, [isDarkMode]);
 
