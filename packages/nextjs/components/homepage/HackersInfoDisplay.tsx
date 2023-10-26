@@ -62,7 +62,7 @@ export const HackersInfoDisplay: React.FC<{ creatorData: CreatorInfo; creatorAdd
             <div className=" tracking-tighter">Last:</div>
             <div className=" tracking-tighter ">
               {withdrawnEvents && withdrawnEvents.length > 0
-                ? getTimeAgo(withdrawnEvents[0]?.block.timestamp * 1000)
+                ? getTimeAgo(Number(withdrawnEvents[0]?.block.timestamp) * 1000)
                 : "Never"}
             </div>
           </div>
