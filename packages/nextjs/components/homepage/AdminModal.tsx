@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { Address } from "../scaffold-eth";
 import { EtherInput } from "../scaffold-eth";
 import { AddressInput } from "../scaffold-eth";
@@ -44,9 +44,10 @@ export const AdminModal = ({
 
   const [adminAddr, setAdminAddr] = useState<string>("");
 
+  const labelRef = useRef<HTMLLabelElement | null>(null);
+
   const buttonDisabled =
     action == "addAdmin"
-
       ? !isAddress(adminAddr)
       : action == "fundContract"
       ? fundingValue <= 0
@@ -296,10 +297,43 @@ export const AdminModal = ({
     if (tokenAddress && tokenAddress !== "0x0000000000000000000000000000000000000000") setRescueTokenAddr(tokenAddress);
   }, [tokenAddress]);
 
+  useEffect(() => {
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closePopup();
+      }
+    };
+
+    const handleOverlayClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+
+      if (target.classList.contains("bg-gray-900")) {
+        closePopup();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("keydown", handleEscapeKey);
+      document.addEventListener("mousedown", handleOverlayClick);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscapeKey);
+      document.removeEventListener("mousedown", handleOverlayClick);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (labelRef.current) {
+      labelRef.current.focus();
+    }
+  }, [action]);
+
   console.log(loading, successMessage, errorMessage);
 
   return (
-    <div className="border-2 rounded-xl overflow-hidden border-black w-fit text-xs bg-base-200 h-full">
+    <div className="">
       <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-20 md:text-base text-[0.8rem]">
         <div className=" modal-box">
           <label onClick={closePopup} className="btn btn-sm btn-circle absolute right-2 top-2">
@@ -325,10 +359,10 @@ export const AdminModal = ({
                 </span>{" "}
                 hacker stream{" "}
               </label>
-              <label htmlFor="cap" className="block mt-4 mb-2">
-                Cap:
+              <label ref={labelRef}>
+                <h1 className="block mt-4 mb-2">Cap:</h1>
+                <EtherInput value={cap.toString()} onChange={value => setCap(value)} placeholder="Enter cap amount" />
               </label>
-              <EtherInput value={cap.toString()} onChange={value => setCap(value)} placeholder="Enter cap amount" />
             </div>
           )}
           {isOpen && action == "addCreator" && (
@@ -337,44 +371,44 @@ export const AdminModal = ({
                 {batchCreators &&
                   batchCreators.map((creator, index) => (
                     <div key={index}>
-                      <label htmlFor={`batch-creators-${index}`} className="block mt-4 mb-2 ">
-                        Creator Address{index != 0 && " " + (index + 1)}:
-                      </label>
-                      {index != 0 && (
-                        <div className="flex justify-between">
-                          <div className="w-[92%]">
-                            <AddressInput
-                              name={`batch-creators-${index}`}
-                              value={creator}
-                              onChange={value => handleInputChange(index, value, setBatchCreators)}
-                            />
+                      <label ref={index == 0 ? labelRef : null}>
+                        <h1 className="block mt-4 mb-2 "> Creator Address{index != 0 && " " + (index + 1)}:</h1>
+                        {index != 0 && (
+                          <div className="flex justify-between">
+                            <div className="w-[92%]">
+                              <AddressInput
+                                name={`batch-creators-${index}`}
+                                value={creator}
+                                onChange={value => handleInputChange(index, value, setBatchCreators)}
+                              />
+                            </div>
+                            <button
+                              className="hover:bg-primary p-1 rounded-md active:scale-90"
+                              onClick={() => {
+                                handleRemoveInput(index);
+                              }}
+                            >
+                              <TrashIcon className="h-[1.5rem]" />
+                            </button>
                           </div>
-                          <button
-                            className="hover:bg-primary p-1 rounded-md active:scale-90"
-                            onClick={() => {
-                              handleRemoveInput(index);
-                            }}
-                          >
-                            <TrashIcon className="h-[1.5rem]" />
-                          </button>
-                        </div>
-                      )}
-                      {index == 0 && (
-                        <AddressInput
-                          name={`batch-creators-${index}`}
-                          value={creator}
-                          onChange={value => handleInputChange(index, value, setBatchCreators)}
-                        />
-                      )}
-                      <label htmlFor={`batch-caps-${index}`} className="block mt-4 mb-2">
-                        Cap{index != 0 && " " + (index + 1)}:
+                        )}
+                        {index == 0 && (
+                          <AddressInput
+                            name={`batch-creators-${index}`}
+                            value={creator}
+                            onChange={value => handleInputChange(index, value, setBatchCreators)}
+                          />
+                        )}
                       </label>
 
-                      <EtherInput
-                        value={batchCaps ? batchCaps[index]?.toString() : ""}
-                        onChange={value => handleInputChange(index, value, setBatchCaps)}
-                        placeholder="Enter stream cap"
-                      />
+                      <label>
+                        <h1 className="block mt-4 mb-2">Cap{index != 0 && " " + (index + 1)}:</h1>
+                        <EtherInput
+                          value={batchCaps ? batchCaps[index]?.toString() : ""}
+                          onChange={value => handleInputChange(index, value, setBatchCaps)}
+                          placeholder="Enter stream cap"
+                        />
+                      </label>
                     </div>
                   ))}
                 <button className="btn btn-primary  mt-2  rounded-md flex ml-auto" onClick={handleAddInput}>
@@ -399,23 +433,23 @@ export const AdminModal = ({
           {isOpen && action == "fundContract" && (
             <div>
               <div>
-                <label htmlFor="creator" className="block mt-4 mb-2">
-                  Funding amount:
+                <label ref={labelRef}>
+                  <h1 className="block mt-4 mb-2">Funding amount:</h1>
+                  <EtherInput value={fundingValue.toString()} onChange={e => setFundingValue(Number(e))} />
                 </label>
-                <EtherInput value={fundingValue.toString()} onChange={e => setFundingValue(Number(e))} />
               </div>
             </div>
           )}
           {isOpen && action === "rescueToken" && (
             <div>
               <p className="">Transfer token balance from the contract to primary admin</p>
-              <label htmlFor="token" className="block mt-4 mb-2">
-                Token Address:
+              <label ref={labelRef}>
+                <h1 className="block mt-4 mb-2"> Token Address:</h1>
+                <AddressInput
+                  value={rescueTokenAddr === "0x0000000000000000000000000000000000000000" ? "" : rescueTokenAddr}
+                  onChange={value => setRescueTokenAddr(value)}
+                />
               </label>
-              <AddressInput
-                value={rescueTokenAddr === "0x0000000000000000000000000000000000000000" ? "" : rescueTokenAddr}
-                onChange={value => setRescueTokenAddr(value)}
-              />
             </div>
           )}
           {isOpen && action === "rescueEth" && (
@@ -425,10 +459,10 @@ export const AdminModal = ({
           )}
           {isOpen && action === "addAdmin" && (
             <div>
-              <label htmlFor="admin" className="block mt-4 mb-2">
-                Admin Address:
+              <label ref={labelRef}>
+                <h1 className="block mt-4 mb-2">Admin Address:</h1>
+                <AddressInput value={adminAddr} onChange={value => setAdminAddr(value)} />
               </label>
-              <AddressInput value={adminAddr} onChange={value => setAdminAddr(value)} />
             </div>
           )}
           {isOpen && action === "removeAdmin" && (

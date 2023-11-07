@@ -16,7 +16,7 @@ const Creator: React.FC<undefined> = () => {
   }
 
   return (
-    <div className="flex flex-col gap-4 xs:w-4/5 xl:w-1/2 w-11/12">
+    <div className="flex flex-col gap-4 xs:w-4/5 lg:max-w-5xl w-11/12">
       {isLoadingCreators ? (
         <div className="flex flex-col gap-4">
           <div className="flex animate-pulse gap-2">

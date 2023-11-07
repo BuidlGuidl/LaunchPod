@@ -37,6 +37,14 @@ export const useTokenBalance = ({ address, isEns, isOp }: TTokenBalanceHookProps
     },
   });
 
+  useScaffoldEventSubscriber({
+    contractName: "YourContract",
+    eventName: "Withdrawn",
+    listener: () => {
+      setUpdataBalance(true);
+    },
+  });
+
   useEffect(() => {
     (async () => {
       if (tokenAddress && tokenAddress != "0x0000000000000000000000000000000000000000" && address) {

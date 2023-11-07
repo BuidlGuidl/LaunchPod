@@ -8,7 +8,7 @@ const Home: NextPage = () => {
   return (
     <>
       <MetaHeader />
-      <div className="flex flex-col gap-4 xs:w-4/5 xl:w-[60%] w-11/12">
+      <div className="flex flex-col gap-4 xs:w-4/5 lg:max-w-5xl w-11/12">
         <Welcome />
         <StreamData creatorPage={false} />
 
