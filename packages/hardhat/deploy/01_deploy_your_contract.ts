@@ -33,7 +33,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     from: deployer,
     // Contract constructor arguments
 
-    args: ["0xB5060bA8E0CC3A70F857B4C33E475E9ba202a8d5", ZERO_ADDRESS, [], []],
+    args: ["0x7d0FdcDCb8876365E131091C9E10AA9AA8E863C3", ZERO_ADDRESS, [], []],
 
     log: true,
     // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
