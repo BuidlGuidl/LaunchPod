@@ -24,7 +24,7 @@ export function useIsCreator() {
   }
 
   return {
-    isCreator: !address || creator == address,
+    isCreator: creator == address,
     isLoading: false,
   };
 }
