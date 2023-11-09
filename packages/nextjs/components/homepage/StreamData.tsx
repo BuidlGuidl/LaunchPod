@@ -127,9 +127,10 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
                   </div>
                 </div>
               ))}
-            {!isLoadingCreators && !isSettingCreatorsData && Object.keys(creatorsData).length === 0 && (
-              <div className="text-center py-6">No Hacker Streams</div>
-            )}
+            {!isLoadingCreators &&
+              !isSettingCreatorsData &&
+              creators.length === 0 &&
+              Object.keys(creatorsData).length === 0 && <div className="text-center py-6">No Hacker Streams</div>}
             {!isLoadingCreators &&
               Object.entries(creatorsData).map(([creatorAddress, creatorData]) => (
                 <HackersInfoDisplay key={creatorAddress} creatorData={creatorData} creatorAddress={creatorAddress} />
