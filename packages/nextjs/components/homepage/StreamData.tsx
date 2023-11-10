@@ -30,6 +30,7 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
   const [creatorsData, setCreatorsData] = useState<CreatorData>({});
   const [adminToRemove, setAdminToRemove] = useState("");
   const [uniqueAdmins, setUniqueAdmins] = useState<string[]>([]);
+  const [isSettingCreatorsData, setIsSettingCreatorsData] = useState(true);
   const { address } = useAccount();
 
   const { isCreator } = useIsCreator();
@@ -58,7 +59,12 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
     args: [creatorPage ? [address || ""] : creators],
   });
 
-  useSetCreator({ allCreatorsData, creators: creatorPage ? [address || ""] : creators, setCreatorsData });
+  useSetCreator({
+    allCreatorsData,
+    creators: creatorPage ? [address || ""] : creators,
+    setCreatorsData,
+    setIsSettingCreatorsData,
+  });
 
   const { isErc20, isEns, isOp } = useErc20();
   const [modalOpen, setModalOpen] = useState(false);
@@ -109,7 +115,7 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
           </div>
 
           <div>
-            {isLoadingCreators &&
+            {isSettingCreatorsData &&
               Array.from({ length: creatorPage ? 1 : 3 }).map((_, index) => (
                 <div key={index} className="animate-pulse flex justify-between px-6 py-4">
                   <div className="rounded-md bg-slate-300 h-6 w-[5%]"></div>
@@ -121,9 +127,10 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
                   </div>
                 </div>
               ))}
-            {!isLoadingCreators && Object.keys(creatorsData).length === 0 && (
-              <div className="text-center py-6">No Hacker Streams</div>
-            )}
+            {!isLoadingCreators &&
+              !isSettingCreatorsData &&
+              creators.length === 0 &&
+              Object.keys(creatorsData).length === 0 && <div className="text-center py-6">No Hacker Streams</div>}
             {!isLoadingCreators &&
               Object.entries(creatorsData).map(([creatorAddress, creatorData]) => (
                 <HackersInfoDisplay key={creatorAddress} creatorData={creatorData} creatorAddress={creatorAddress} />
