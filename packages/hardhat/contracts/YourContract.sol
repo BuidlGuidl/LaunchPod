@@ -35,7 +35,7 @@ contract YourContract is AccessControl, ReentrancyGuard {
   // Fixed cycle, max creators and minimum cap
   uint256 constant CYCLE = 30 days;
   uint256 constant MAXCREATORS = 25;
-  uint256 constant MINIMUM_CAP = 0.5 ether;
+  uint256 constant MINIMUM_CAP = 0.25 ether;
   uint256 constant MINIMUM_ERC20_CAP = 10 * 10 ** 18;
 
   // ERC20 support
