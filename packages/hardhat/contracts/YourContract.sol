@@ -57,7 +57,7 @@ contract YourContract is AccessControl, ReentrancyGuard {
   }
 
   // Constructor to setup admin role and initial creators
-  constructor(address _primaryAdmin, address _tokenAddress, address[] memory _creators, uint256[] memory _caps) {
+  constructor(address _primaryAdmin, address _tokenAddress) {
     _setupRole(DEFAULT_ADMIN_ROLE, _primaryAdmin);
     isAdmin[_primaryAdmin] = true;
     primaryAdmin = _primaryAdmin;
@@ -67,9 +67,6 @@ contract YourContract is AccessControl, ReentrancyGuard {
       tokenAddress = _tokenAddress;
     }
 
-    if (_creators.length > 0) {
-      addBatch(_creators, _caps);
-    }
   }
 
   // Function to modify admin roles
