@@ -70,7 +70,7 @@ export const WithdrawModal = ({
   return (
     <div className="">
       {isOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-20 md:text-sm text-[0.7rem]">
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 md:text-sm text-[0.7rem]">
           <div className=" modal-box">
             <label onClick={closePopup} className="btn btn-sm btn-circle absolute right-2 top-2">
               ✕
