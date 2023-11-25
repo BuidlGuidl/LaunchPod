@@ -86,7 +86,7 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
 
   return (
     <div className="flex lg:flex-wrap md:flex-row flex-col border rounded-xl">
-      <div className="container md:w-[62%]  pt-4">
+      <div className="container md:w-[62%]  py-2">
         <div className="flex flex-col ">
           <div className="py-2 flex justify-between">
             <h1
@@ -150,7 +150,7 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
           )}
         </div>
       </div>
-      <div className="md:w-[38%] pt-4 md:border-l pb-2">
+      <div className="md:w-[38%] py-2 md:border-l pb-2">
         <div className="py-2 border-b px-4">
           <h1
             className={`font-bold font-typo-round md:text-xl text-lg  upercase  tracking-wide ${
