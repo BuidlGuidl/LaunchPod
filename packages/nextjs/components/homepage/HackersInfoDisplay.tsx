@@ -38,11 +38,11 @@ export const HackersInfoDisplay: React.FC<{ creatorData: CreatorInfo; creatorAdd
   }, [withdrawn.isLoading, creatorAddress, withdrawn.data]);
 
   return (
-    <div className="flex flex-col justify-between md:flex-row place-items-center border-t px-6 py-2 w-full">
+    <div className="flex flex-col justify-between lg:flex-row place-items-center border-t px-6 py-2 w-full">
       <div className=" md:ml-0 py-2">
         <Address address={creatorAddress} />
       </div>
-      <div className="flex flex-col gap-1 text-sm w-2/3 md:w-[50%]">
+      <div className="flex flex-col gap-1 text-sm w-2/3 lg:w-[40%] lg:ml-auto lg:mr-5">
         <div className="flex flex-row justify-center">
           <div className="flex md:text-base text-[0.8rem] ">
             <span className="px-1">
