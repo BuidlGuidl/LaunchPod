@@ -92,7 +92,6 @@ export const Header = () => {
     useCallback(() => setIsDrawerOpen(false), []),
   );
 
-
   return (
     <div className="sticky lg:static top-0 navbar bg-base-100 min-h-0 flex-shrink-0 justify-between z-20 shadow-md shadow-secondary px-0 sm:px-2">
       <div className="navbar-start w-auto lg:w-1/2">
@@ -124,12 +123,12 @@ export const Header = () => {
           </div>
           <div className="flex flex-col">
             <span className="font-bold leading-tight">LaunchPod&#8482;</span>
-            <span className="text-xs">Public Good</span>
+            <span className="text-xs">BuidlGuidl Cohort</span>
           </div>
         </Link>
-        <ul className="hidden lg:flex lg:flex-nowrap menu menu-horizontal px-1 gap-2">
+        {/* <ul className="hidden lg:flex lg:flex-nowrap menu menu-horizontal px-1 gap-2">
           <HeaderMenuLinks />
-        </ul>
+        </ul> */}
       </div>
       <div className="navbar-end flex-grow mr-4">
         <RainbowKitCustomConnectButton />
