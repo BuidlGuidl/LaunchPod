@@ -27,16 +27,20 @@ const Contributions = ({ creatorPage }: { creatorPage: boolean }) => {
     eventName: "Withdrawn",
     listener: logs => {
       logs.map(log => {
-        const [creator, amount, reason] = log.args;
+        const creator = log.args[0];
+        const amount = log.args[1];
+        const reason = log.args[2];
         const newEvent = { args: [creator, amount, reason], block: { timestamp: Math.floor(Date.now() / 1000) } };
-        const currentEvents = withdrawnEvents;
-        currentEvents?.push(newEvent);
-        setWithdrawnEvents(currentEvents);
+        setWithdrawnEvents(prev => {
+          if (prev) {
+            const updatedEvents = [newEvent, ...prev];
+            return updatedEvents;
+          }
+          return [newEvent];
+        });
       });
     },
   });
-
-  // console.log(withdrawnEvents);
 
   const getDate = (timestamp: number) => {
     const date = new Date(Number(timestamp) * 1000);

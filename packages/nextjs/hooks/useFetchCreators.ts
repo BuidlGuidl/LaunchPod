@@ -4,7 +4,7 @@ import { useDeployedContractInfo, useScaffoldEventHistory, useScaffoldEventSubsc
 
 export const useFetchCreators = () => {
   const [creators, setCreators] = useState<string[]>([]);
-  const [isValidatingCreators, setIsValidatingCreators] = useState(false);
+  const [isValidatingCreators, setIsValidatingCreators] = useState(true);
 
   // Read the creatorAdded events to get added creators.
   const {
@@ -27,7 +27,6 @@ export const useFetchCreators = () => {
       logs.map(log => {
         const creator = log.args[0];
         setCreators(prev => [...prev, creator] as string[]);
-        console.log(log);
       });
     },
   });

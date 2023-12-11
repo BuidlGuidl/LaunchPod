@@ -30,6 +30,7 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
   const [creatorsData, setCreatorsData] = useState<CreatorData>({});
   const [adminToRemove, setAdminToRemove] = useState("");
   const [uniqueAdmins, setUniqueAdmins] = useState<string[]>([]);
+  const [isSettingCreatorsData, setIsSettingCreatorsData] = useState(true);
   const { address } = useAccount();
 
   const { isCreator } = useIsCreator();
@@ -58,7 +59,12 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
     args: [creatorPage ? [address || ""] : creators],
   });
 
-  useSetCreator({ allCreatorsData, creators: creatorPage ? [address || ""] : creators, setCreatorsData });
+  useSetCreator({
+    allCreatorsData,
+    creators: creatorPage ? [address || ""] : creators,
+    setCreatorsData,
+    setIsSettingCreatorsData,
+  });
 
   const { isErc20, isEns, isOp } = useErc20();
   const [modalOpen, setModalOpen] = useState(false);
@@ -80,7 +86,7 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
 
   return (
     <div className="flex lg:flex-wrap md:flex-row flex-col border rounded-xl">
-      <div className="container md:w-[62%]  pt-4">
+      <div className="container md:w-[62%]  py-2">
         <div className="flex flex-col ">
           <div className="py-2 flex justify-between">
             <h1
@@ -109,7 +115,7 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
           </div>
 
           <div>
-            {isLoadingCreators &&
+            {isSettingCreatorsData &&
               Array.from({ length: creatorPage ? 1 : 3 }).map((_, index) => (
                 <div key={index} className="animate-pulse flex justify-between px-6 py-4">
                   <div className="rounded-md bg-slate-300 h-6 w-[5%]"></div>
@@ -121,9 +127,10 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
                   </div>
                 </div>
               ))}
-            {!isLoadingCreators && Object.keys(creatorsData).length === 0 && (
-              <div className="text-center py-6">No Hacker Streams</div>
-            )}
+            {!isLoadingCreators &&
+              !isSettingCreatorsData &&
+              creators.length === 0 &&
+              Object.keys(creatorsData).length === 0 && <div className="text-center py-6">No Hacker Streams</div>}
             {!isLoadingCreators &&
               Object.entries(creatorsData).map(([creatorAddress, creatorData]) => (
                 <HackersInfoDisplay key={creatorAddress} creatorData={creatorData} creatorAddress={creatorAddress} />
@@ -143,7 +150,7 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
           )}
         </div>
       </div>
-      <div className="md:w-[38%] pt-4 md:border-l pb-2">
+      <div className="md:w-[38%] py-2 md:border-l pb-2">
         <div className="py-2 border-b px-4">
           <h1
             className={`font-bold font-typo-round md:text-xl text-lg  upercase  tracking-wide ${
