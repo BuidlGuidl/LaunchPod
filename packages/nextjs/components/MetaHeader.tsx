@@ -15,7 +15,7 @@ const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL ? `https://${process.env.NEXT
 
 export const MetaHeader = ({
   title = "LaunchPod™",
-  description = "LaunchPod&#8482;: Created with 🏗 scaffold-eth-2",
+  description = "LaunchPod: Created with 🏗 scaffold-eth-2",
   image = "thumbnail.jpg",
   twitterCard = "summary_large_image",
   children,
