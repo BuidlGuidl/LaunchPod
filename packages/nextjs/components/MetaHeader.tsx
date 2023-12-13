@@ -9,7 +9,7 @@ type MetaHeaderProps = {
   children?: React.ReactNode;
 };
 
-const baseUrl = "https://buidlguidlpod.vercel.app/"; //Need to manually put in the base url
+const baseUrl = "https://launchpod.buidlguidl.com/"; //Need to manually put in the base url
 
 export const MetaHeader = ({
   title = "LaunchPod",
