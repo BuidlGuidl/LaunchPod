@@ -6,38 +6,27 @@ export const useFetchCreators = () => {
   const [creators, setCreators] = useState<string[]>([]);
   const [isValidatingCreators, setIsValidatingCreators] = useState(true);
 
-  // Read the creatorAdded events to get added creators.
+  // Read the builderAdded events to get added creators.
   const {
-    data: creatorAdded,
+    data: builderAdded,
     isLoading: isLoadingCreators,
     error: errorReadingCreators,
   } = useScaffoldEventHistory({
     contractName: "YourContract",
-    eventName: "CreatorAdded",
+    eventName: "AddBuilder",
     fromBlock: BigInt(Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0),
     blockData: true,
   });
 
-  const addedCreators = creatorAdded?.map(creator => creator.args[0]);
+  const addedCreators = builderAdded?.map(creator => creator?.args[0]);
 
   useScaffoldEventSubscriber({
     contractName: "YourContract",
-    eventName: "CreatorAdded",
+    eventName: "AddBuilder",
     listener: logs => {
       logs.map(log => {
         const creator = log.args[0];
         setCreators(prev => [...prev, creator] as string[]);
-      });
-    },
-  });
-
-  useScaffoldEventSubscriber({
-    contractName: "YourContract",
-    eventName: "CreatorRemoved",
-    listener: logs => {
-      logs.map(log => {
-        const creator = log.args[0];
-        setCreators(prev => prev.filter(existingCreator => creator != existingCreator));
       });
     },
   });

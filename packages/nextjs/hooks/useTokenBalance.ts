@@ -39,7 +39,7 @@ export const useTokenBalance = ({ address, isEns, isOp }: TTokenBalanceHookProps
 
   useScaffoldEventSubscriber({
     contractName: "YourContract",
-    eventName: "Withdrawn",
+    eventName: "Withdraw",
     listener: () => {
       setUpdataBalance(true);
     },
