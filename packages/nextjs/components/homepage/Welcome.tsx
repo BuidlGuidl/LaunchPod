@@ -3,7 +3,7 @@ import React from "react";
 const Welcome = () => {
   return (
     <div className="md:text-base text-[0.8rem] border rounded-xl p-4 text-center">
-      <h1 className="font-bold font-typo-round md:text-2xl text-xl tracking-wide ">Welcome to LaunchPod!</h1>
+      <h1 className="font-bold font-typo-round md:text-2xl text-xl ">Welcome to LaunchPod!</h1>
       <p>
         🚀 LaunchPod is on a mission to fund open-source work by providing a monthly stream of ETH to Ethereum
         developers! For new and existing builders alike, LaunchPod acts as the home base of the normal BuidlGuidl

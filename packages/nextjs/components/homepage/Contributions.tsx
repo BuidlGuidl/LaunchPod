@@ -55,7 +55,7 @@ const Contributions = ({ creatorPage }: { creatorPage: boolean }) => {
     <div>
       {withdrawEvents && withdrawEvents?.length > 0 && (
         <div className=" md:text-sm text-[0.7rem] border rounded-xl">
-          <h1 className="font-bold font-typo-round md:text-xl text-lg  p-4 tracking-wide">
+          <h1 className="font-bold font-typo-round md:text-xl text-lg  p-4">
             {creatorPage ? "Your Contributions" : "Contributions"}
           </h1>
           {withdrawEvents.map((event, index) => (
