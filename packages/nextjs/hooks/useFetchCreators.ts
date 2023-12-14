@@ -31,17 +31,6 @@ export const useFetchCreators = () => {
     },
   });
 
-  // useScaffoldEventSubscriber({
-  //   contractName: "YourContract",
-  //   eventName: "CreatorRemoved",
-  //   listener: logs => {
-  //     logs.map(log => {
-  //       const creator = log.args[0];
-  //       setCreators(prev => prev.filter(existingCreator => creator != existingCreator));
-  //     });
-  //   },
-  // });
-
   const { data: streamContract } = useDeployedContractInfo("YourContract");
 
   useEffect(() => {
