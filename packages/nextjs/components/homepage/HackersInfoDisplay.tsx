@@ -22,20 +22,20 @@ export const HackersInfoDisplay: React.FC<{ creatorData: CreatorInfo; creatorAdd
 
   const [adminModalOpen, setAdminModalOpen] = useState(false);
   const [adminAction, setAdminAction] = useState<"removeCreator" | "updateCreator">("updateCreator");
-  const [withdrawnEvents, setWithdrawnEvents] = useState<any[] | undefined>([]);
+  const [withdrawEvents, setWithdrawEvents] = useState<any[] | undefined>([]);
   const { isAdmin } = useIsAdmin();
 
-  const withdrawn = useScaffoldEventHistory({
+  const withdraw = useScaffoldEventHistory({
     contractName: "YourContract",
-    eventName: "Withdrawn",
+    eventName: "Withdraw",
     fromBlock: BigInt(Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0),
     blockData: true,
   });
 
   useEffect(() => {
-    const events = withdrawn.data?.filter(obj => obj.args[0] === creatorAddress);
-    setWithdrawnEvents(events);
-  }, [withdrawn.isLoading, creatorAddress, withdrawn.data]);
+    const events = withdraw.data?.filter(obj => obj.args[0] === creatorAddress);
+    setWithdrawEvents(events);
+  }, [withdraw.isLoading, creatorAddress, withdraw.data]);
 
   return (
     <div className="flex flex-col justify-between lg:flex-row place-items-center border-t px-6 py-2 w-full">
@@ -61,8 +61,8 @@ export const HackersInfoDisplay: React.FC<{ creatorData: CreatorInfo; creatorAdd
           <div className="md:text-base text-[0.8rem]  flex flex-row items-center gap-1">
             <div className=" tracking-tighter">Last:</div>
             <div className=" tracking-tighter ">
-              {withdrawnEvents && withdrawnEvents.length > 0
-                ? getTimeAgo(Number(withdrawnEvents[0]?.block.timestamp) * 1000)
+              {withdrawEvents && withdrawEvents.length > 0
+                ? getTimeAgo(Number(withdrawEvents[0]?.block.timestamp) * 1000)
                 : "Never"}
             </div>
           </div>

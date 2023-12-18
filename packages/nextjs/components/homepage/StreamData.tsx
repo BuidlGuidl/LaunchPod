@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { TokenBalance } from "../TokenBalance";
 import { AdminModal } from "./AdminModal";
 import { HackersInfoDisplay } from "./HackersInfoDisplay";
@@ -87,13 +88,9 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
   return (
     <div className="flex lg:flex-wrap md:flex-row flex-col border rounded-xl">
       <div className="container md:w-[62%]  py-2">
-        <div className="flex flex-col ">
-          <div className="py-2 flex justify-between">
-            <h1
-              className={`font-bold font-typo-round md:text-xl text-lg  px-4 md:text-left text-center tracking-wide ${
-                !isAdmin ? "w-full" : ""
-              }`}
-            >
+        <div className="flex flex-col">
+          <div className="pb-2 pt-1 flex justify-between">
+            <h1 className={`font-bold font-typo-round md:text-xl px-4 ${!isAdmin ? "w-full" : ""}`}>
               {creatorPage ? "Your Stream" : "Hacker Streams"}
             </h1>
             {isAdmin && (
@@ -151,14 +148,17 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
         </div>
       </div>
       <div className="md:w-[38%] py-2 md:border-l pb-2">
-        <div className="py-2 border-b px-4">
+        <div className="flex justify-between pb-2 border-b px-4 py-0">
           <h1
-            className={`font-bold font-typo-round md:text-xl text-lg  upercase  tracking-wide ${
+            className={`pt-1 font-bold font-typo-round md:text-xl text-lg ${
               !isAdmin ? "text-center md:text-left" : ""
             }`}
           >
             Contract Data
           </h1>
+          <div className="relative w-10 h-10">
+            <Image alt="OP Logo" className="cursor-pointer" fill src="/OPLogo.png" />
+          </div>
         </div>
         <div className="px-4 pt-4">
           {isCreator && !creatorPage && (
@@ -203,7 +203,7 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
         {isAdmin && (
           <div>
             <div className="py-2 mt-6  px-4 flex justify-between ">
-              <h1 className=" font-bold font-typo-round md:text-xl text-lg  upercase md:text-left text-center tracking-wide">
+              <h1 className=" font-bold font-typo-round md:text-xl text-lg  upercase md:text-left text-center">
                 Admins
               </h1>
               <div>
