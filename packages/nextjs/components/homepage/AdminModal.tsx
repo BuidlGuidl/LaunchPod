@@ -66,7 +66,10 @@ export const AdminModal = ({
       ? batchCreators?.some(creator => !isAddress(creator)) || batchCaps?.some(cap => cap == "" || parseFloat(cap) <= 0)
       : action == "updateCreator"
       ? cap == "" || parseFloat(cap) < 0
+      : action == "transferOwnership"
+      ? !isAddress(newPrimaryAdmin)
       : false;
+
 
   const { writeAsync: removeCreator } = useScaffoldContractWrite({
     contractName: "YourContract",
