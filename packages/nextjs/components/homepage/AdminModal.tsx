@@ -496,7 +496,7 @@ export const AdminModal = ({
           )}
           {isOpen && action === "transferOwnership" && (
             <div>
-              Address of new primary admin:
+              Address of new owner:
               <AddressInput value={newPrimaryAdmin} onChange={value => setNewPrimaryAdmin(value)} />
             </div>
           )}
