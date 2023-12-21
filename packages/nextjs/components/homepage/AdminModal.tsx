@@ -23,7 +23,9 @@ export const AdminModal = ({
   creatorAddress?: string;
   action: string;
   setAction?: Dispatch<
-    SetStateAction<"addCreator" | "fundContract" | "rescueEth" | "rescueToken" | "addAdmin" | "removeAdmin">
+    SetStateAction<
+      "addCreator" | "fundContract" | "rescueEth" | "rescueToken" | "addAdmin" | "removeAdmin" | "transferOwnership"
+    >
   >;
   adminToRemove?: string;
 }) => {
@@ -43,6 +45,13 @@ export const AdminModal = ({
   const [rescueTokenAddr, setRescueTokenAddr] = useState<string>("");
 
   const [adminAddr, setAdminAddr] = useState<string>("");
+  //create newvariable for newprimaryadmin address
+
+  const [newPrimaryAdmin, setNewPrimaryAdmin] = useState<string>("");
+
+  useEffect(() => {
+    if (newPrimaryAdmin) setNewPrimaryAdmin(newPrimaryAdmin);
+  }, [newPrimaryAdmin]);
 
   const labelRef = useRef<HTMLLabelElement | null>(null);
 
@@ -57,6 +66,8 @@ export const AdminModal = ({
       ? batchCreators?.some(creator => !isAddress(creator)) || batchCaps?.some(cap => cap == "" || parseFloat(cap) <= 0)
       : action == "updateCreator"
       ? cap == "" || parseFloat(cap) < 0
+      : action == "transferOwnership"
+      ? !isAddress(newPrimaryAdmin)
       : false;
 
   const { writeAsync: removeCreator } = useScaffoldContractWrite({
@@ -148,6 +159,12 @@ export const AdminModal = ({
     functionName: "modifyAdminRole",
     //args is address of admin
     args: [adminToRemove, false],
+  });
+
+  const { writeAsync: transferOwnership } = useScaffoldContractWrite({
+    contractName: "YourContract",
+    functionName: "transferPrimaryAdmin",
+    args: [newPrimaryAdmin],
   });
 
   // Hook for approving before funding for erc20 streams
@@ -247,6 +264,9 @@ export const AdminModal = ({
       } else if (action === "removeAdmin") {
         await removeAdmin();
         setSuccessMessage("Admin removed successfully.");
+      } else if (action === "transferOwnership") {
+        await transferOwnership();
+        setSuccessMessage("Ownership transferred successfully.");
       } else if (action === "updateCreator") {
         debouncedUpdateCreator();
       } else if (action === "fundContract") {
@@ -476,6 +496,13 @@ export const AdminModal = ({
               </label>
             </div>
           )}
+          {isOpen && action === "transferOwnership" && (
+            <div>
+              Address of new owner:
+              <AddressInput value={newPrimaryAdmin} onChange={value => setNewPrimaryAdmin(value)} />
+            </div>
+          )}
+
           <button
             className="btn btn-primary text-lg font-normal rounded-lg w-full mt-2 ml-auto"
             disabled={buttonDisabled}
@@ -489,6 +516,7 @@ export const AdminModal = ({
             {action == "rescueToken" && "Rescue Token"}
             {action == "addAdmin" && "Add Admin"}
             {action == "removeAdmin" && "Remove Admin"}
+            {action == "transferOwnership" && "Transfer Ownership"}
           </button>
         </div>
       </div>

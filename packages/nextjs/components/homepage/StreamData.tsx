@@ -7,6 +7,7 @@ import { Tooltip } from "react-tooltip";
 import { useAccount } from "wagmi";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { WalletIcon } from "@heroicons/react/24/outline";
+import { KeyIcon } from "@heroicons/react/24/outline";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { Address, Balance } from "~~/components/scaffold-eth";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
@@ -44,6 +45,8 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
     functionName: "primaryAdmin",
   });
 
+  const isPrimaryAdmin = address?.toLowerCase() === primaryAdmin?.toLowerCase();
+
   const {
     creators,
     isLoadingCreators,
@@ -70,7 +73,7 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [adminModalOpen, setAdminModalOpen] = useState(false);
   const [adminAction, setAdminAction] = useState<
-    "addCreator" | "fundContract" | "rescueEth" | "rescueToken" | "addAdmin" | "removeAdmin"
+    "addCreator" | "fundContract" | "rescueEth" | "rescueToken" | "addAdmin" | "removeAdmin" | "transferOwnership"
   >("addCreator");
 
   useEffect(() => {
@@ -198,6 +201,22 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
           </div>
           <div className="flex gap-2 bg-base-300 mt-2 rounded-md w-full px-4 py-2 font-bold justify-center">
             <span className="font-bold font-sans">Owner: </span> <Address address={primaryAdmin} />
+            {isPrimaryAdmin && (
+              <div>
+                <button
+                  data-tooltip-id="transfer-ownership"
+                  data-tooltip-content="transfer ownership"
+                  className="hover:bg-primary p-2 rounded-md active:scale-90"
+                  onClick={() => {
+                    setAdminAction("transferOwnership");
+                    setAdminModalOpen(true);
+                  }}
+                >
+                  <KeyIcon className="h-[1.1rem]" />
+                </button>
+                <Tooltip place="bottom" id="transfer-ownership" />
+              </div>
+            )}
           </div>
         </div>
         {isAdmin && (
