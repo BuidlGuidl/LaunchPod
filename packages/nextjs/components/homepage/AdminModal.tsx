@@ -55,6 +55,8 @@ export const AdminModal = ({
 
   const labelRef = useRef<HTMLLabelElement | null>(null);
 
+  const labelRef = useRef<HTMLLabelElement | null>(null);
+
   const buttonDisabled =
     action == "addAdmin"
       ? !isAddress(adminAddr)
