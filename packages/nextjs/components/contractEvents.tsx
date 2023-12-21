@@ -6,10 +6,9 @@ import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth";
 
 const ContractEvents = () => {
   const [fundsReceivedEvents, setFundsReceivedEvents] = useState<any[] | undefined>([]);
-  const [withdrawnEvents, setWithdrawnEvents] = useState<any[] | undefined>([]);
-  const [creatorAddedEvents, setCreatorAddedEvents] = useState<any[] | undefined>([]);
-  const [creatorUpdatedEvents, setCreatorUpdatedEvents] = useState<any[] | undefined>([]);
-  const [creatorRemovedEvents, setCreatorRemovedEvents] = useState<any[] | undefined>([]);
+  const [withdrawEvents, setWithdrawEvents] = useState<any[] | undefined>([]);
+  const [addBuilderEvents, setAddBuilderEvents] = useState<any[] | undefined>([]);
+  const [updateBuilderEvents, setUpdateBuilderEvents] = useState<any[] | undefined>([]);
   const [agreementDrainedEvents, setAgreementDrainedEvents] = useState<any[] | undefined>([]);
 
   const fundsReceived = useScaffoldEventHistory({
@@ -19,32 +18,24 @@ const ContractEvents = () => {
     blockData: true,
   });
 
-  const withdrawn = useScaffoldEventHistory({
+  const withdraw = useScaffoldEventHistory({
     contractName: "YourContract",
-    eventName: "Withdrawn",
+    eventName: "Withdraw",
     fromBlock: BigInt(Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0),
     blockData: true,
   });
 
-  const creatorAdded = useScaffoldEventHistory({
+  const addBuilder = useScaffoldEventHistory({
     contractName: "YourContract",
-    eventName: "CreatorAdded",
-    fromBlock: BigInt(Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0),
-
-    blockData: true,
-  });
-
-  const creatorUpdated = useScaffoldEventHistory({
-    contractName: "YourContract",
-    eventName: "CreatorUpdated",
+    eventName: "AddBuilder",
     fromBlock: BigInt(Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0),
 
     blockData: true,
   });
 
-  const creatorRemoved = useScaffoldEventHistory({
+  const updateBuilder = useScaffoldEventHistory({
     contractName: "YourContract",
-    eventName: "CreatorRemoved",
+    eventName: "UpdateBuilder",
     fromBlock: BigInt(Number(process.env.NEXT_PUBLIC_DEPLOY_BLOCK) || 0),
 
     blockData: true,
@@ -63,20 +54,16 @@ const ContractEvents = () => {
   }, [fundsReceived]);
 
   useEffect(() => {
-    setWithdrawnEvents(withdrawn.data);
-  }, [withdrawn]);
+    setWithdrawEvents(withdraw.data);
+  }, [withdraw]);
 
   useEffect(() => {
-    setCreatorAddedEvents(creatorAdded.data);
-  }, [creatorAdded]);
+    setAddBuilderEvents(addBuilder.data);
+  }, [addBuilder]);
 
   useEffect(() => {
-    setCreatorUpdatedEvents(creatorUpdated.data);
-  }, [creatorUpdated]);
-
-  useEffect(() => {
-    setCreatorRemovedEvents(creatorRemoved.data);
-  }, [creatorRemoved]);
+    setUpdateBuilderEvents(updateBuilder.data);
+  }, [updateBuilder]);
 
   useEffect(() => {
     setAgreementDrainedEvents(agreementDrained.data);
@@ -100,10 +87,10 @@ const ContractEvents = () => {
           ))}
         </div>
       )}
-      {withdrawnEvents && withdrawnEvents?.length > 0 && (
+      {withdrawEvents && withdrawEvents?.length > 0 && (
         <div className="p-4 w-full space-x-4 space-y-4 items-center flex flex-col justify-center">
           <h3 className="text-lg font-bold">Withdraw Event</h3>
-          {withdrawnEvents.map((event, index) => (
+          {withdrawEvents.map((event, index) => (
             <div key={index}>
               <div className="flex flex-row items-center">
                 <Address address={event.args[0]} />
@@ -116,10 +103,10 @@ const ContractEvents = () => {
           ))}
         </div>
       )}
-      {creatorAddedEvents && creatorAddedEvents?.length > 0 && (
+      {addBuilderEvents && addBuilderEvents?.length > 0 && (
         <div className="p-4 w-full space-x-4 space-y-4 items-center flex flex-col justify-center">
           <h3 className="text-lg font-bold">Creator Added</h3>
-          {creatorAddedEvents.map((event, index) => (
+          {addBuilderEvents.map((event, index) => (
             <div key={index}>
               <div className="flex flex-row items-center">
                 <Address address={event.args[0]} />
@@ -132,10 +119,10 @@ const ContractEvents = () => {
           ))}
         </div>
       )}
-      {creatorUpdatedEvents && creatorUpdatedEvents?.length > 0 && (
+      {updateBuilderEvents && updateBuilderEvents?.length > 0 && (
         <div className="p-4 w-full space-x-4 space-y-4 items-center flex flex-col justify-center">
           <h3 className="text-lg font-bold">Creator Updated</h3>
-          {creatorUpdatedEvents.map((event, index) => (
+          {updateBuilderEvents.map((event, index) => (
             <div key={index}>
               <div className="flex flex-row items-center">
                 <Address address={event.args[0]} />
@@ -143,18 +130,6 @@ const ContractEvents = () => {
                   Ξ <Price value={Number(formatEther(event.args[1]))} />
                 </div>
                 <div className="pl-4">30 days</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-      {creatorRemovedEvents && creatorRemovedEvents?.length > 0 && (
-        <div className="p-4 w-full space-x-4 space-y-4 items-center flex flex-col justify-center">
-          <h3 className="text-lg font-bold">Creator Removed</h3>
-          {creatorRemovedEvents.map((event, index) => (
-            <div key={index}>
-              <div className="flex flex-row items-center">
-                <Address address={event.args[0]} />
               </div>
             </div>
           ))}

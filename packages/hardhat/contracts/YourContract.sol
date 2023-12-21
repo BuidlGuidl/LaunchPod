@@ -32,6 +32,7 @@ error NotAuthorized();
 error InvalidNewAdminAddress();
 
 contract YourContract is AccessControl, ReentrancyGuard {
+
   using SafeERC20 for IERC20;
 
   // Fixed cycle, max creators and minimum cap
