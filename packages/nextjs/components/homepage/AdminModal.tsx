@@ -55,8 +55,6 @@ export const AdminModal = ({
 
   const labelRef = useRef<HTMLLabelElement | null>(null);
 
-  const labelRef = useRef<HTMLLabelElement | null>(null);
-
   const buttonDisabled =
     action == "addAdmin"
       ? !isAddress(adminAddr)
@@ -71,7 +69,6 @@ export const AdminModal = ({
       : action == "transferOwnership"
       ? !isAddress(newPrimaryAdmin)
       : false;
-
 
   const { writeAsync: removeCreator } = useScaffoldContractWrite({
     contractName: "YourContract",
