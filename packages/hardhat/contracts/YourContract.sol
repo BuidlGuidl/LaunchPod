@@ -28,6 +28,8 @@ error ERC20TransferFailed();
 error ERC20SendingFailed(address token, address recipient);
 error ERC20FundsTransferFailed(address token, address to, uint256 amount);
 error BelowMinimumCap(uint256 provided, uint256 minimum);
+error NotAuthorized();
+error InvalidNewAdminAddress();
 
 contract YourContract is AccessControl, ReentrancyGuard {
   using SafeERC20 for IERC20;
@@ -84,6 +86,19 @@ contract YourContract is AccessControl, ReentrancyGuard {
     }
   }
 
+  // Function to transfer primary admin role
+	function transferPrimaryAdmin(address newPrimaryAdmin) public {
+		if (msg.sender != primaryAdmin) revert NotAuthorized();
+		if (newPrimaryAdmin == address(0)) revert InvalidNewAdminAddress();
+
+		primaryAdmin = newPrimaryAdmin;
+
+		_revokeRole(DEFAULT_ADMIN_ROLE, primaryAdmin);
+		_grantRole(DEFAULT_ADMIN_ROLE, newPrimaryAdmin);
+
+    emit PrimaryAdminTransferred(newPrimaryAdmin);
+	}
+
   // Struct to store information about creator's flow
   struct CreatorFlowInfo {
     uint256 cap; // Maximum amount of funds that can be withdrawn in a cycle
@@ -109,6 +124,7 @@ contract YourContract is AccessControl, ReentrancyGuard {
   event AdminRemoved(address indexed to);
   event AgreementDrained(uint256 amount);
   event ERC20FundsReceived(address indexed token, address indexed from, uint256 amount);
+  event PrimaryAdminTransferred(address indexed newAdmin);
 
   // Check if a flow for a creator is active
   modifier isFlowActive(address _creator) {
