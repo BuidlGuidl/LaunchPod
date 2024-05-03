@@ -34,7 +34,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
 
     // First Argument: Address of primary admin
     // Second Argument: Enter zero address for eth mode or enter address of ERC20 token contract for token mode
-    args: ["0xD2a561BA9814416DA6b24034D5863CfF33Db55Ac", "0xCA59cCeb39bE1808d7aA607153f4A5062daF3a83"],
+    args: ["0xC7728158CEecb2CBE00a155Ed0Ed746D94f993cC", "0xCA59cCeb39bE1808d7aA607153f4A5062daF3a83"],
 
     log: true,
     // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
