@@ -26,12 +26,16 @@ export const Price: React.FC<TPriceProps> = ({ value }: TPriceProps) => {
   const isValueNaN = isNaN(value);
   let displayBalance = isValueNaN ? NaN : "Ξ " + value.toFixed(4);
 
+  const gtPriceValue = value * gtPrice;
+
   if (!isValueNaN && dollarMode && price > 0) {
     displayBalance = "$" + (value * price).toFixed(2);
   }
 
   return (
     <span
+      data-tooltip-id={gtPriceValue.toFixed(2) + " USD"}
+      data-tooltip-content={gtPriceValue.toFixed(2) + " USD"}
       style={{
         cursor: "pointer",
       }}
