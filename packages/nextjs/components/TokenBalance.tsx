@@ -19,7 +19,6 @@ export const TokenBalance = ({ address, className = "", isEns, isOp, isGt }: TTo
   const { tokenSymbol } = useErc20();
   const { gtPrice } = useTokenPrice();
 
-  //create multiplication of gtPrice and balance
   const gtBalance = balance !== null ? balance * gtPrice : null;
 
   if (!address || balance === null) {
