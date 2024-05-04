@@ -10,15 +10,12 @@ export const useTokenPrice = () => {
   const [gtPrice, setGtPrice] = useState(0);
 
   const fetchPrice = () => {
-    fetch(
-      "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=optimism,ethereum-name-service,the-graph",
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-        },
+    fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=the-graph", {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
       },
-    )
+    })
       .then(response => response.json())
       .then(data => {
         data.map((token: object & { id: string; current_price: number }) => {
