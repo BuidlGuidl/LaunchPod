@@ -69,7 +69,7 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
     setIsSettingCreatorsData,
   });
 
-  const { isErc20, isEns, isOp } = useErc20();
+  const { isErc20, isEns, isOp, isGt } = useErc20();
   const [modalOpen, setModalOpen] = useState(false);
   const [adminModalOpen, setAdminModalOpen] = useState(false);
   const [adminAction, setAdminAction] = useState<
@@ -174,7 +174,13 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
           <div className="  py-3 rounded-md px-2 bg-base-300 w-full ">
             <div className="w-full bg-primary rounded-md py-2 px-2 mb-3 flex justify-center">
               {isErc20 ? (
-                <TokenBalance className="text-2xl" address={streamContract.data?.address} isEns={isEns} isOp={isOp} />
+                <TokenBalance
+                  className="text-2xl"
+                  address={streamContract.data?.address}
+                  isEns={isEns}
+                  isOp={isOp}
+                  isGt={isGt}
+                />
               ) : (
                 <Balance className="text-2xl" address={streamContract.data?.address} />
               )}

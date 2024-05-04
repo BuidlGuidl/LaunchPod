@@ -7,19 +7,24 @@ export const useTokenPrice = () => {
 
   const [ensPrice, setEnsPrice] = useState(0);
   const [opPrice, setOpPrice] = useState(0);
+  const [gtPrice, setGtPrice] = useState(0);
 
   const fetchPrice = () => {
-    fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=optimism,ethereum-name-service", {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
+    fetch(
+      "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=optimism,ethereum-name-service,the-graph",
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
       },
-    })
+    )
       .then(response => response.json())
       .then(data => {
         data.map((token: object & { id: string; current_price: number }) => {
           if (token.id == "optimism") setOpPrice(token.current_price);
           if (token.id == "ethereum-name-service") setEnsPrice(token.current_price);
+          if (token.id == "the-graph") setGtPrice(token.current_price);
         });
       })
       .catch(error => {
@@ -40,8 +45,11 @@ export const useTokenPrice = () => {
     enablePolling ? scaffoldConfig.pollingInterval : null,
   );
 
+  console.log("gtPrice", gtPrice);
+
   return {
     ensPrice,
     opPrice,
+    gtPrice,
   };
 };

@@ -10,13 +10,14 @@ type TTokenBalanceHookProps = {
   address?: string;
   isEns?: boolean;
   isOp?: boolean;
+  isGt?: boolean;
 };
 
-export const useTokenBalance = ({ address, isEns, isOp }: TTokenBalanceHookProps) => {
+export const useTokenBalance = ({ address, isEns, isOp, isGt }: TTokenBalanceHookProps) => {
   const [isTokenBalance, setIsTokenBalance] = useState(true);
   const [balance, setBalance] = useState<number | null>(null);
-  const { ensPrice, opPrice } = useTokenPrice();
-  const price = isEns ? ensPrice : isOp ? opPrice : 0;
+  const { ensPrice, opPrice, gtPrice } = useTokenPrice();
+  const price = isEns ? ensPrice : isOp ? opPrice : isGt ? gtPrice : 0;
   const [updateBalance, setUpdataBalance] = useState(false);
 
   const { tokenAddress } = useErc20();

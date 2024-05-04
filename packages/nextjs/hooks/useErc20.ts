@@ -8,6 +8,7 @@ export function useErc20() {
   const [tokenSymbol, setTokenSymbol] = useState("");
   const [isEns, setIsEns] = useState(false);
   const [isOp, setIsOp] = useState(false);
+  const [isGt, setIsGt] = useState(false);
 
   const { data: isErc20, isLoading: isErc20Loading } = useScaffoldContractRead({
     contractName: "YourContract",
@@ -41,6 +42,7 @@ export function useErc20() {
   useEffect(() => {
     if (tokenName == "Ethereum Name Service") setIsEns(true);
     if (tokenName == "Optimism") setIsOp(true);
+    if (tokenName == "The Graph") setIsGt(true);
   }, [tokenName]);
 
   if (isErc20Loading || tokenAddressLoadng) {
@@ -58,5 +60,6 @@ export function useErc20() {
     tokenSymbol,
     isEns,
     isOp,
+    isGt,
   };
 }

@@ -1,20 +1,26 @@
 import Image from "next/image";
 import { useErc20 } from "~~/hooks/useErc20";
 import { useTokenBalance } from "~~/hooks/useTokenBalance";
+import { useTokenPrice } from "~~/hooks/useTokenPrice";
 
 type TTokenBalanceProps = {
   address?: string;
   className?: string;
   isEns?: boolean;
   isOp?: boolean;
+  isGt?: boolean;
 };
 
 /**
  * Display (ETH & USD) balance of an ETH address.
  */
-export const TokenBalance = ({ address, className = "", isEns, isOp }: TTokenBalanceProps) => {
-  const { balance, price, isTokenBalance } = useTokenBalance({ address, isEns, isOp });
+export const TokenBalance = ({ address, className = "", isEns, isOp, isGt }: TTokenBalanceProps) => {
+  const { balance, price, isTokenBalance, onToggleBalance } = useTokenBalance({ address, isEns, isOp, isGt });
   const { tokenSymbol } = useErc20();
+  const { gtPrice } = useTokenPrice();
+
+  //create multiplication of gtPrice and balance
+  const gtBalance = balance !== null ? balance * gtPrice : null;
 
   if (!address || balance === null) {
     return (
@@ -29,18 +35,22 @@ export const TokenBalance = ({ address, className = "", isEns, isOp }: TTokenBal
 
   return (
     <button
-      className={`btn btn-sm btn-ghost flex flex-col font-normal items-center hover:bg-transparent ${className}`}
-      // onClick={onToggleBalance}
+      className={`btn btn-sm btn-ghost flex flex-col font-normal text-sm items-center hover:bg-transparent ${className}`}
+      onClick={onToggleBalance}
     >
       <div className="w-full flex items-center ">
         {isTokenBalance ? (
           <>
-            <span> {balance?.toFixed(2)}</span>
+            <span>
+              {" "}
+              {balance?.toFixed(2)} {tokenSymbol} / {gtBalance?.toFixed(2)} USD{" "}
+            </span>
+
             {isEns && <Image className=" ml-1" src="/assets/ensLogo.png" alt="ens logo" width={25} height={25} />}
             {isOp && <Image className=" ml-1" src="/assets/opLogo.png" alt="op logo" width={25} height={25} />}
             {/* {isEns && <span className="text-base ml-1">ENS</span>}
             {isOp && <span className=" ml-1">OP</span>} */}
-            {!isEns && !isOp && <div className="text-base  ml-1">{tokenSymbol}</div>}
+            {/* {!isEns && !isOp && <div className="text-base  ml-1">{tokenSymbol}</div>} */}
           </>
         ) : (
           <>
