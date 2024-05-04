@@ -40,9 +40,9 @@ export const TokenBalance = ({ address, className = "", isEns, isOp, isGt }: TTo
       <div className="w-full flex items-center ">
         {isTokenBalance ? (
           <>
-            <span>
-              {" "}
-              {balance?.toFixed(2)} {tokenSymbol} / {gtBalance?.toFixed(2)} USD{" "}
+            <span className="font-bold text-lg">
+              {balance?.toFixed(2)} {tokenSymbol}{" "}
+              <span className="bg-green-200 px-2 py-1 rounded-full text-orange-500">{gtBalance?.toFixed(2)} USD</span>
             </span>
 
             {isEns && <Image className=" ml-1" src="/assets/ensLogo.png" alt="ens logo" width={25} height={25} />}

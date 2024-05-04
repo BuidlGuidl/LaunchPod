@@ -34,8 +34,6 @@ export const Price: React.FC<TPriceProps> = ({ value }: TPriceProps) => {
 
   return (
     <span
-      data-tooltip-id={gtPriceValue.toFixed(2) + " USD"}
-      data-tooltip-content={gtPriceValue.toFixed(2) + " USD"}
       style={{
         cursor: "pointer",
       }}
@@ -45,7 +43,7 @@ export const Price: React.FC<TPriceProps> = ({ value }: TPriceProps) => {
         }
       }}
     >
-      {displayBalance}
+      {displayBalance} <br /> {gtPriceValue.toFixed(2)} USD
     </span>
   );
 };
