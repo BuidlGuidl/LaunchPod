@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useInterval } from "usehooks-ts";
 import scaffoldConfig from "~~/scaffold.config";
+import { useGlobalState } from "~~/services/store/store";
 
 export const useTokenPrice = () => {
   const enablePolling = false;
@@ -43,6 +44,10 @@ export const useTokenPrice = () => {
   );
 
   console.log("gtPrice", gtPrice);
+  //if gtPrice is not zero, set as nativeCurrencyPrice
+  if (gtPrice > 0) {
+    useGlobalState.getState().setNativeCurrencyPrice(gtPrice);
+  }
 
   return {
     ensPrice,

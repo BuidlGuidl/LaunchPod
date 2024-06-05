@@ -18,6 +18,7 @@ import { useFetchCreators } from "~~/hooks/useFetchCreators";
 import { useIsAdmin } from "~~/hooks/useIsAdmin";
 import { useIsCreator } from "~~/hooks/useIsCreator";
 import { useSetCreator } from "~~/hooks/useSetCreator";
+import { useGlobalState } from "~~/services/store/store";
 
 export type CreatorInfo = {
   cap: string;
@@ -86,6 +87,9 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
   useEffect(() => {
     setAdminModalOpen(false);
   }, [creatorsData, uniqueAdmins]);
+
+  const grtPrice = useGlobalState(state => state.nativeCurrencyPrice);
+  console.log(grtPrice);
 
   return (
     <div className="flex lg:flex-wrap md:flex-row flex-col border rounded-xl">
@@ -174,13 +178,15 @@ const StreamData = ({ creatorPage }: { creatorPage: boolean }) => {
           <div className="  py-3 rounded-md px-2 bg-base-300 w-full ">
             <div className="w-full bg-primary rounded-md py-2 px-2 mb-3 flex justify-center">
               {isErc20 ? (
-                <TokenBalance
-                  className="text-2xl"
-                  address={streamContract.data?.address}
-                  isEns={isEns}
-                  isOp={isOp}
-                  isGt={isGt}
-                />
+                <div>
+                  <TokenBalance
+                    className="text-2xl"
+                    address={streamContract.data?.address}
+                    isEns={isEns}
+                    isOp={isOp}
+                    isGt={isGt}
+                  />
+                </div>
               ) : (
                 <Balance className="text-2xl" address={streamContract.data?.address} />
               )}

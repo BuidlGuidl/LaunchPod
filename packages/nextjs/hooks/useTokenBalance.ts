@@ -19,7 +19,6 @@ export const useTokenBalance = ({ address, isEns, isOp, isGt }: TTokenBalanceHoo
   const { ensPrice, opPrice, gtPrice } = useTokenPrice();
   const price = isEns ? ensPrice : isOp ? opPrice : isGt ? gtPrice : 0;
   const [updateBalance, setUpdataBalance] = useState(false);
-
   const { tokenAddress } = useErc20();
 
   useScaffoldEventSubscriber({
