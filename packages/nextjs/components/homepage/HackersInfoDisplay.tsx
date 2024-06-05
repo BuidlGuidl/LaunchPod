@@ -50,7 +50,7 @@ export const HackersInfoDisplay: React.FC<{ creatorData: CreatorInfo; creatorAdd
             <span className="px-1">
               <Price value={Number(unlockedAmount)} />
             </span>
-
+            /
             <span className="px-1">
               <Price value={cap} />
             </span>
