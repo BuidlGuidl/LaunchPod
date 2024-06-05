@@ -11,11 +11,13 @@ import { useCreatorUnlockedAmount } from "~~/hooks/useCreatorUnlockedAmount";
 import { useIsAdmin } from "~~/hooks/useIsAdmin";
 import { getTimeAgo } from "~~/utils/getTimeAgo";
 
+//import { useGlobalState } from "~~/services/store/store";
 // Component for displaying individual creator information
 export const HackersInfoDisplay: React.FC<{ creatorData: CreatorInfo; creatorAddress: string }> = ({
   creatorData,
   creatorAddress,
 }) => {
+  //const { thegraphPrice } = useGlobalState(state => state);
   const { unlockedAmount } = useCreatorUnlockedAmount(creatorAddress);
   const cap = Number(creatorData.cap);
   const percentage = cap > 0 ? (Number(unlockedAmount) / cap) * 100 : 0;

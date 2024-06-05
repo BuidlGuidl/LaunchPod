@@ -1,7 +1,8 @@
 import Image from "next/image";
 import { useErc20 } from "~~/hooks/useErc20";
 import { useTokenBalance } from "~~/hooks/useTokenBalance";
-import { useTokenPrice } from "~~/hooks/useTokenPrice";
+
+//import { useTokenPrice } from "~~/hooks/useTokenPrice";
 
 type TTokenBalanceProps = {
   address?: string;
@@ -17,9 +18,9 @@ type TTokenBalanceProps = {
 export const TokenBalance = ({ address, className = "", isEns, isOp, isGt }: TTokenBalanceProps) => {
   const { balance, price, isTokenBalance, onToggleBalance } = useTokenBalance({ address, isEns, isOp, isGt });
   const { tokenSymbol } = useErc20();
-  const { gtPrice } = useTokenPrice();
+  //const { gtPrice } = useTokenPrice();
 
-  const gtBalance = balance !== null ? balance * gtPrice : null;
+  //const gtBalance = balance !== null ? balance * gtPrice : null;
 
   if (!address || balance === null) {
     return (
@@ -42,7 +43,6 @@ export const TokenBalance = ({ address, className = "", isEns, isOp, isGt }: TTo
           <>
             <span className="font-bold text-lg">
               {balance?.toFixed(2)} {tokenSymbol}{" "}
-              <span className="bg-green-200 px-2 py-1 rounded-full text-orange-500">{gtBalance?.toFixed(2)} USD</span>
             </span>
 
             {isEns && <Image className=" ml-1" src="/assets/ensLogo.png" alt="ens logo" width={25} height={25} />}
