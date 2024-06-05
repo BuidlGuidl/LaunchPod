@@ -353,7 +353,7 @@ export const AdminModal = ({
   console.log(loading, successMessage, errorMessage);
 
   return (
-    <div className="">
+    <div className={`fixed inset-0 z-50 flex items-center justify-center ${isOpen ? "block" : "hidden"}`}>
       <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50  md:text-base text-[0.8rem]">
         <div className=" modal-box">
           <label onClick={closePopup} className="btn btn-sm btn-circle absolute right-2 top-2">
