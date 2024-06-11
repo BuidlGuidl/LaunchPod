@@ -12,7 +12,7 @@ type MetaHeaderProps = {
 const baseUrl = "https://buidlguidlpod.vercel.app/"; //Need to manually put in the base url
 
 export const MetaHeader = ({
-  title = "LaunchPod",
+  title = "GraphCohort",
   description = "Empowering Ethereum developers through cohort streams; contribute, claim, and showcase at BuidlGuidl.com",
   image = "bglpbanner.png",
   twitterCard = "summary_large_image",
