@@ -26,7 +26,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const ERC20Mock1Address = ERC20Mock1.address;
 
-  const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
+  //const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
   await deploy("YourContract", {
     from: deployer,
@@ -34,7 +34,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
 
     // First Argument: Address of primary admin
     // Second Argument: Enter zero address for eth mode or enter address of ERC20 token contract for token mode
-    args: ["0x11E91FB4793047a68dFff29158387229eA313ffE", ZERO_ADDRESS],
+    args: ["0xC7728158CEecb2CBE00a155Ed0Ed746D94f993cC", "0xCA59cCeb39bE1808d7aA607153f4A5062daF3a83"],
 
     log: true,
     // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by

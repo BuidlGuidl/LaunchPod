@@ -66,7 +66,6 @@ const Contributions = ({ creatorPage }: { creatorPage: boolean }) => {
                   <div>{getDate(event.block.timestamp)}</div>
 
                   <div className="font-bold font-sans ">
-                    <span className=" hidden md:contents ">&#x2022; </span>
                     <Price value={Number(formatEther(event.args[1]))} />
                   </div>
                 </div>
